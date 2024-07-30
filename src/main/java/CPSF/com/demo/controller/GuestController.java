@@ -1,10 +1,9 @@
-package CPSF.com.demo;
+package CPSF.com.demo.controller;
 
 import CPSF.com.demo.Entity.Guest;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RestController;
 
 @Controller
 public class GuestController {
