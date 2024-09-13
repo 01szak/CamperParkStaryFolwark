@@ -9,7 +9,7 @@ import jakarta.persistence.Id;
 public class Guest {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private int id;
     private String firstName;
     private String LastName;
 
@@ -19,6 +19,27 @@ public class Guest {
     private String carRegistration;
     private int occupiedPlace;
 
+    public Guest() {
+    }
+
+    public Guest(String firstName, String lastName, String phoneNumber, String idNumber, String emailAddress, String carRegistration, int occupiedPlace) {
+        this.firstName = firstName;
+        LastName = lastName;
+        this.phoneNumber = phoneNumber;
+        this.idNumber = idNumber;
+        this.emailAddress = emailAddress;
+        this.carRegistration = carRegistration;
+        this.occupiedPlace = occupiedPlace;
+    }
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
+
     public int getOccupiedPlace() {
         return occupiedPlace;
     }
@@ -26,9 +47,7 @@ public class Guest {
     public void setOccupiedPlace(int occupiedPlace) {
         this.occupiedPlace = occupiedPlace;
     }
-//mozna potem dodac kolejne wart.
-    //polaczyc z bd
-    //priorytety
+
 
     public String getFirstName() {
         return firstName;
@@ -76,5 +95,19 @@ public class Guest {
 
     public void setCarRegistration(String carRegistration) {
         this.carRegistration = carRegistration;
+    }
+
+    @Override
+    public String toString() {
+        return "Guest{" +
+                "id=" + id +
+                ", firstName='" + firstName + '\'' +
+                ", LastName='" + LastName + '\'' +
+                ", phoneNumber='" + phoneNumber + '\'' +
+                ", idNumber='" + idNumber + '\'' +
+                ", emailAddress='" + emailAddress + '\'' +
+                ", carRegistration='" + carRegistration + '\'' +
+                ", occupiedPlace=" + occupiedPlace +
+                '}';
     }
 }
