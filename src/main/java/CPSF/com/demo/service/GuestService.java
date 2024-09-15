@@ -9,11 +9,6 @@ import java.util.List;
 
 public interface GuestService {
 
-    List<Guest> findAll();
-
-    Guest findByPlace(int place);
-
-    Guest save (Guest theGuest);
-     void deleteByPlace(int place);
+    public void  save(Guest guest);
 
 }

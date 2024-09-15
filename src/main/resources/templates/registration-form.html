@@ -1,23 +1,63 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<html lang="en"  xmlns:th="http://www.thymeleaf.org">
 <head>
+    <style>
+
+        .RegistrationDiv{
+            text-align: center;
+
+        }
+        .topReferencesButtons{
+            text-align: center;
+        }
+
+    </style>
     <meta charset="UTF-8">
-    <title>Rejestracja</title>
+    <title>Demo Login</title>
 </head>
 <body>
 
-<form th:action="@{/confirmation}" th:object="${guest}" method="POST">
+<div class="topReferencesButtons ">
 
+    <a href="https://www.google.com/search?client=opera-gx&hs=HKJ&sca_esv=84988bd0a5bc7a4b&sca_upv=1&sxsrf=ADLYWILDlcVtGm2vYfkt5pMijVckiQzlrg:1726425302847&q=shrek&udm=2&fbs=AEQNm0Dvr3xYvXRaGaB8liPABJYdGovAUMem85jmaNP43N9LWkpJzPExVfN1dM6Qi4rL-ZCUpN5qLHKOqAlKUxwZpsmlou8qLwHyBOcWJHi8Pqxo1R5ZJsvG6djMMleofA8yVnAM2wUkqoFFvXDQ0imbpG98fgb7YeJotsYKgW-1_FTMLTu9dHPUJ5S9jC-F2dn0eKsUfppt&sa=X&ved=2ahUKEwjA86C3y8WIAxUjBNsEHcgCEJYQtKgLegQIEBAB&biw=1495&bih=746&dpr=1.25">
+ <button type="button"> tymczasowy link(kiedys jakies odnosniki)</button>
+    </a>
+
+</div>
+<hr>
+
+<h3>Login form</h3>
+<div class="RegistrationDiv">
+
+
+<!--<form  th:action="@{/registration-form.html}" th:object="${guest}" method="GET">-->
+    <form  th:action="@{/save}"  th:object="${guest}" method="POST">
+
+    First Name:
+    <br><br>
+    <input type="text" th:field="*{firstName}"/>
     <br><br>
 
-    REJESTRACJ...
+    Last Name:
+    <br><br>
+    <input type="text" th:field="*{lastName}"/>
+    <br><br>
+
+    Email:
+    <br><br>
+    <input type="text" th:field="*{emailAddress}"/>
+    <br><br>
 
 
+    Car Registration:
+    <br><br>
+    <input type="text" th:field="*{carRegistration}"/>
+    <br><br>
 
-
+    <button type="submit" >submit</button>
 </form>
 
-
+</div>
 
 </body>
 </html>

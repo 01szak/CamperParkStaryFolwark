@@ -1,33 +1,35 @@
 package CPSF.com.demo.Entity;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
+import org.springframework.stereotype.Repository;
 
 @Entity
+@Table(name = "guest")
 public class Guest {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
+    @Column(name = "first_name")
     private String firstName;
+    @Column(name = "last_name")
     private String LastName;
-
+    @Column(name = "phone_number")
     private String phoneNumber;
-    private String idNumber;
-    private String emailAddress;
+    @Column(name = "email")
+    private String email;
+    @Column(name = "car_registration")
     private String carRegistration;
+    @Column(name = "occupied_place")
     private int occupiedPlace;
 
     public Guest() {
     }
 
-    public Guest(String firstName, String lastName, String phoneNumber, String idNumber, String emailAddress, String carRegistration, int occupiedPlace) {
+    public Guest(String firstName, String lastName, String phoneNumber, String emailAddress, String carRegistration, int occupiedPlace) {
         this.firstName = firstName;
         LastName = lastName;
         this.phoneNumber = phoneNumber;
-        this.idNumber = idNumber;
-        this.emailAddress = emailAddress;
+        this.email = emailAddress;
         this.carRegistration = carRegistration;
         this.occupiedPlace = occupiedPlace;
     }
@@ -73,20 +75,14 @@ public class Guest {
         this.phoneNumber = phoneNumber;
     }
 
-    public String getIdNumber() {
-        return idNumber;
-    }
 
-    public void setIdNumber(String idNumber) {
-        this.idNumber = idNumber;
-    }
 
     public String getEmailAddress() {
-        return emailAddress;
+        return email;
     }
 
     public void setEmailAddress(String emailAddress) {
-        this.emailAddress = emailAddress;
+        this.email = emailAddress;
     }
 
     public String getCarRegistration() {
@@ -104,8 +100,8 @@ public class Guest {
                 ", firstName='" + firstName + '\'' +
                 ", LastName='" + LastName + '\'' +
                 ", phoneNumber='" + phoneNumber + '\'' +
-                ", idNumber='" + idNumber + '\'' +
-                ", emailAddress='" + emailAddress + '\'' +
+
+                ", emailAddress='" + email + '\'' +
                 ", carRegistration='" + carRegistration + '\'' +
                 ", occupiedPlace=" + occupiedPlace +
                 '}';

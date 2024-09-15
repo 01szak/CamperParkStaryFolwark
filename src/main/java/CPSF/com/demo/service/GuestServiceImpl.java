@@ -2,6 +2,8 @@ package CPSF.com.demo.service;
 
 import CPSF.com.demo.DAO.GuestRepository;
 import CPSF.com.demo.Entity.Guest;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.Query;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Example;
 import org.springframework.stereotype.Service;
@@ -20,31 +22,12 @@ public class GuestServiceImpl implements GuestService {
         guestRepository = theGuestRepository;
     }
 
-    @Override
-    public List<Guest> findAll() {
-        return guestRepository.findAll();
-    }
 
     @Override
-    public Guest findByPlace(int place) {
-        Optional<Guest> result = guestRepository.findById(place);
-        Guest theGuest = null;
+    public void save(Guest guest) {
 
-        if(result.isPresent()){
-            theGuest = result.get();
-        }else {
-            throw new RuntimeException("Miejsce jest puste...");
-        }
-        return theGuest;
+        guestRepository.save(guest);
     }
 
-    @Override
-    public Guest save(Guest theGuest) {
-        return null;
-    }
 
-    @Override
-    public void deleteByPlace(int place) {
-
-    }
 }
