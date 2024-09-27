@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Guests Management</title>
+</head>
+<body>
+
+<div>
+    <form>
+<table>
+
+<thead>
+
+<tr>
+    <th>guest_firstName</th>
+    <th>guest_lastName</th>
+    <th>occupiedPlace</th>
+</tr>
+
+</thead>
+
+<tbody>
+
+<tr th:each="tempGuest : ${guests}">
+
+    <td th:text="${tempGuest.firstName}"/>
+    <td th:text="${tempGuest.lastName}"/>
+    <td th:text="${tempGuest.occupiedPlace}"/>
+
+</tr>
+
+</tbody>
+
+</table>
+    </form>
+</div>
+
+
+
+</body>
+</html>

@@ -5,29 +5,12 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="38561928-bf32-4204-85b9-f84ac4ea04bb" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/src/main/java/CPSF/com/demo/Controller/OwnerController.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/CPSF/com/demo/Repository/OwnerRepository.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/CPSF/com/demo/Service/OwnerService.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/CPSF/com/demo/Service/OwnerServiceImpl.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/resources/templates/confirmation-form.html" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/resources/templates/guestsManagement-form.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/compiler.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/compiler.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/dataSources.local.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/dataSources.local.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/dataSources.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/dataSources.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/dataSources/018fd6fe-cad4-4f96-b6db-f11667b34bb0.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/pom.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/CPSF/com/demo/DAO/GuestRepository.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/CPSF/com/demo/Repository/GuestRepository.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/CPSF/com/demo/Entity/Guest.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/CPSF/com/demo/Entity/Guest.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/CPSF/com/demo/Entity/Owner.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/CPSF/com/demo/Entity/Owner.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/CPSF/com/demo/controller/GuestController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/CPSF/com/demo/Controller/GuestController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/CPSF/com/demo/service/GuestService.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/CPSF/com/demo/Service/GuestService.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/CPSF/com/demo/service/GuestServiceImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/CPSF/com/demo/Service/GuestServiceImpl.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/templates/registration-form.html" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/templates/registration-form.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/templates/setOccupiedPlace-form.html" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/templates/setOccupiedPlace-form.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/templates/registration-form.html" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/templates/registration-form.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/templates/setOccupiedPlace-form.html" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/templates/setOccupiedPlace-form.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/CPSF/com/demo/Controller/OwnerController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/CPSF/com/demo/Controller/OwnerController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/CPSF/com/demo/Service/OwnerServiceImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/CPSF/com/demo/Service/OwnerServiceImpl.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/resources/templates/ownerForms/guestsManagement-form.html" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/templates/guestsManagement-form.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/templates/registration-form.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/templates/setOccupiedPlace-form.html" beforeDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -84,6 +67,13 @@
     ]
   }
 }</component>
+  <component name="RecentsManager">
+    <key name="MoveFile.RECENT_KEYS">
+      <recent name="C:\Users\kacpe\Documents\GitHub\CamperParkStaryFolwark\src\main\resources\templates" />
+      <recent name="C:\Users\kacpe\Documents\GitHub\CamperParkStaryFolwark\src\main\resources\templates\ownerForms" />
+      <recent name="C:\Users\kacpe\Documents\GitHub\CamperParkStaryFolwark\src\main\resources\templates\guestForms" />
+    </key>
+  </component>
   <component name="RunManager">
     <configuration name="CamperparkdemoApplication" type="SpringBootApplicationConfigurationType" factoryName="Spring Boot" nameIsGenerated="true">
       <option name="FRAME_DEACTIVATION_UPDATE_POLICY" value="UpdateClassesAndResources" />
@@ -116,8 +106,18 @@
       <workItem from="1727019557062" duration="2047000" />
       <workItem from="1727296839761" duration="3739000" />
       <workItem from="1727384396977" duration="4996000" />
-      <workItem from="1727427890973" duration="1355000" />
+      <workItem from="1727427890973" duration="1645000" />
+      <workItem from="1727437561135" duration="3771000" />
     </task>
+    <task id="LOCAL-00001" summary="Updating Owner class adding Owner Controller and adding guestsManagement-form.html">
+      <option name="closed" value="true" />
+      <created>1727429541141</created>
+      <option name="number" value="00001" />
+      <option name="presentableId" value="LOCAL-00001" />
+      <option name="project" value="LOCAL" />
+      <updated>1727429541141</updated>
+    </task>
+    <option name="localTasksCounter" value="2" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -139,5 +139,9 @@
         </entry>
       </map>
     </option>
+  </component>
+  <component name="VcsManagerConfiguration">
+    <MESSAGE value="Updating Owner class adding Owner Controller and adding guestsManagement-form.html" />
+    <option name="LAST_COMMIT_MESSAGE" value="Updating Owner class adding Owner Controller and adding guestsManagement-form.html" />
   </component>
 </project>

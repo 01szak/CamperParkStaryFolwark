@@ -21,7 +21,8 @@ public class OwnerServiceImpl implements OwnerService{
     public void add(Owner owner) {}
     @Override
     public List<Guest>findAllGuests(){
-        return ownerRepository.findAllGuests();
+
+    return ownerRepository.findAllGuests();
     }
 
 }
