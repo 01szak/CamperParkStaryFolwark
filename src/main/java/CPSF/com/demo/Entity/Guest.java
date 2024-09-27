@@ -21,6 +21,8 @@ public class Guest {
     private String carRegistration;
     @Column(name = "occupied_place")
     private int occupiedPlace;
+    @Column(name = "role")
+    private String role = "guest";
 
     public Guest() {
     }

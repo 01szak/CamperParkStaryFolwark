@@ -1,4 +1,4 @@
-package CPSF.com.demo.DAO;
+package CPSF.com.demo.Repository;
 
 import CPSF.com.demo.Entity.Guest;
 import org.springframework.data.jpa.repository.JpaRepository;

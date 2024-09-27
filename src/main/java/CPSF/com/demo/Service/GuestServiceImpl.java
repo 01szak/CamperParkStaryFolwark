@@ -1,15 +1,9 @@
-package CPSF.com.demo.service;
+package CPSF.com.demo.Service;
 
-import CPSF.com.demo.DAO.GuestRepository;
+import CPSF.com.demo.Repository.GuestRepository;
 import CPSF.com.demo.Entity.Guest;
-import jakarta.persistence.EntityManager;
-import jakarta.persistence.Query;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Example;
 import org.springframework.stereotype.Service;
-
-import java.util.List;
-import java.util.Optional;
 
 
 @Service
@@ -17,7 +11,7 @@ public class GuestServiceImpl implements GuestService {
 
     private GuestRepository guestRepository;
 
-    @Autowired
+@Autowired
     public GuestServiceImpl(GuestRepository theGuestRepository){
         guestRepository = theGuestRepository;
     }
