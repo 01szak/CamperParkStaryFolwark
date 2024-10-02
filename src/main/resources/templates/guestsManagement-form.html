@@ -3,14 +3,33 @@
 <head>
     <meta charset="UTF-8">
     <title>Guests Management</title>
+    <style>
+
+        .guest_list{
+            table, th, td {
+                text-align: center;
+                border: 1px solid black;
+            }
+        }
+
+    </style>
 </head>
 <body>
 
-<div>
+<div class="guest_list">
     <form>
-<table>
+        <form id="sortForm" action="#" th:headers="sort" method="get">
 
-<thead>
+            <label>
+                <input type="checkbox" id="sortOrder" name="sortOrder" value="desc"> desc
+            </label>
+            <input type="hidden" name="sortOrder" value="asc" id="sortOrderHidden">
+            <button type="submit"> sort </button>
+
+        </form>
+        <table>
+
+    <thead>
 
 <tr>
     <th>guest_firstName</th>
@@ -20,19 +39,41 @@
 
 </thead>
 
-<tbody>
+    <tbody>
 
 <tr th:each="tempGuest : ${guests}">
+
 
     <td th:text="${tempGuest.firstName}"/>
     <td th:text="${tempGuest.lastName}"/>
     <td th:text="${tempGuest.occupiedPlace}"/>
 
+    <td>
+
+
+    </td>
+
 </tr>
+<div>
+</div>
 
 </tbody>
 
+
 </table>
+        <script>
+            document.getElementById("sortOrder").addEventListener("change", function() {
+                var checkbox = document.getElementById("sortOrder");
+                var hiddenInput = document.getElementById("sortOrderHidden");
+
+                if (checkbox.checked) {
+                    hiddenInput.value = "desc"; // Ustaw sortowanie malejące
+                } else {
+                    hiddenInput.value = "asc";  // Ustaw sortowanie rosnące
+                }
+            });
+        </script>
+
     </form>
 </div>
 

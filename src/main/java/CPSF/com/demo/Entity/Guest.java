@@ -1,11 +1,15 @@
 package CPSF.com.demo.Entity;
 
+import CPSF.com.demo.OccupiedPlace;
 import jakarta.persistence.*;
 import org.springframework.stereotype.Repository;
 
 @Entity
 @Table(name = "guest")
 public class Guest {
+
+
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
@@ -20,14 +24,16 @@ public class Guest {
     @Column(name = "car_registration")
     private String carRegistration;
     @Column(name = "occupied_place")
-    private int occupiedPlace;
+    @Enumerated(EnumType.ORDINAL)
+    private OccupiedPlace occupiedPlace;
     @Column(name = "role")
     private String role = "guest";
+
 
     public Guest() {
     }
 
-    public Guest(String firstName, String lastName, String phoneNumber, String emailAddress, String carRegistration, int occupiedPlace) {
+    public Guest(String firstName, String lastName, String phoneNumber, String emailAddress, String carRegistration, OccupiedPlace occupiedPlace) {
         this.firstName = firstName;
         LastName = lastName;
         this.phoneNumber = phoneNumber;
@@ -44,11 +50,11 @@ public class Guest {
         this.id = id;
     }
 
-    public int getOccupiedPlace() {
+    public OccupiedPlace getOccupiedPlace() {
         return occupiedPlace;
     }
 
-    public void setOccupiedPlace(int occupiedPlace) {
+    public void setOccupiedPlace(OccupiedPlace occupiedPlace) {
         this.occupiedPlace = occupiedPlace;
     }
 
