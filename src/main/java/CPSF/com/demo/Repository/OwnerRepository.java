@@ -13,19 +13,19 @@ import java.util.List;
 @Repository
 public interface OwnerRepository extends JpaRepository<Guest,Integer> {
 
-    @Query("SELECT g from Guest g")
-    List<Guest> findAllGuests();
+//    @Query("SELECT g from Guest g")
+//    List<Guest> findAllGuests();
+//
+//    @Query("SELECT g from Guest g where g.occupiedPlace = :occupiedPlace")
+//    Guest findGuestByOccupiedPlace(@Param("occupiedPlace")OccupiedPlace occupiedPlace);
+//
+//
+//    @Query("SELECT g from Guest g ORDER BY g.occupiedPlace asc ")
+//    List<Guest> findAllByOccupiedPlaceAsc();
+//
+//    @Query("SELECT g from Guest g  ORDER BY g.occupiedPlace desc ")
+//    List<Guest> findAllByOccupiedPlaceDesc();
 
-    @Query("SELECT g from Guest g where g.occupiedPlace = :occupiedPlace")
-    Guest findGuestByOccupiedPlace(@Param("occupiedPlace")OccupiedPlace occupiedPlace);
-
-
-    @Query("SELECT g from Guest g ORDER BY g.occupiedPlace asc ")
-    List<Guest> findAllByOccupiedPlaceAsc();
-
-    @Query("SELECT g from Guest g  ORDER BY g.occupiedPlace desc ")
-    List<Guest> findAllByOccupiedPlaceDesc();
-
-    @Query("SELECT g from Guest g order by g.occupiedPlace desc")
-    List<Guest> getSortedTable();
+//   @Query ("SELECT g from Guest g order by g.occupiedPlace :order")
+//    List<Guest> getSortedTable(String sortDir);
 }

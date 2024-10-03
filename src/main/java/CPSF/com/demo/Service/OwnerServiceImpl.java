@@ -1,8 +1,6 @@
 package CPSF.com.demo.Service;
 
 import CPSF.com.demo.Entity.Guest;
-import CPSF.com.demo.Entity.Owner;
-import CPSF.com.demo.OccupiedPlace;
 import CPSF.com.demo.Repository.OwnerRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
@@ -12,18 +10,20 @@ import java.util.List;
 
 
 @Service
-public class OwnerServiceImpl implements OwnerService{
+public class OwnerServiceImpl implements OwnerService {
 
     private OwnerRepository ownerRepository;
 
-@Autowired
-    public OwnerServiceImpl(OwnerRepository theOwnerRepository){ownerRepository = theOwnerRepository;}
+    @Autowired
+    public OwnerServiceImpl(OwnerRepository theOwnerRepository) {
+        ownerRepository = theOwnerRepository;
+    }
 
 
     @Override
-    public List<Guest>findAllGuests(){
+    public List<Guest> findAllGuests() {
 
-        return ownerRepository.findAllGuests();
+        return ownerRepository.findAll();
     }
 
 //    @Override
@@ -44,7 +44,9 @@ public class OwnerServiceImpl implements OwnerService{
 
     @Override
     public List<Guest> getSortedTable(Sort.Direction direction) {
-        return ownerRepository.getSortedTable();
+        Sort sort = Sort.by(direction, "OccupiedPlace");
+        sort.isSorted();
+        return ownerRepository.findAll(sort);
     }
 
 }

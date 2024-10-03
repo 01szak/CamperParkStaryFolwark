@@ -25,12 +25,12 @@ public class OwnerController {
         this.ownerService = ownerService;
     }
 
-    @GetMapping("/guestsManagement")
-    public String findAllGuests(Model model){
-        List<Guest> guests = ownerService.findAllGuests();
-        model.addAttribute("guests",guests);
-        return "guestsManagement-form";
-    }
+//    @GetMapping("/guestsManagement")
+//    public String findAllGuests(Model model){
+//        List<Guest> guests = ownerService.findAllGuests();
+//        model.addAttribute("guests",guests);
+//        return "guestsManagement-form";
+//    }
 
 //    @GetMapping(value = "guestsManagement/", headers = "desc")
 //    public String findGuestByOccupiedPlaceDesc(Model model){
@@ -51,7 +51,7 @@ public class OwnerController {
 //        return "guestsManagement-form";
 //
 //    }
-    @GetMapping(value = "/guestsManagement", headers = "sort")
+    @GetMapping(value = "/guestsManagement")
     public String sortTable(@RequestParam(defaultValue = "asc") String sortOrder, Model model){
 
         Sort.Direction direction = sortOrder.equals("desc") ? Sort.Direction.DESC : Sort.Direction.ASC;
@@ -59,10 +59,12 @@ public class OwnerController {
         List<Guest> guests = ownerService.getSortedTable(direction);
 
         model.addAttribute("guests",guests);
+        model.addAttribute("sortOrderDirection",direction.toString());
 
         return "guestsManagement-form";
 
     }
+
     @DeleteMapping("/guestsManagement/{occupiedPlace}")
     public String deleteGuestByOccupiedPlace(){
 
