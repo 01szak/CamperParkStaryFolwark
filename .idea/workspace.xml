@@ -1,0 +1,210 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="AutoImportSettings">
+    <option name="autoReloadType" value="SELECTIVE" />
+  </component>
+  <component name="ChangeListManager">
+    <list default="true" id="38561928-bf32-4204-85b9-f84ac4ea04bb" name="Changes" comment="">
+      <change beforePath="$PROJECT_DIR$/.idea/dataSources.local.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/dataSources.local.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/CPSF/com/demo/Controller/OwnerController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/CPSF/com/demo/Controller/OwnerController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/CPSF/com/demo/Repository/OwnerRepository.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/CPSF/com/demo/Repository/OwnerRepository.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/CPSF/com/demo/Service/OwnerServiceImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/CPSF/com/demo/Service/OwnerServiceImpl.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/resources/templates/guestsManagement-form.html" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/templates/guestsManagement-form.html" afterDir="false" />
+    </list>
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="FileTemplateManagerImpl">
+    <option name="RECENT_TEMPLATES">
+      <list>
+        <option value="Class" />
+        <option value="Interface" />
+        <option value="HTML File" />
+        <option value="Enum" />
+      </list>
+    </option>
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  </component>
+  <component name="MarkdownSettingsMigration">
+    <option name="stateVersion" value="1" />
+  </component>
+  <component name="ProjectColorInfo">{
+  &quot;associatedIndex&quot;: 4
+}</component>
+  <component name="ProjectId" id="2mIQeiUQoQ33iWjSx8ZJsXaUtrL" />
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "DefaultHtmlFileTemplate": "HTML File",
+    "RequestMappingsPanelOrder0": "0",
+    "RequestMappingsPanelOrder1": "1",
+    "RequestMappingsPanelWidth0": "75",
+    "RequestMappingsPanelWidth1": "75",
+    "RunOnceActivity.OpenProjectViewOnStart": "true",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "Spring Boot.CamperparkdemoApplication.executor": "Debug",
+    "git-widget-placeholder": "branch1",
+    "kotlin-language-version-configured": "true",
+    "last_opened_file_path": "E:/Projects/kacper/CamperParkStaryFolwark",
+    "node.js.detected.package.eslint": "true",
+    "node.js.detected.package.tslint": "true",
+    "node.js.selected.package.eslint": "(autodetect)",
+    "node.js.selected.package.tslint": "(autodetect)",
+    "nodejs_package_manager_path": "npm",
+    "run.code.analysis.last.selected.profile": "pProject Default",
+    "vue.rearranger.settings.migration": "true"
+  },
+  "keyToStringList": {
+    "DatabaseDriversLRU": [
+      "mysql"
+    ]
+  }
+}]]></component>
+  <component name="RecentsManager">
+    <key name="MoveFile.RECENT_KEYS">
+      <recent name="C:\Users\kacpe\Documents\GitHub\CamperParkStaryFolwark\src\main\resources\templates" />
+      <recent name="C:\Users\kacpe\Documents\GitHub\CamperParkStaryFolwark\src\main\resources\templates\ownerForms" />
+      <recent name="C:\Users\kacpe\Documents\GitHub\CamperParkStaryFolwark\src\main\resources\templates\guestForms" />
+    </key>
+  </component>
+  <component name="RunManager">
+    <configuration name="CamperparkdemoApplication" type="SpringBootApplicationConfigurationType" factoryName="Spring Boot" nameIsGenerated="true">
+      <option name="FRAME_DEACTIVATION_UPDATE_POLICY" value="UpdateClassesAndResources" />
+      <module name="demo" />
+      <option name="SPRING_BOOT_MAIN_CLASS" value="CPSF.com.demo.CamperparkdemoApplication" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+  </component>
+  <component name="SharedIndexes">
+    <attachedChunks>
+      <set>
+        <option value="bundled-jdk-9f38398b9061-39b83d9b5494-intellij.indexing.shared.core-IU-241.19072.14" />
+        <option value="bundled-js-predefined-1d06a55b98c1-0b3e54e931b4-JavaScript-IU-241.19072.14" />
+      </set>
+    </attachedChunks>
+  </component>
+  <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="38561928-bf32-4204-85b9-f84ac4ea04bb" name="Changes" comment="" />
+      <created>1726761707663</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1726761707663</updated>
+      <workItem from="1726761708644" duration="29000" />
+      <workItem from="1726761750554" duration="1917000" />
+      <workItem from="1726767030888" duration="167000" />
+      <workItem from="1726866060814" duration="4526000" />
+      <workItem from="1727019557062" duration="2047000" />
+      <workItem from="1727296839761" duration="3739000" />
+      <workItem from="1727384396977" duration="4996000" />
+      <workItem from="1727427890973" duration="1645000" />
+      <workItem from="1727437561135" duration="4068000" />
+      <workItem from="1727553761039" duration="7046000" />
+      <workItem from="1727722939635" duration="5234000" />
+      <workItem from="1727797483119" duration="557000" />
+      <workItem from="1727880485319" duration="4808000" />
+      <workItem from="1727902753314" duration="664000" />
+    </task>
+    <task id="LOCAL-00001" summary="Updating Owner class adding Owner Controller and adding guestsManagement-form.html">
+      <option name="closed" value="true" />
+      <created>1727429541141</created>
+      <option name="number" value="00001" />
+      <option name="presentableId" value="LOCAL-00001" />
+      <option name="project" value="LOCAL" />
+      <updated>1727429541141</updated>
+    </task>
+    <task id="LOCAL-00002" summary="Updating Owner class adding Owner Controller and adding guestsManagement-form.html adding table to the guest management form">
+      <option name="closed" value="true" />
+      <created>1727441894935</created>
+      <option name="number" value="00002" />
+      <option name="presentableId" value="LOCAL-00002" />
+      <option name="project" value="LOCAL" />
+      <updated>1727441894935</updated>
+    </task>
+    <task id="LOCAL-00003" summary="Updating Owner class adding Owner Controller and adding guestsManagement-form.html adding table to the guest management form, trying to make the table interactive based on checkbox which should sort data in descending order(failed)">
+      <option name="closed" value="true" />
+      <created>1727885800584</created>
+      <option name="number" value="00003" />
+      <option name="presentableId" value="LOCAL-00003" />
+      <option name="project" value="LOCAL" />
+      <updated>1727885800584</updated>
+    </task>
+    <option name="localTasksCounter" value="4" />
+    <servers />
+  </component>
+  <component name="TypeScriptGeneratedFilesManager">
+    <option name="version" value="3" />
+  </component>
+  <component name="Vcs.Log.Tabs.Properties">
+    <option name="TAB_STATES">
+      <map>
+        <entry key="MAIN">
+          <value>
+            <State>
+              <option name="CUSTOM_BOOLEAN_PROPERTIES">
+                <map>
+                  <entry key="Show.Git.Branches" value="false" />
+                </map>
+              </option>
+            </State>
+          </value>
+        </entry>
+      </map>
+    </option>
+  </component>
+  <component name="VcsManagerConfiguration">
+    <MESSAGE value="Updating Owner class adding Owner Controller and adding guestsManagement-form.html" />
+    <MESSAGE value="Updating Owner class adding Owner Controller and adding guestsManagement-form.html adding table to the guest management form" />
+    <MESSAGE value="Updating Owner class adding Owner Controller and adding guestsManagement-form.html adding table to the guest management form, trying to make the table interactive based on checkbox which should sort data in descending order(failed)" />
+    <option name="LAST_COMMIT_MESSAGE" value="Updating Owner class adding Owner Controller and adding guestsManagement-form.html adding table to the guest management form, trying to make the table interactive based on checkbox which should sort data in descending order(failed)" />
+  </component>
+  <component name="XDebuggerManager">
+    <breakpoint-manager>
+      <breakpoints>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/src/main/java/CPSF/com/demo/Controller/OwnerController.java</url>
+          <line>29</line>
+          <option name="timeStamp" value="3" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/src/main/java/CPSF/com/demo/Controller/OwnerController.java</url>
+          <line>61</line>
+          <option name="timeStamp" value="6" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/src/main/java/CPSF/com/demo/Service/OwnerServiceImpl.java</url>
+          <line>46</line>
+          <option name="timeStamp" value="7" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/src/main/java/CPSF/com/demo/Service/OwnerServiceImpl.java</url>
+          <line>48</line>
+          <option name="timeStamp" value="8" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/src/main/java/CPSF/com/demo/Service/OwnerServiceImpl.java</url>
+          <line>47</line>
+          <option name="timeStamp" value="10" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="javascript">
+          <url>file://$PROJECT_DIR$/src/main/resources/templates/guestsManagement-form.html</url>
+          <line>69</line>
+          <properties lambdaOrdinal="-1" />
+          <option name="timeStamp" value="5" />
+        </line-breakpoint>
+      </breakpoints>
+    </breakpoint-manager>
+  </component>
+</project>
