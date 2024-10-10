@@ -7,6 +7,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 
 public interface OwnerService {
@@ -16,7 +17,9 @@ public interface OwnerService {
 //     List<Guest> findAllByOccupiedPlaceDesc();
 //     List<Guest> findAllByOccupiedPlaceAsc();
      List<Guest> getSortedTable(Sort.Direction direction);
+     Guest getInfoByFirstNameOrLastName();
 
+     Guest getGuest();
 
 
 

@@ -49,4 +49,14 @@ public class OwnerServiceImpl implements OwnerService {
         return ownerRepository.findAll(sort);
     }
 
+    @Override
+    public Guest getInfoByFirstNameOrLastName() {
+        return null;
+    }
+
+    @Override
+    public Guest getGuest() {
+        return null;
+    }
+
 }

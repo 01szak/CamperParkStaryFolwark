@@ -55,7 +55,6 @@ public class OwnerController {
     public String sortTable(@RequestParam(defaultValue = "asc") String sortOrder, Model model){
 
         Sort.Direction direction = sortOrder.equals("desc") ? Sort.Direction.DESC : Sort.Direction.ASC;
-
         List<Guest> guests = ownerService.getSortedTable(direction);
 
         model.addAttribute("guests",guests);
@@ -70,7 +69,11 @@ public class OwnerController {
 
         return "";
     }
+    @GetMapping("/aboutGuest")
+    public String aboutGuest(){
 
+        return "aboutGuest-form";
+}
 
 
 
