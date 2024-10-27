@@ -5,7 +5,7 @@ import jakarta.persistence.*;
 import org.springframework.stereotype.Repository;
 
 @Entity
-@Table(name = "guest")
+@Table(name = "GUESTS")
 public class Guest {
 
 

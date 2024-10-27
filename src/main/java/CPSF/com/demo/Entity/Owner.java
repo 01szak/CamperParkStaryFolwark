@@ -8,7 +8,7 @@ import lombok.*;
 @Entity
 @AllArgsConstructor
 @NoArgsConstructor
-@Table(name = "owner")
+@Table(name = "OWNERS")
 public class Owner {
 
     @Id
