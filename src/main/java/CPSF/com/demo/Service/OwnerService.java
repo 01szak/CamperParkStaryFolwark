@@ -2,7 +2,6 @@ package CPSF.com.demo.Service;
 
 import CPSF.com.demo.Entity.Guest;
 import CPSF.com.demo.Entity.Owner;
-import CPSF.com.demo.OccupiedPlace;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
@@ -16,11 +15,11 @@ public interface OwnerService {
 //     Guest findGuestByOccupiedPlace(OccupiedPlace occupiedPlace);
 //     List<Guest> findAllByOccupiedPlaceDesc();
 //     List<Guest> findAllByOccupiedPlaceAsc();
-     List<Guest> getSortedTable(Sort.Direction direction);
      Guest getInfoByFirstNameOrLastName();
 
-     Guest getGuest();
+     List <Guest> getGuests();
 
+     Guest findGuestByOccupiedPlace(int occupiedPlace);
 
 
 
