@@ -16,20 +16,18 @@ import java.util.Date;
 public class CampingPlace {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-
     @Column(name = "place_number" )
     private int placeNumber;
     @Column(name = "is_occupied")
     private boolean isOccupied;
     @Nullable
-    @Column(name = "check_out_date")
+    @Column(name = "check_out_date", nullable = true)
     private Date checkOutDate;
     @OneToOne(mappedBy = "campingPlace",
             cascade = {
             CascadeType.PERSIST,
             CascadeType.REFRESH,
-            CascadeType.PERSIST,
-            CascadeType.MERGE,
+            CascadeType.MERGE
     })
     private Guest guest;
 
