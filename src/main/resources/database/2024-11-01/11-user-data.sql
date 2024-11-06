@@ -1,8 +1,8 @@
 -- liquibase formatted sql
 --changeset kacper:5
---validCheckSum 9:97de32193a5ae0096e0b6ca2448f32bb
+--validCheckSum 9:7827ecc3eba2c4687f7487df6dd081db
 
-INSERT INTO Users (first_name, last_name, phone_number, email, car_registration, role_id) VALUES
+INSERT INTO users (first_name, last_name, phone_number, email, car_registration, role_id) VALUES
 ('firstName0', 'lastName0', null, '9d0507@mail.com', 'ded3ce4', 2),
 ('firstName1', 'lastName1', null, 'a5fef7@mail.com', 'bcbecab', 2),
 ('firstName2', 'lastName2', null, '47f3f1@mail.com', '2ff3f9d', 2),

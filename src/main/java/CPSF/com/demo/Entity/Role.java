@@ -1,2 +1,28 @@
-package CPSF.com.demo.Entity;public class Role {
+package CPSF.com.demo.Entity;
+
+import jakarta.persistence.*;
+import lombok.*;
+
+import java.util.List;
+
+@Entity
+@Table(name = "Roles")
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
+@ToString
+public class Role {
+    @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    private int id;
+    @Column(name = "role_name")
+    private String roleName;
+    @OneToMany(mappedBy = "role" ,cascade = {
+                CascadeType.PERSIST,
+                CascadeType.MERGE,
+                CascadeType.REFRESH,
+                CascadeType.DETACH
+    })
+    private List<User> users;
 }

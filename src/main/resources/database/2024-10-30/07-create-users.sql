@@ -1,6 +1,7 @@
 --liquibase formatted sql
 --changeset kacper:1
-CREATE  TABLE Users (
+--validCheckSum 9:af2f21bb0cbe31382ee86bf40abc6f60
+CREATE  TABLE users (
     id BIGINT AUTO_INCREMENT PRIMARY KEY,
     first_name varchar(400) not null,
     last_name varchar(400) not null,
