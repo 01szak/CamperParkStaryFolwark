@@ -20,14 +20,13 @@ public class Reservation {
     private LocalDate dateEnter;
     @Column(name = "date_checkout")
     private LocalDate dateCheckout;
-    @OneToOne
+    @OneToOne(cascade = {
+            CascadeType.DETACH,
+            CascadeType.MERGE,
+            CascadeType.PERSIST,
+            CascadeType.REFRESH
+    })
     @JoinColumn(name = "camperPlace_id")
     private CamperPlace camperPlace;
 
-    public String convertDateEnterToString(){
-        return dateEnter.toString();
-    }
-    public String convertDateCheckoutToString(){
-       return dateCheckout.toString();
-    }
 }

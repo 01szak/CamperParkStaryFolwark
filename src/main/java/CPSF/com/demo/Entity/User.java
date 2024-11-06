@@ -24,7 +24,12 @@ public class User {
     private String phoneNumber;
     @Column(name = "car_registration")
     private String carRegistration;
-   @ManyToOne
    @JoinColumn(name = "role_id")
+   @ManyToOne(cascade = {
+           CascadeType.PERSIST,
+           CascadeType.MERGE,
+           CascadeType.DETACH,
+           CascadeType.REFRESH,
+   })
     private Role role;
 }
