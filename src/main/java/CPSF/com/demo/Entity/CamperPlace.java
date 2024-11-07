@@ -1,10 +1,11 @@
 package CPSF.com.demo.Entity;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotNull;
 import lombok.*;
 
 @Entity
-@Table(name = "Camper_place")
+@Table(name = "camper_place")
 @Getter
 @Setter
 @NoArgsConstructor
@@ -16,6 +17,7 @@ public class CamperPlace {
     private int id;
     @Column(name = "price")
     private double price;
+    @NotNull
     @Column(name = "is_occupied")
     private int isOccupied;
     @OneToOne(mappedBy = "camperPlace")

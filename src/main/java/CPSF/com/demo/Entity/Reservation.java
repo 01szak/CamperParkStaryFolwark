@@ -6,7 +6,7 @@ import lombok.*;
 import java.time.LocalDate;
 import java.util.Date;
 @Entity
-@Table(name = "Reservation")
+@Table(name = "reservation")
 @Getter
 @Setter
 @NoArgsConstructor
@@ -26,7 +26,7 @@ public class Reservation {
             CascadeType.PERSIST,
             CascadeType.REFRESH
     })
-    @JoinColumn(name = "camperPlace_id")
+    @JoinColumn(name = "camper_place_id")
     private CamperPlace camperPlace;
 
 }

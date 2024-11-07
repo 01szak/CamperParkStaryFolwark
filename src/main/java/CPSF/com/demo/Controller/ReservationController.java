@@ -2,11 +2,13 @@ package CPSF.com.demo.Controller;
 
 import CPSF.com.demo.Entity.CamperPlace;
 import CPSF.com.demo.Entity.Reservation;
+import CPSF.com.demo.Service.CamperPlaceService;
 import CPSF.com.demo.Service.ReservationService;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import jakarta.persistence.Query;
 import jakarta.persistence.TypedQuery;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -16,42 +18,39 @@ import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.Date;
 
+@Transactional
 @RestController
 @RequestMapping("/reservation")
 public class ReservationController {
 
     private final ReservationService reservationService;
+    private final CamperPlaceService camperPlaceService;
     @PersistenceContext
     private EntityManager entityManager;
-    public ReservationController(ReservationService theReservationService){
+
+    public ReservationController(ReservationService theReservationService, CamperPlaceService camperPlaceService){
         this.reservationService = theReservationService;
+        this.camperPlaceService = camperPlaceService;
     }
 
     @PostMapping("/setReservation")
-    public Reservation setReservation(Model model, int camperPlaceNumber, LocalDate dateEnter, LocalDate checkout){
+    public Reservation setReservation(int camperPlaceNumber, LocalDate enter, LocalDate checkout){
         Reservation reservation = new Reservation();
 
-        TypedQuery<CamperPlace> camperPlace = entityManager.createQuery(
+        if (camperPlaceService.isCamperPlaceOccupied(camperPlaceNumber).equals(false)){
 
-                "SELECT c FROM CamperPlace c WHERE c.id = :camperPlaceNumber",CamperPlace.class
-        );
-        camperPlace.setParameter("camperPlaceNumber",camperPlaceNumber);
-        CamperPlace theCamperPlace = camperPlace.getSingleResult();
+            CamperPlace camperPlace = camperPlaceService.findCamperPlaceById(camperPlaceNumber);
+            reservationService.setReservation(reservation,camperPlace,enter,checkout);
 
-        dateEnter.format(DateTimeFormatter.ofPattern("dd-MM-yyyy"));
-        checkout.format(DateTimeFormatter.ofPattern("dd-MM-yyyy"));
-
-        if(theCamperPlace.getIsOccupied() == 0){
-            reservation.setCamperPlace(theCamperPlace);
-            reservation.setDateEnter(dateEnter);
-            reservation.setDateCheckout(checkout);
+            System.out.println(
+                    "You have successfully made a reservation: \nid: "
+                    + camperPlace.getId()
+                    + "\ndate: " + enter + "/" + checkout);
         }else {
-            System.out.println("The place you have chosen is occupied, choose another");
+
+            System.out.println("The place you have chosen is occupied");
+
         }
-
-        model.addAttribute("reservation",reservation);
-
         return reservation;
-
     }
 }
