@@ -10,6 +10,7 @@ import jakarta.persistence.Query;
 import jakarta.persistence.TypedQuery;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -17,6 +18,7 @@ import org.springframework.web.bind.annotation.RestController;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.Date;
+import java.util.List;
 
 @Transactional
 @RestController
@@ -52,5 +54,13 @@ public class ReservationController {
 
         }
         return reservation;
+
+
+        }
+        @GetMapping("/findAll")
+        public List<Reservation> findAllReservations(){
+        List<Reservation> reservations = reservationService.findAllReservations();
+        return reservations;
+        }
     }
-}
+

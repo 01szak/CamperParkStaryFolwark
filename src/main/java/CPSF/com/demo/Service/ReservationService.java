@@ -4,10 +4,12 @@ import CPSF.com.demo.Entity.CamperPlace;
 import CPSF.com.demo.Entity.Reservation;
 import CPSF.com.demo.Repository.ReservationRepository;
 import CPSF.com.demo.Repository.UserRepository;
+import org.aspectj.lang.annotation.Before;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
+import java.util.List;
 
 @Service
 public class ReservationService {
@@ -31,4 +33,22 @@ public class ReservationService {
         return reservation;
      }
 
+     public List<Reservation> findAllReservations(){
+        List<Reservation> allReservations = reservationRepository.findAll();
+        return allReservations;
+     }
+     public void deleteReservation(Reservation reservation){
+        reservationRepository.delete(reservation);
+     }
+
+     public void deleteIfExpired(){
+         List<Reservation> reservations = findAllReservations();
+         for(Reservation reservation : reservations){
+             if (reservation.getDateCheckout().isBefore(LocalDate.now()) || reservation.getDateCheckout().isEqual(LocalDate.now())) {
+                 deleteReservation(reservation);
+             }
+         }
+     }
+
 }
+
