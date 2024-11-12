@@ -1,7 +1,10 @@
 package CPSF.com.demo.Entity;
 
+import io.micrometer.core.instrument.binder.netty4.NettyAllocatorMetrics;
 import jakarta.persistence.*;
 import lombok.*;
+
+import java.util.List;
 
 @Entity
 @Table(name = "users")
@@ -32,4 +35,16 @@ public class User {
            CascadeType.REFRESH,
    })
     private Role role;
+   @OneToOne(mappedBy = "user",fetch = FetchType.LAZY,cascade = {
+           CascadeType.DETACH,
+           CascadeType.MERGE,
+           CascadeType.PERSIST,
+           CascadeType.REFRESH
+   })
+   @JoinColumn(name = "id")
+   private Reservation reservation;
+
+   @OneToOne
+   private CamperPlace camperPlace;
+
 }

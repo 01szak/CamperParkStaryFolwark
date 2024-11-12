@@ -3,6 +3,7 @@ package CPSF.com.demo.Entity;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.lang.reflect.Type;
 import java.time.LocalDate;
 import java.util.Date;
 @Entity
@@ -20,7 +21,7 @@ public class Reservation {
     private LocalDate dateEnter;
     @Column(name = "date_checkout")
     private LocalDate dateCheckout;
-    @OneToOne(cascade = {
+    @ManyToOne(fetch = FetchType.LAZY,cascade = {
             CascadeType.DETACH,
             CascadeType.MERGE,
             CascadeType.PERSIST,
@@ -28,5 +29,19 @@ public class Reservation {
     })
     @JoinColumn(name = "camper_place_id")
     private CamperPlace camperPlace;
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id")
+    private User user;
 
+
+    public int daysDifference(){
+        int daysDifference = dateEnter.until(dateCheckout).getDays();
+        return daysDifference;
+    }
+
+    public double calculateFinalPrice(){
+        double price = camperPlace.getPrice();
+        double finalPrice = price * daysDifference();
+        return finalPrice;
+    }
 }
