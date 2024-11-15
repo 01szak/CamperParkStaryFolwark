@@ -27,26 +27,27 @@ public class ReservationController {
     private final ReservationService reservationService;
     private final CamperPlaceService camperPlaceService;
     private final UserService userService;
-    public ReservationController(ReservationService theReservationService, CamperPlaceService camperPlaceService, UserService userService){
+
+    public ReservationController(ReservationService theReservationService, CamperPlaceService camperPlaceService, UserService userService) {
         this.reservationService = theReservationService;
         this.camperPlaceService = camperPlaceService;
         this.userService = userService;
     }
 
-    @PostMapping("/setReservation/{camperPlaceNumber}/{enter}/{checkout}")
-    public Reservation setReservation(@PathVariable int camperPlaceNumber,@PathVariable LocalDate enter,@PathVariable LocalDate checkout){
+    @PostMapping("/setReservation")
+    public Reservation setReservation(int camperPlaceNumber, LocalDate enter, LocalDate checkout) {
         Reservation reservation = new Reservation();
 
-        if (camperPlaceService.isCamperPlaceOccupied(camperPlaceNumber).equals(false)){
+        if (camperPlaceService.isCamperPlaceOccupied(camperPlaceNumber).equals(false)) {
 
             CamperPlace camperPlace = camperPlaceService.findCamperPlaceById(camperPlaceNumber);
-            reservationService.setReservation(reservation,camperPlace,enter,checkout);
+            reservationService.setReservation(reservation, camperPlace, enter, checkout);
 
             System.out.println(
                     "You have successfully made a reservation: \nid: "
-                    + camperPlace.getId()
-                    + "\ndate: " + enter + "/" + checkout);
-        }else {
+                            + camperPlace.getId()
+                            + "\ndate: " + enter + "/" + checkout);
+        } else {
 
             System.out.println("The place you have chosen is occupied");
 
@@ -54,17 +55,29 @@ public class ReservationController {
         return reservation;
 
 
-        }
-    @GetMapping("/findAll")
-    public List<Reservation> findAllReservations(){
-        List<Reservation> reservations = reservationService.findAllReservations();
-        return reservations;
-        }
+    }
 
-    @GetMapping("/findByUserId/{userId}")
-    public Reservation findReservationByUserId(@RequestParam int userId){
-        Reservation reservation = reservationService.getReservationByUserId(userId);
+    @GetMapping("/find/{reservationId}")
+    public Reservation findReservationById(int reservationId) {
+        Reservation reservation = reservationService.findReservationById(reservationId);
         return reservation;
     }
+
+    @GetMapping("/find")
+    public List<Reservation> findAllReservations() {
+        List<Reservation> reservations = reservationService.findAllReservations();
+        return reservations;
     }
+
+    @PutMapping("/updateReservation/{reservationId}/{newCheckin}/{newCheckout}")
+    public void updateReservation(@PathVariable int reservationId, @PathVariable LocalDate newCheckin, @PathVariable LocalDate newCheckout) {
+        reservationService.updateReservation(reservationId, newCheckin, newCheckout);
+    }
+
+    @GetMapping("/find/{userId}")
+    public Reservation findReservationByUserId(@PathVariable int userId) {
+        Reservation reservation = reservationService.findByUser_id(userId);
+        return reservation;
+    }
+}
 

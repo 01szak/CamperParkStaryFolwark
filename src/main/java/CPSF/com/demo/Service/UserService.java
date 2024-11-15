@@ -2,7 +2,6 @@ package CPSF.com.demo.Service;
 
 import CPSF.com.demo.Entity.CamperPlace;
 import CPSF.com.demo.Entity.Reservation;
-import CPSF.com.demo.Entity.Role;
 import CPSF.com.demo.Entity.User;
 import CPSF.com.demo.Repository.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -30,19 +29,17 @@ public class UserService {
 
     }
 
-    public User getUserByCamperPlaceId(int camperPlaceId){
-        return userRepository.findUserByCamperPlace_Id(camperPlaceId);
-    }
-  public User createUser(User user,String firstName, String lastName,String email,String phoneNumber, String carRegistration,Reservation reservation,CamperPlace camperPlace,int camperPlaceNumber, LocalDate enter, LocalDate checkout){
-        user.setFirstName(firstName);
-        user.setLastName(lastName);
-        user.setEmail(email);
-        user.setPhoneNumber(phoneNumber);
-        user.setRole(new Role(2,"guest"));
 
-         reservationService.createReservation(camperPlaceNumber,enter,checkout);
-        user.setCamperPlace(camperPlace);
-        return userRepository.save(user);
-  }
+//  public User createUser(User user,String firstName, String lastName,String email,String phoneNumber, String carRegistration,Reservation reservation,CamperPlace camperPlace,int camperPlaceNumber, LocalDate enter, LocalDate checkout){
+//        user.setFirstName(firstName);
+//        user.setLastName(lastName);
+//        user.setEmail(email);
+//        user.setPhoneNumber(phoneNumber);
+//        user.setRole(new Role(2,"guest"));
+//
+//         reservationService.createReservation(camperPlaceNumber,enter,checkout);
+//        user.setCamperPlace(camperPlace);
+//        return userRepository.save(user);
+//  }
 
 }

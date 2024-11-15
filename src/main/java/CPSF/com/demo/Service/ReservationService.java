@@ -27,15 +27,11 @@ public class ReservationService {
         this.camperPlaceService = camperPlaceService;
     }
 
-    public Reservation findByCamperPlace(int CamperPlaceId){
-        return reservationRepository.findReservationByCamperPlace_Id(CamperPlaceId);
-
-     }
     @Transactional
-     public Reservation setReservation(Reservation reservation,CamperPlace camperPlace, LocalDate enter,LocalDate checkout){
+     public Reservation setReservation(Reservation reservation,CamperPlace camperPlace, LocalDate checkin,LocalDate checkout){
         reservation.setCamperPlace(camperPlace);
-        reservation.setDateEnter(enter);
-        reservation.setDateCheckout(checkout);
+        reservation.setCheckin(checkin);
+        reservation.setCheckout(checkout);
         reservationRepository.save(reservation);
         return reservation;
     }
@@ -63,22 +59,40 @@ public class ReservationService {
         return allReservations;
      }
 
+     public Reservation findReservationById(int reservationId){
+        Reservation reservation = reservationRepository.findById(reservationId).orElseThrow();
+        return reservation;
+     }
+     public Reservation findByUser_id(int userId){
+        Reservation reservation = reservationRepository.findByUser_Id(userId);
+        return reservation;
+     }
+     public List<Reservation> findAllReservationsByCamperPlace(int camperPlaceId){
+        List<Reservation> reservations = reservationRepository.findAllByCamperPlace_Id (camperPlaceId);
+        return reservations;
+     }
+
+    @Transactional
     public void deleteReservation(Reservation reservation){
         reservationRepository.delete(reservation);
      }
+    @Transactional
      public void deleteIfExpired(){
          List<Reservation> reservations = findAllReservations();
          for(Reservation reservation : reservations){
-             if (reservation.getDateCheckout().isBefore(LocalDate.now()) || reservation.getDateCheckout().isEqual(LocalDate.now())) {
+             if (reservation.getCheckout().isBefore(LocalDate.now()) || reservation.getCheckout().isEqual(LocalDate.now())) {
                  deleteReservation(reservation);
              }
          }
      }
+     @Transactional
+     public void updateReservation(int reservationId,LocalDate newCheckin, LocalDate newCheckout) {
+        Reservation reservation = reservationRepository.findById(reservationId).orElseThrow();
+        reservation.setCheckout(newCheckin);
+        reservation.setCheckout(newCheckout);
+        reservationRepository.save(reservation);
+     }
 
-    public Reservation getReservationByUserId(int userId){
-        Reservation reservation = reservationRepository.getReservationByUser_Id(userId);
-        return reservation;
-    }
 
 }
 

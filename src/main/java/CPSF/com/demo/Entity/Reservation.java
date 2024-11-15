@@ -1,5 +1,6 @@
 package CPSF.com.demo.Entity;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -17,25 +18,26 @@ public class Reservation {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
-    @Column(name = "date_enter")
-    private LocalDate dateEnter;
-    @Column(name = "date_checkout")
-    private LocalDate dateCheckout;
-    @ManyToOne(fetch = FetchType.LAZY,cascade = {
-            CascadeType.DETACH,
-            CascadeType.MERGE,
-            CascadeType.PERSIST,
-            CascadeType.REFRESH
-    })
-    @JoinColumn(name = "camper_place_id")
+
+    @Column(name = "checkin")
+    @JsonFormat(pattern = "dd-MM-yyyy")
+    private LocalDate checkin;
+
+    @Column(name = "checkout")
+    @JsonFormat(pattern = "dd-MM-yyyy")
+    private LocalDate checkout;
+
+    @ManyToOne
+    @JoinColumn(name = "camperPlace_id")
     private CamperPlace camperPlace;
-    @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id")
+
+    @ManyToOne
+    @JoinColumn(name =  "user_id")
     private User user;
 
 
     public int daysDifference(){
-        int daysDifference = dateEnter.until(dateCheckout).getDays();
+        int daysDifference = checkin.until(checkout).getDays();
         return daysDifference;
     }
 

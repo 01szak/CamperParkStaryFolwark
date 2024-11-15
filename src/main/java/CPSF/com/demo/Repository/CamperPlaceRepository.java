@@ -8,5 +8,4 @@ import org.springframework.web.bind.annotation.RestController;
 @Repository
 public interface CamperPlaceRepository extends JpaRepository<CamperPlace,Integer> {
 
-    public CamperPlace findCamperPlaceById(int id);
 }
