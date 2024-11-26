@@ -1,16 +1,17 @@
-package CPSF.com.demo.Entity;
+package CPSF.com.demo.entity;
 
-import CPSF.com.demo.Enum.Type;
+import CPSF.com.demo.enums.Type;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 
 @Entity
-@Table(name = "camperPlace")
+@Table(name = "camper_places")
 @Getter
 @Setter
 @NoArgsConstructor
@@ -31,7 +32,7 @@ public class CamperPlace {
     private Type type;
 
     @Column(name = "price")
-    private double price;
+    private BigDecimal price;
 
     @OneToMany(mappedBy = "camperPlace",fetch = FetchType.LAZY,cascade = {
             CascadeType.DETACH,

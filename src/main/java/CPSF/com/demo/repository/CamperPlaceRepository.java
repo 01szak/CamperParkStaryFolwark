@@ -1,9 +1,8 @@
-package CPSF.com.demo.Repository;
+package CPSF.com.demo.repository;
 
-import CPSF.com.demo.Entity.CamperPlace;
+import CPSF.com.demo.entity.CamperPlace;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
-import org.springframework.web.bind.annotation.RestController;
 
 @Repository
 public interface CamperPlaceRepository extends JpaRepository<CamperPlace,Integer> {

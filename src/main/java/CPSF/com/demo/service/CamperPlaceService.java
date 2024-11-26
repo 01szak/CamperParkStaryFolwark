@@ -1,14 +1,13 @@
-package CPSF.com.demo.Service;
+package CPSF.com.demo.service;
 
-import CPSF.com.demo.Entity.CamperPlace;
-import CPSF.com.demo.Entity.Reservation;
-import CPSF.com.demo.Enum.Type;
-import CPSF.com.demo.Repository.CamperPlaceRepository;
-import jakarta.validation.groups.Default;
-import org.hibernate.boot.model.internal.XMLContext;
+import CPSF.com.demo.entity.CamperPlace;
+import CPSF.com.demo.entity.Reservation;
+import CPSF.com.demo.enums.Type;
+import CPSF.com.demo.repository.CamperPlaceRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.stream.Stream;
 
@@ -20,8 +19,15 @@ public class CamperPlaceService {
     public CamperPlaceService(CamperPlaceRepository camperPlaceRepository) {
         this.camperPlaceRepository = camperPlaceRepository;
     }
-   @Transactional
-    public void createCamperPlace(Type type,Double price){
+
+    @Transactional
+    public void createCamperPlace(Type type, BigDecimal price) {
+        if (type == null) {
+            throw new IllegalArgumentException("Type cannot be null");
+        }
+        if (price == null || price.intValue() == 0) {
+            throw new IllegalArgumentException("Price must be positive");
+        }
         CamperPlace camperPlace = new CamperPlace();
         camperPlace.setType(type);
         camperPlace.setPrice(price);

@@ -1,14 +1,16 @@
-package CPSF.com.demo.Entity;
+package CPSF.com.demo.entity;
 
-import CPSF.com.demo.Enum.Role;
+import CPSF.com.demo.enums.Role;
 import jakarta.persistence.*;
 import lombok.*;
 
 import java.util.List;
 
 @Entity
-@Table(name = "user")
-@Data
+@Table(name = "users")
+@Getter
+@Setter
+@NoArgsConstructor
 public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)

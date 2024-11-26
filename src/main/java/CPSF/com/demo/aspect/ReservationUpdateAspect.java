@@ -1,15 +1,10 @@
-package CPSF.com.demo.Aspect;
+package CPSF.com.demo.aspect;
 
-import CPSF.com.demo.Entity.Reservation;
-import CPSF.com.demo.Service.ReservationService;
-import jdk.jfr.Category;
+import CPSF.com.demo.service.ReservationService;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Before;
 import org.springframework.context.annotation.EnableAspectJAutoProxy;
 import org.springframework.stereotype.Component;
-
-import java.time.LocalDate;
-import java.util.List;
 
 @Aspect
 @Component
@@ -22,7 +17,7 @@ public class ReservationUpdateAspect {
         this.reservationService = theReservationService;
     }
 
-    @Before("execution(* CPSF.com.demo.Controller.*.*(..))")
+    @Before("execution(* CPSF.com.demo.controller.*.*(..))")
     public void checkIfReservationExpired() {
         reservationService.deleteIfExpired();
 

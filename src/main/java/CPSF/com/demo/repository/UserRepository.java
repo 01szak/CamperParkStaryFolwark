@@ -1,6 +1,6 @@
-package CPSF.com.demo.Repository;
+package CPSF.com.demo.repository;
 
-import CPSF.com.demo.Entity.User;
+import CPSF.com.demo.entity.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

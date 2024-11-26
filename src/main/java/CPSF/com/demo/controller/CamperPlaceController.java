@@ -1,13 +1,16 @@
-package CPSF.com.demo.Controller;
+package CPSF.com.demo.controller;
 
-import CPSF.com.demo.Enum.Type;
-import CPSF.com.demo.Service.CamperPlaceService;
+import CPSF.com.demo.enums.Type;
+import CPSF.com.demo.service.CamperPlaceService;
+import jakarta.validation.constraints.Positive;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+
+import java.math.BigDecimal;
 
 @Transactional
 @RestController
@@ -20,7 +23,9 @@ private final CamperPlaceService camperPlaceService;
     }
 
     @PostMapping("/create")
-    public void createCamperPlace(Type type, Double price){
+    public void createCamperPlace(
+        @RequestParam Type type,
+        @RequestParam @Positive(message = "Price can't be negative") BigDecimal price){
         camperPlaceService.createCamperPlace(type,price);
 
     }

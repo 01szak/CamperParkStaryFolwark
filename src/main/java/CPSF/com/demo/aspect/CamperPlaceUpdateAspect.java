@@ -1,8 +1,8 @@
-package CPSF.com.demo.Aspect;
+package CPSF.com.demo.aspect;
 
-import CPSF.com.demo.Entity.Reservation;
-import CPSF.com.demo.Service.CamperPlaceService;
-import CPSF.com.demo.Service.ReservationService;
+import CPSF.com.demo.entity.Reservation;
+import CPSF.com.demo.service.CamperPlaceService;
+import CPSF.com.demo.service.ReservationService;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Before;
 import org.springframework.context.annotation.EnableAspectJAutoProxy;
@@ -21,7 +21,7 @@ public class CamperPlaceUpdateAspect {
         this.camperPlaceService = camperPlaceService;
         this.reservationService = reservationService;
     }
-    @Before("execution(* CPSF.com.demo.Controller.*.*(..))")
+    @Before("execution(* CPSF.com.demo.controller.*.*(..))")
     public void setIsOccupiedIfReservationContinuesAtTheMoment(){
         List<Reservation> allReservations = reservationService.findAllReservations();
         for(Reservation reservation : allReservations){

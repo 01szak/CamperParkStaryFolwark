@@ -1,16 +1,11 @@
-package CPSF.com.demo.Service;
+package CPSF.com.demo.service;
 
-import CPSF.com.demo.Entity.CamperPlace;
-import CPSF.com.demo.Entity.Reservation;
-import CPSF.com.demo.Entity.User;
-import CPSF.com.demo.Repository.UserRepository;
-import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Component;
+import CPSF.com.demo.entity.User;
+import CPSF.com.demo.entity.UserDTO;
+import CPSF.com.demo.repository.UserRepository;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDate;
 import java.util.List;
-import java.util.Random;
 
 @Service
 public class UserService {
@@ -29,8 +24,16 @@ public class UserService {
 
     }
 
+//TODO: create UserDto
 
-//  public User createUser(User user,String firstName, String lastName,String email,String phoneNumber, String carRegistration,Reservation reservation,CamperPlace camperPlace,int camperPlaceNumber, LocalDate enter, LocalDate checkout){
+//  public UserDTO createUser(
+//          User user,String firstName,
+//          String lastName,
+//          String email,
+//          String phoneNumber,
+//          String carRegistration,
+//          Reservation reservation,
+//          CamperPlace camperPlace,int camperPlaceNumber, LocalDate enter, LocalDate checkout){
 //        user.setFirstName(firstName);
 //        user.setLastName(lastName);
 //        user.setEmail(email);

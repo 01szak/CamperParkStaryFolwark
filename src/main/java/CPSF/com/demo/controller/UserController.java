@@ -1,7 +1,7 @@
-package CPSF.com.demo.Controller;
+package CPSF.com.demo.controller;
 
-import CPSF.com.demo.Entity.User;
-import CPSF.com.demo.Service.UserService;
+import CPSF.com.demo.entity.User;
+import CPSF.com.demo.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import java.util.List;

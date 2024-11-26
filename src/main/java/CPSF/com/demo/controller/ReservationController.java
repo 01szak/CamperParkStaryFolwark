@@ -1,22 +1,15 @@
-package CPSF.com.demo.Controller;
+package CPSF.com.demo.controller;
 
-import CPSF.com.demo.Entity.CamperPlace;
-import CPSF.com.demo.Entity.Reservation;
-import CPSF.com.demo.Entity.User;
-import CPSF.com.demo.Service.CamperPlaceService;
-import CPSF.com.demo.Service.ReservationService;
-import CPSF.com.demo.Service.UserService;
-import jakarta.persistence.EntityManager;
-import jakarta.persistence.PersistenceContext;
-import jakarta.persistence.Query;
-import jakarta.persistence.TypedQuery;
+import CPSF.com.demo.entity.CamperPlace;
+import CPSF.com.demo.entity.Reservation;
+import CPSF.com.demo.service.CamperPlaceService;
+import CPSF.com.demo.service.ReservationService;
+import CPSF.com.demo.service.UserService;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
-import java.util.Date;
 import java.util.List;
 
 @Transactional
@@ -35,8 +28,12 @@ public class ReservationController {
     }
 
     @PostMapping("/setReservation")
-    public Reservation setReservation(int camperPlaceNumber, LocalDate enter, LocalDate checkout) {
-        Reservation reservation = new Reservation();
+    public Reservation setReservation(
+            @RequestParam int camperPlaceNumber,
+            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate enter,
+            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate checkout) {
+
+            Reservation reservation = new Reservation();
 
         if (camperPlaceService.isCamperPlaceOccupied(camperPlaceNumber).equals(false)) {
 
@@ -58,7 +55,7 @@ public class ReservationController {
     }
 
     @GetMapping("/find/{reservationId}")
-    public Reservation findReservationById(int reservationId) {
+    public Reservation findReservationById(@PathVariable int reservationId) {
         Reservation reservation = reservationService.findReservationById(reservationId);
         return reservation;
     }
@@ -69,15 +66,18 @@ public class ReservationController {
         return reservations;
     }
 
-    @PutMapping("/updateReservation/{reservationId}/{newCheckin}/{newCheckout}")
-    public void updateReservation(@PathVariable int reservationId, @PathVariable LocalDate newCheckin, @PathVariable LocalDate newCheckout) {
+    @PutMapping("/updateReservation")
+    public void updateReservation(
+            @RequestParam int reservationId,
+            @RequestParam  @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)LocalDate newCheckin,
+            @RequestParam  @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate newCheckout) {
         reservationService.updateReservation(reservationId, newCheckin, newCheckout);
     }
 
-    @GetMapping("/find/{userId}")
-    public Reservation findReservationByUserId(@PathVariable int userId) {
-        Reservation reservation = reservationService.findByUser_id(userId);
-        return reservation;
+    @GetMapping("/find/user/{userId}")
+    public List<Reservation> findReservationByUserId(@PathVariable int userId) {
+        List<Reservation> reservations = reservationService.findByUser_id(userId);
+        return reservations;
     }
 }
 

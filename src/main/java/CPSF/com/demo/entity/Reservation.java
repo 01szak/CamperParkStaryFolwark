@@ -1,12 +1,14 @@
-package CPSF.com.demo.Entity;
+package CPSF.com.demo.entity;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.AssertTrue;
+import jakarta.validation.constraints.NotNull;
 import lombok.*;
 
-import java.lang.reflect.Type;
+import java.math.BigDecimal;
 import java.time.LocalDate;
-import java.util.Date;
+
 @Entity
 @Table(name = "reservation")
 @Getter
@@ -20,11 +22,13 @@ public class Reservation {
     private int id;
 
     @Column(name = "checkin")
-    @JsonFormat(pattern = "dd-MM-yyyy")
+    @JsonFormat(pattern = "yyyy-MM-dd")
+    @NotNull(message = "Check-in date is required")
     private LocalDate checkin;
 
     @Column(name = "checkout")
-    @JsonFormat(pattern = "dd-MM-yyyy")
+    @JsonFormat(pattern = "yyyy-MM-dd")
+    @NotNull(message = "Check-out date is required")
     private LocalDate checkout;
 
     @ManyToOne
@@ -41,9 +45,16 @@ public class Reservation {
         return daysDifference;
     }
 
-    public double calculateFinalPrice(){
-        double price = camperPlace.getPrice();
-        double finalPrice = price * daysDifference();
+    public BigDecimal calculateFinalPrice(){
+        BigDecimal price = camperPlace.getPrice();
+        BigDecimal finalPrice = price.multiply(BigDecimal.valueOf(daysDifference())) ;
         return finalPrice;
+    }
+    @AssertTrue(message = "Check-out date must be after check-in date")
+    private boolean isCheckoutAfterCheckin() {
+        if (checkin == null || checkout == null) {
+            return true;
+        }
+        return checkout.isAfter(checkin);
     }
 }
