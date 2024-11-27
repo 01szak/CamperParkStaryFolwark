@@ -1,7 +1,6 @@
 package CPSF.com.demo.service;
 
 import CPSF.com.demo.entity.User;
-import CPSF.com.demo.entity.UserDTO;
 import CPSF.com.demo.repository.UserRepository;
 import org.springframework.stereotype.Service;
 

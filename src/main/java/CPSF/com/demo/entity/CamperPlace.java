@@ -19,19 +19,21 @@ import java.util.List;
 @ToString
 public class CamperPlace {
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    @Max(19)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
 
-    @NotNull
+
     @Column(name = "is_Occupied")
-    private int isOccupied;
+    @NotNull
+    private Boolean isOccupied;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "type")
+    @NotNull
     private Type type;
 
     @Column(name = "price")
+    @NotNull
     private BigDecimal price;
 
     @OneToMany(mappedBy = "camperPlace",fetch = FetchType.LAZY,cascade = {

@@ -1,5 +1,6 @@
 package CPSF.com.demo.entity;
 
+import CPSF.com.demo.enums.ReservationStatus;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.AssertTrue;
@@ -38,6 +39,8 @@ public class Reservation {
     @ManyToOne
     @JoinColumn(name =  "user_id")
     private User user;
+    @Column(name =  "status")
+    private ReservationStatus reservationStatus;
 
 
     public int daysDifference(){

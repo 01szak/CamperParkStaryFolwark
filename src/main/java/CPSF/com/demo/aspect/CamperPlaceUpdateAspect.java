@@ -25,7 +25,7 @@ public class CamperPlaceUpdateAspect {
     public void setIsOccupiedIfReservationContinuesAtTheMoment(){
         List<Reservation> allReservations = reservationService.findAllReservations();
         for(Reservation reservation : allReservations){
-            camperPlaceService.setIsOccupiedIfReservationContinuesAtTheMoment(reservation);
+            camperPlaceService.setIsOccupiedAndReservationStatusDependingOnReservationDay(reservation);
         }
 
     }

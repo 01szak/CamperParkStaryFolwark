@@ -20,25 +20,27 @@ CREATE TABLE users
 
 CREATE TABLE reservation
 (
-    id             BIGINT AUTO_INCREMENT PRIMARY KEY,
-    checkin        DATE   NOT NULL,
-    checkout       DATE   NOT NULL,
-    camperPlace_id BIGINT NOT NULL,
-    user_id        BIGINT NOT NULL,
+    id              BIGINT AUTO_INCREMENT PRIMARY KEY,
+    checkin         DATE        NOT NULL,
+    checkout        DATE        NOT NULL,
+    camper_place_id BIGINT      NOT NULL,
+    user_id         BIGINT      NOT NULL,
+    status          VARCHAR(10) NOT NULL,
     CONSTRAINT fk_reservation_user FOREIGN KEY (user_id) REFERENCES users (id),
-    CONSTRAINT fk_reservation_camper_place FOREIGN KEY (camperPlace_id) REFERENCES camper_places (id),
+    CONSTRAINT fk_reservation_camper_place FOREIGN KEY (camper_place_id) REFERENCES camper_places (id),
     CONSTRAINT chk_valid_dates CHECK (checkout > checkin),
     INDEX idx_reservation_user (user_id),
-    INDEX idx_reservation_camper_place (camperPlace_id)
+    INDEX idx_reservation_camper_place (camper_place_id),
+    CONSTRAINT chk_valid_status CHECK (status IN ('EXPIRED', 'ACTIVE', 'COMING'))
 );
 
 CREATE TABLE camper_places
 (
     id          BIGINT AUTO_INCREMENT PRIMARY KEY,
-    is_occupied TINYINT(1) default 0 NOT NULL,
-    type        VARCHAR(400)         NOT NULL,
-    price       DECIMAL(10, 2)       NOT NULL,
+    is_occupied BOOLEAN  NOT NULL default FALSE,
+    type        VARCHAR(400)          NOT NULL,
+    price       DECIMAL(10, 2)        NOT NULL,
     CONSTRAINT chk_price_positive CHECK (price >= 0),
-    CONSTRAINT chk_valid_type CHECK (type IN ('STANDARD', 'PREMIUM', 'DELUXE'))
+    CONSTRAINT chk_valid_type CHECK (type IN ('STANDARD', 'VIP', 'PLUS'))
 );
 
