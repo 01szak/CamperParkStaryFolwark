@@ -1,5 +1,5 @@
 package CPSF.com.demo.enums;
 
 public enum ReservationStatus {
-    EXPIRED,ACTIVE,COMING
+    EXPIRED,ACTIVE,COMING,NOT_DEFINED
 }

@@ -15,7 +15,6 @@ import java.time.LocalDate;
 @Getter
 @Setter
 @NoArgsConstructor
-@AllArgsConstructor
 @ToString
 public class Reservation {
     @Id
@@ -33,7 +32,7 @@ public class Reservation {
     private LocalDate checkout;
 
     @ManyToOne
-    @JoinColumn(name = "camperPlace_id")
+    @JoinColumn(name = "camper_place_id")
     private CamperPlace camperPlace;
 
     @ManyToOne
@@ -41,6 +40,15 @@ public class Reservation {
     private User user;
     @Column(name =  "status")
     private ReservationStatus reservationStatus;
+
+    public Reservation(int id, LocalDate checkin, LocalDate checkout, CamperPlace camperPlace, User user) {
+        this.id = id;
+        this.checkin = checkin;
+        this.checkout = checkout;
+        this.camperPlace = camperPlace;
+        this.user = user;
+
+    }
 
 
     public int daysDifference(){

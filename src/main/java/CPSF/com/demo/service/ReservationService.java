@@ -26,10 +26,11 @@ public class ReservationService {
     }
 
     @Transactional
-    public void setReservation(Reservation reservation, CamperPlace camperPlace, LocalDate checkin, LocalDate checkout) {
+    public void setReservation(Reservation reservation, CamperPlace camperPlace, LocalDate checkin, LocalDate checkout,ReservationStatus reservationStatus) {
         reservation.setCamperPlace(camperPlace);
         reservation.setCheckin(checkin);
         reservation.setCheckout(checkout);
+        reservation.setReservationStatus(reservationStatus);
         reservationRepository.save(reservation);
     }
 
@@ -38,7 +39,7 @@ public class ReservationService {
         if (camperPlaceService.isCamperPlaceOccupied(camperPlaceNumber).equals(false)) {
 
             CamperPlace camperPlace = camperPlaceService.findCamperPlaceById(camperPlaceNumber);
-             setReservation(new Reservation(), camperPlace, enter, checkout);
+             setReservation(new Reservation(), camperPlace, enter, checkout,ReservationStatus.COMING);
 
             System.out.println(
                     "You have successfully made a reservation: \nid: "

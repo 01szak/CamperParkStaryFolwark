@@ -2,6 +2,7 @@ package CPSF.com.demo.service;
 
 import CPSF.com.demo.entity.User;
 import CPSF.com.demo.repository.UserRepository;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -22,26 +23,15 @@ public class UserService {
         return userRepository.findAll() ;
 
     }
+    public void save(User user){
+        userRepository.save(user);
+    }
+    public User findByEmail(String email){
+        return userRepository.findByEmail(email).orElseThrow();
+    }
+
 
 //TODO: create UserDto
 
-//  public UserDTO createUser(
-//          User user,String firstName,
-//          String lastName,
-//          String email,
-//          String phoneNumber,
-//          String carRegistration,
-//          Reservation reservation,
-//          CamperPlace camperPlace,int camperPlaceNumber, LocalDate enter, LocalDate checkout){
-//        user.setFirstName(firstName);
-//        user.setLastName(lastName);
-//        user.setEmail(email);
-//        user.setPhoneNumber(phoneNumber);
-//        user.setRole(new Role(2,"guest"));
-//
-//         reservationService.createReservation(camperPlaceNumber,enter,checkout);
-//        user.setCamperPlace(camperPlace);
-//        return userRepository.save(user);
-//  }
 
 }

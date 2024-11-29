@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
+import java.time.Clock;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.stream.Stream;
@@ -66,11 +67,14 @@ public class CamperPlaceService {
     public void setIsOccupiedAndReservationStatusDependingOnReservationDay(Reservation reservation) {
         CamperPlace camperPlace = reservation.getCamperPlace();
         Stream<LocalDate> daysBetweenEnterAndCheckout = reservation.getCheckin().datesUntil(reservation.getCheckout());
+        Stream<LocalDate> daysBetweenEnterAndCheckout2 = reservation.getCheckin().datesUntil(reservation.getCheckout());
+
         if (daysBetweenEnterAndCheckout.anyMatch(date -> date.equals(LocalDate.now()))) {
-            camperPlace.setIsOccupied(true);
             reservation.setReservationStatus(ReservationStatus.ACTIVE);
-        } else if (daysBetweenEnterAndCheckout.anyMatch(date -> date.isAfter(LocalDate.now()))) {
+            camperPlace.setIsOccupied(true);
+        } else if (daysBetweenEnterAndCheckout2.anyMatch(date -> date.isBefore(LocalDate.now()))) {
             reservation.setReservationStatus(ReservationStatus.EXPIRED);
+            camperPlace.setIsOccupied(false);
         } else {
             reservation.setReservationStatus(ReservationStatus.COMING);
             camperPlace.setIsOccupied(false);

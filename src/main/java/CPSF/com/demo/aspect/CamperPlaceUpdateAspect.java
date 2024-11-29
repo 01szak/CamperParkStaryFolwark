@@ -22,7 +22,7 @@ public class CamperPlaceUpdateAspect {
         this.reservationService = reservationService;
     }
     @Before("execution(* CPSF.com.demo.controller.*.*(..))")
-    public void setIsOccupiedIfReservationContinuesAtTheMoment(){
+    public void setIsOccupiedAndReservationStatusDependingOnReservationDay(){
         List<Reservation> allReservations = reservationService.findAllReservations();
         for(Reservation reservation : allReservations){
             camperPlaceService.setIsOccupiedAndReservationStatusDependingOnReservationDay(reservation);
