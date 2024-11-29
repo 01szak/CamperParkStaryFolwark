@@ -12,11 +12,10 @@ import java.util.List;
 
 @Entity
 @Table(name = "camper_places")
-@Getter
-@Setter
+@Data
+@Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@ToString
 public class CamperPlace {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

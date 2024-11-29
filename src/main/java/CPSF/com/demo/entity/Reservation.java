@@ -11,11 +11,11 @@ import java.math.BigDecimal;
 import java.time.LocalDate;
 
 @Entity
+@Builder
 @Table(name = "reservation")
-@Getter
-@Setter
+@Data
 @NoArgsConstructor
-@ToString
+@AllArgsConstructor
 public class Reservation {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -63,9 +63,6 @@ public class Reservation {
     }
     @AssertTrue(message = "Check-out date must be after check-in date")
     private boolean isCheckoutAfterCheckin() {
-        if (checkin == null || checkout == null) {
-            return true;
-        }
         return checkout.isAfter(checkin);
     }
 }
