@@ -6,7 +6,6 @@ import CPSF.com.demo.entity.User;
 import CPSF.com.demo.enums.ReservationStatus;
 import CPSF.com.demo.enums.Type;
 import CPSF.com.demo.repository.CamperPlaceRepository;
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -14,10 +13,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.math.BigDecimal;
-import java.time.Clock;
-import java.time.Instant;
 import java.time.LocalDate;
-import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -58,9 +54,9 @@ class CamperPlaceServiceTest {
     void setIsOccupiedAndReservationStatusDependingOnReservationDay() {
         //given
         int id = 1;
-        Reservation reservation1 = new Reservation(id, LocalDate.of(2023,10,1),LocalDate.of(2023,10,10),new CamperPlace(),new User());
-        Reservation reservation2= new Reservation(id, LocalDate.of(2024,11,25),LocalDate.of(2024,11,30),new CamperPlace(),new User());
-        Reservation reservation3 = new Reservation(id, LocalDate.of(2025,10,1),LocalDate.of(2025,10,10),new CamperPlace(),new User());
+        Reservation reservation1 = new Reservation(id, LocalDate.of(2023,10,1),LocalDate.of(2023,10,10),new CamperPlace(),new User(request.getFirstName(), request.getLastName(), request.getEmail(), request.getPhoneNumber(), request.getCarRegistration(), request.getCountry(), request.getCity(), request.getStreetAddress(), request.getPassword(), Role.GUEST, reservations));
+        Reservation reservation2= new Reservation(id, LocalDate.of(2024,11,25),LocalDate.of(2024,11,30),new CamperPlace(),new User(request.getFirstName(), request.getLastName(), request.getEmail(), request.getPhoneNumber(), request.getCarRegistration(), request.getCountry(), request.getCity(), request.getStreetAddress(), request.getPassword(), Role.GUEST, reservations));
+        Reservation reservation3 = new Reservation(id, LocalDate.of(2025,10,1),LocalDate.of(2025,10,10),new CamperPlace(),new User(request.getFirstName(), request.getLastName(), request.getEmail(), request.getPhoneNumber(), request.getCarRegistration(), request.getCountry(), request.getCity(), request.getStreetAddress(), request.getPassword(), Role.GUEST, reservations));
         List<Reservation> reservationList = new ArrayList<>();
         reservationList.add(reservation1);
         reservationList.add(reservation2);

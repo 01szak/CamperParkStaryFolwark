@@ -49,7 +49,7 @@ public class ReservationController {
         return reservations;
     }
 
-    @GetMapping("/find")
+    @GetMapping("/findAll")
     public List<Reservation> findAllReservations() {
         List<Reservation> reservations = reservationService.findAllReservations();
         return reservations;

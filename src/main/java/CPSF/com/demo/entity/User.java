@@ -25,7 +25,7 @@ public class User implements UserDetails {
     private String firstName;
 
     @Column(name = "last_name")
-    private String LastName;
+    private String lastName;
 
     @Column(name = "email")
     private String email;
@@ -59,6 +59,19 @@ public class User implements UserDetails {
    })
     private List<Reservation> reservations;
 
+    public User(String firstName, String lastName, String email, String phoneNumber, String carRegistration, String country, String city, String streetAddress, String password, Role role, List<Reservation> reservations) {
+        this.firstName = firstName;
+        lastName = lastName;
+        this.email = email;
+        this.phoneNumber = phoneNumber;
+        this.carRegistration = carRegistration;
+        this.country = country;
+        this.city = city;
+        this.streetAddress = streetAddress;
+        this.password = password;
+        this.role = role;
+        this.reservations = reservations;
+    }
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {

@@ -62,7 +62,7 @@ public class Reservation {
         return finalPrice;
     }
     @AssertTrue(message = "Check-out date must be after check-in date")
-    private boolean isCheckoutAfterCheckin() {
+    private boolean sCheckoutAfterCheckin() {
         return checkout.isAfter(checkin);
     }
 }

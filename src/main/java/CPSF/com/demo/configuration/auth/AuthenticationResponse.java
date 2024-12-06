@@ -1,4 +1,4 @@
-package CPSF.com.demo.configuration;
+package CPSF.com.demo.configuration.auth;
 
 import jakarta.validation.constraints.NotNull;
 import lombok.*;

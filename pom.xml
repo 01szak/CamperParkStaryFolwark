@@ -118,6 +118,11 @@
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-security</artifactId>
         </dependency>
+        <dependency>
+            <groupId>io.openapitools.swagger</groupId>
+            <artifactId>swagger-maven-plugin</artifactId>
+            <version>2.1.6</version>
+        </dependency>
     </dependencies>
 
     <build>
@@ -134,6 +139,7 @@
                     </excludes>
                 </configuration>
             </plugin>
+
         </plugins>
     </build>
 

@@ -1,6 +1,7 @@
 package CPSF.com.demo.controller;
 
 import CPSF.com.demo.entity.User;
+import CPSF.com.demo.entity.UserDto;
 import CPSF.com.demo.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -18,12 +19,15 @@ public class UserController {
     }
 
     @GetMapping("/findAll")
-    public List<User> findAll(){
+    public List<UserDto> findAll(){
 
-        return userService.findAll() ;
+        return userService.findAll();
 
     }
-
+    @GetMapping("/findBy{email}")
+    public UserDto findByEmail(@PathVariable String email){
+        return userService.findByEmail(email);
+    }
 
 
    }

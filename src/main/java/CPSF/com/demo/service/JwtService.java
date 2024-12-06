@@ -1,4 +1,4 @@
-package CPSF.com.demo.configuration;
+package CPSF.com.demo.service;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;

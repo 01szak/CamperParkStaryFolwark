@@ -1,9 +1,10 @@
-package CPSF.com.demo.configuration;
+package CPSF.com.demo.service;
 
+import CPSF.com.demo.configuration.auth.AuthenticationRequest;
+import CPSF.com.demo.configuration.auth.AuthenticationResponse;
+import CPSF.com.demo.configuration.auth.RegisterRequest;
+import CPSF.com.demo.entity.Mapper;
 import CPSF.com.demo.entity.User;
-import CPSF.com.demo.enums.Role;
-import CPSF.com.demo.repository.UserRepository;
-import CPSF.com.demo.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -17,23 +18,19 @@ public class AuthenticationService {
     private final JwtService jwtService;
     private final PasswordEncoder passwordEncoder;
     private final AuthenticationManager authenticationManager;
+    private final Mapper mapper;
     public AuthenticationResponse register(RegisterRequest request) {
-        var user = User.builder()
-                .firstName(request.getFirstName())
-                .LastName(request.getLastName())
-                .email(request.getEmail())
-                .password(passwordEncoder.encode(request.getPassword()))
-                .role(Role.GUEST)
+        User user = mapper.toUser(request);
+        userService.save(user);
+        var jwtToken = jwtService.generateToken(user);
+        mapper.toDto(user);
+        return AuthenticationResponse.builder()
+                .token(jwtToken)
                 .build();
 
-                userService.save(user);
-                var jwtToken = jwtService.generateToken(user);
-                return AuthenticationResponse.builder()
-                        .token(jwtToken)
-                        .build();
-
     }
-    public AuthenticationResponse authenticate(AuthenticationRequest request){
+
+    public AuthenticationResponse authenticate(AuthenticationRequest request) {
         authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(
                         request.getEmail(),
