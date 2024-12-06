@@ -36,9 +36,13 @@ public class UserService {
         User user = userRepository.findByEmail(email).orElseThrow();
 
         return mapper.toDto(user);
+    }    public User findUserByEmailForAuthenticationPurpose(String email) {
+
+        return userRepository.findByEmail(email).orElseThrow();
     }
 
 
-
-
+    public void save(User user) {
+        userRepository.save(user);
+    }
 }
