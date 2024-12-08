@@ -1,7 +1,11 @@
 package CPSF.com.demo;
 
+import io.swagger.v3.oas.models.media.EmailSchema;
+import jakarta.validation.constraints.Email;
+import org.apache.naming.factory.SendMailFactory;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.boot.autoconfigure.mail.MailSenderAutoConfiguration;
 
 import java.util.Random;
 import java.util.UUID;

@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.regex.Pattern;
 
 @Service
 public class UserService {
@@ -31,7 +32,6 @@ public class UserService {
                 .map(mapper::toDto)
                 .toList();
     }
-
     public UserDto findByEmail(String email) {
         User user = userRepository.findByEmail(email).orElseThrow();
 
