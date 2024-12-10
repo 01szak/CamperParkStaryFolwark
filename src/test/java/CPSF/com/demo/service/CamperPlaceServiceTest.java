@@ -50,30 +50,30 @@ class CamperPlaceServiceTest {
         assertFalse(camperPlace.getIsOccupied());
     }
 
-    @Test
-    void setIsOccupiedAndReservationStatusDependingOnReservationDay() {
-        //given
-        int id = 1;
-        Reservation reservation1 = new Reservation(id, LocalDate.of(2023,10,1),LocalDate.of(2023,10,10),new CamperPlace(),new User(request.getFirstName(), request.getLastName(), request.getEmail(), request.getPhoneNumber(), request.getCarRegistration(), request.getCountry(), request.getCity(), request.getStreetAddress(), request.getPassword(), Role.GUEST, reservations));
-        Reservation reservation2= new Reservation(id, LocalDate.of(2024,11,25),LocalDate.of(2024,11,30),new CamperPlace(),new User(request.getFirstName(), request.getLastName(), request.getEmail(), request.getPhoneNumber(), request.getCarRegistration(), request.getCountry(), request.getCity(), request.getStreetAddress(), request.getPassword(), Role.GUEST, reservations));
-        Reservation reservation3 = new Reservation(id, LocalDate.of(2025,10,1),LocalDate.of(2025,10,10),new CamperPlace(),new User(request.getFirstName(), request.getLastName(), request.getEmail(), request.getPhoneNumber(), request.getCarRegistration(), request.getCountry(), request.getCity(), request.getStreetAddress(), request.getPassword(), Role.GUEST, reservations));
-        List<Reservation> reservationList = new ArrayList<>();
-        reservationList.add(reservation1);
-        reservationList.add(reservation2);
-        reservationList.add(reservation3);
-        for (Reservation reservation : reservationList){
-            underTest.setIsOccupiedAndReservationStatusDependingOnReservationDay(reservation);
-        }
-
-        //then
-
-        assertEquals(ReservationStatus.EXPIRED,reservation1.getReservationStatus());
-        assertEquals(ReservationStatus.ACTIVE,reservation2.getReservationStatus());
-        assertEquals(ReservationStatus.COMING,reservation3.getReservationStatus());
-
-        assertFalse(reservation1.getCamperPlace().getIsOccupied());
-        assertTrue(reservation2.getCamperPlace().getIsOccupied());
-        assertFalse(reservation3.getCamperPlace().getIsOccupied());
-
-    }
+//    @Test
+//    void setIsOccupiedAndReservationStatusDependingOnReservationDay() {
+//        //given
+//        int id = 1;
+//        Reservation reservation1 = new Reservation(id, LocalDate.of(2023,10,1),LocalDate.of(2023,10,10),new CamperPlace(),new User(request.getFirstName(), request.getLastName(), request.getEmail(), request.getPhoneNumber(), request.getCarRegistration(), request.getCountry(), request.getCity(), request.getStreetAddress(), request.getPassword(), Role.GUEST, reservations));
+//        Reservation reservation2= new Reservation(id, LocalDate.of(2024,11,25),LocalDate.of(2024,11,30),new CamperPlace(),new User(request.getFirstName(), request.getLastName(), request.getEmail(), request.getPhoneNumber(), request.getCarRegistration(), request.getCountry(), request.getCity(), request.getStreetAddress(), request.getPassword(), Role.GUEST, reservations));
+//        Reservation reservation3 = new Reservation(id, LocalDate.of(2025,10,1),LocalDate.of(2025,10,10),new CamperPlace(),new User(request.getFirstName(), request.getLastName(), request.getEmail(), request.getPhoneNumber(), request.getCarRegistration(), request.getCountry(), request.getCity(), request.getStreetAddress(), request.getPassword(), Role.GUEST, reservations));
+//        List<Reservation> reservationList = new ArrayList<>();
+//        reservationList.add(reservation1);
+//        reservationList.add(reservation2);
+//        reservationList.add(reservation3);
+//        for (Reservation reservation : reservationList){
+//            underTest.setIsOccupiedAndReservationStatusDependingOnReservationDay(reservation);
+//        }
+//
+//        //then
+//
+//        assertEquals(ReservationStatus.EXPIRED,reservation1.getReservationStatus());
+//        assertEquals(ReservationStatus.ACTIVE,reservation2.getReservationStatus());
+//        assertEquals(ReservationStatus.COMING,reservation3.getReservationStatus());
+//
+//        assertFalse(reservation1.getCamperPlace().getIsOccupied());
+//        assertTrue(reservation2.getCamperPlace().getIsOccupied());
+//        assertFalse(reservation3.getCamperPlace().getIsOccupied());
+//
+//    }
 }

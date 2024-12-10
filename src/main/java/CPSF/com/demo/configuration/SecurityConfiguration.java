@@ -25,15 +25,11 @@ public class SecurityConfiguration {
                 .csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(authorize -> authorize
 
-                        .requestMatchers("/auth/**").permitAll()
-                        .requestMatchers("/users/**").hasRole(Role.ADMIN.name())
+                        .requestMatchers("/swagger-ui/**", "/v3/api-docs/**", "/swagger-resources/**").permitAll()
+                        .requestMatchers("/auth/register","/auth/authenticate").permitAll()
+                        .requestMatchers("/reservations/createReservation","/reservations/updateReservation").hasAnyRole(Role.ADMIN.name(), Role.GUEST.name())
+                        .requestMatchers("/users/**","/camperPlace/**","/reservations/find","/reservations/find/user","reservations/findByReservationStatus").hasRole(Role.ADMIN.name())
                         .requestMatchers("/camperPlace/**").hasRole(Role.ADMIN.name())
-                        .requestMatchers("/reservations/createReservation").hasAnyRole(Role.ADMIN.name(), Role.GUEST.name())
-                        .requestMatchers("/reservations/updateReservation").hasAnyRole(Role.ADMIN.name(), Role.GUEST.name())
-                        .requestMatchers("/reservations/find").hasRole(Role.ADMIN.name())
-                        .requestMatchers("/reservations/find/user").hasRole(Role.ADMIN.name())
-                        .requestMatchers("reservations/findByReservationStatus").hasRole(Role.ADMIN.name())
-                        .requestMatchers("/swagger-ui/**").permitAll()
                         .anyRequest().authenticated()
                 )
                 .sessionManagement(session -> session

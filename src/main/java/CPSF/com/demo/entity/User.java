@@ -51,7 +51,7 @@ public class User implements UserDetails {
     @Column(name = "role")
     private Role role;
 
-    @OneToMany(mappedBy = "user",fetch = FetchType.LAZY,cascade = {
+    @OneToMany(mappedBy = "user",fetch = FetchType.EAGER,cascade = {
            CascadeType.DETACH,
            CascadeType.MERGE,
            CascadeType.PERSIST,

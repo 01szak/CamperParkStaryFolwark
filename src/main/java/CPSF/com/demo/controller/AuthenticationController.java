@@ -3,34 +3,33 @@ package CPSF.com.demo.controller;
 import CPSF.com.demo.EmailValidator;
 import CPSF.com.demo.configuration.auth.AuthenticationRequest;
 import CPSF.com.demo.configuration.auth.AuthenticationResponse;
-import CPSF.com.demo.exceptions.WrongEmailException;
 import CPSF.com.demo.service.AuthenticationService;
 import CPSF.com.demo.configuration.auth.RegisterRequest;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpRequest;
 import org.springframework.http.ResponseEntity;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.net.http.HttpResponse;
 
 @RestController
 @RequiredArgsConstructor
+@RequestMapping("/auth")
 public class AuthenticationController {
     private final AuthenticationService authenticationService;
-
-
+    @Transactional
     @PostMapping("/register")
-    public ResponseEntity<AuthenticationResponse> register(@RequestBody RegisterRequest request) throws WrongEmailException {
-       if(!EmailValidator.check(request.getEmail())){
-           return ResponseEntity.badRequest().body(AuthenticationResponse.builder()
-                   .message("Incorrect email")
-                   .build());
-       }
+    public ResponseEntity<AuthenticationResponse> register(@RequestBody RegisterRequest request) {
+        if(!EmailValidator.check(request.getEmail())){
+            return ResponseEntity.badRequest().body(AuthenticationResponse.builder()
+                    .message("Incorrect email")
+                    .build());
+        }
         return ResponseEntity.ok(authenticationService.register(request));
     }
+
 
     @PostMapping("/authenticate")
     public ResponseEntity<AuthenticationResponse> authenticate(@RequestBody AuthenticationRequest request) {
