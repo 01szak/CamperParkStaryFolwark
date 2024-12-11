@@ -2,7 +2,7 @@
 -- changeset kacper:1
 -- validCheckSum: 9:637036636767df5bdb843aee2d0351b8
 
-CREATE TABLE users
+CREATE TABLE demo_camper_park_sf.users
 (
     id               BIGINT AUTO_INCREMENT PRIMARY KEY,
     first_name       VARCHAR(50)  NOT NULL,
@@ -18,15 +18,15 @@ CREATE TABLE users
     CONSTRAINT uk_user_email UNIQUE (email)
 );
 
-CREATE TABLE reservation
+CREATE TABLE demo_camper_park_sf.reservations
 (
     id              BIGINT AUTO_INCREMENT PRIMARY KEY,
     checkin         DATE        NOT NULL,
     checkout        DATE        NOT NULL,
     camper_place_id BIGINT      NOT NULL,
     user_id         BIGINT      NOT NULL,
-    status          VARCHAR(10) NOT NULL,
-    CONSTRAINT fk_reservation_user FOREIGN KEY (user_id) REFERENCES users (id),
+    status          VARCHAR(10) NOT NULL DEFAULT 'COMING',
+    CONSTRAINT fk_reservation_user FOREIGN KEY (user_id) REFERENCES users(id),
     CONSTRAINT fk_reservation_camper_place FOREIGN KEY (camper_place_id) REFERENCES camper_places (id),
     CONSTRAINT chk_valid_dates CHECK (checkout > checkin),
     INDEX idx_reservation_user (user_id),
@@ -34,7 +34,7 @@ CREATE TABLE reservation
     CONSTRAINT chk_valid_status CHECK (status IN ('EXPIRED', 'ACTIVE', 'COMING'))
 );
 
-CREATE TABLE camper_places
+CREATE TABLE demo_camper_park_sf.camper_places
 (
     id          BIGINT AUTO_INCREMENT PRIMARY KEY,
     is_occupied BOOLEAN  NOT NULL default FALSE,

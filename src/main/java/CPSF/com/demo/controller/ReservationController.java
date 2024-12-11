@@ -2,11 +2,16 @@ package CPSF.com.demo.controller;
 
 import CPSF.com.demo.entity.CamperPlace;
 import CPSF.com.demo.entity.Reservation;
+import CPSF.com.demo.entity.User;
 import CPSF.com.demo.enums.ReservationStatus;
+import CPSF.com.demo.enums.Role;
 import CPSF.com.demo.service.CamperPlaceService;
 import CPSF.com.demo.service.ReservationService;
 import CPSF.com.demo.service.UserService;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
@@ -20,12 +25,11 @@ import java.util.List;
 public class ReservationController {
 
     private final ReservationService reservationService;
-    private final CamperPlaceService camperPlaceService;
     private final UserService userService;
 
-    public ReservationController(ReservationService theReservationService, CamperPlaceService camperPlaceService, UserService userService) {
+
+    public ReservationController(ReservationService theReservationService, @Lazy UserService userService) {
         this.reservationService = theReservationService;
-        this.camperPlaceService = camperPlaceService;
         this.userService = userService;
     }
 
@@ -35,7 +39,7 @@ public class ReservationController {
             @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate enter,
             @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate checkout) {
 
-            reservationService.createReservation(camperPlaceNumber,enter,checkout);
+        reservationService.createReservation(camperPlaceNumber, enter, checkout);
     }
 
     @GetMapping("/find/{reservationId}")
@@ -43,6 +47,7 @@ public class ReservationController {
         Reservation reservation = reservationService.findReservationById(reservationId);
         return reservation;
     }
+
     @GetMapping("/findByReservationStatus")
     public List<Reservation> findReservationsDependingOnStatus(@RequestParam ReservationStatus... args) {
         List<Reservation> reservations = reservationService.findReservationByReservationStatus(args);
@@ -51,8 +56,13 @@ public class ReservationController {
 
     @GetMapping("/findAll")
     public List<Reservation> findAllReservations() {
-        List<Reservation> reservations = reservationService.findAllReservations();
-        return reservations;
+
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        User user = userService.findUserByEmailForAuthenticationPurpose(authentication.getName());
+        if (user.getRole().equals(Role.GUEST)) {
+            return reservationService.findAllUserReservations(user.getId());
+        }
+        return reservationService.findAllReservations();
     }
 
     @PutMapping("/updateReservation")

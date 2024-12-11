@@ -1,5 +1,5 @@
 package CPSF.com.demo.enums;
 
-public enum Role{
+public enum Role {
     ADMIN,GUEST
 }

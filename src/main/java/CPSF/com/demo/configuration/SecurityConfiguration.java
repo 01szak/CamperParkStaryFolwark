@@ -27,9 +27,9 @@ public class SecurityConfiguration {
 
                         .requestMatchers("/swagger-ui/**", "/v3/api-docs/**", "/swagger-resources/**").permitAll()
                         .requestMatchers("/auth/register","/auth/authenticate").permitAll()
-                        .requestMatchers("/reservations/createReservation","/reservations/updateReservation").hasAnyRole(Role.ADMIN.name(), Role.GUEST.name())
-                        .requestMatchers("/users/**","/camperPlace/**","/reservations/find","/reservations/find/user","reservations/findByReservationStatus").hasRole(Role.ADMIN.name())
-                        .requestMatchers("/camperPlace/**").hasRole(Role.ADMIN.name())
+                        .requestMatchers("/reservations/createReservation","/reservations/updateReservation","/reservations/findAll").hasAnyAuthority(Role.ADMIN.toString(), Role.GUEST.toString())
+                        .requestMatchers("/users/**","/camperPlace/**","/reservations/find","/reservations/find/user","/reservations/findByReservationStatus").hasAuthority(Role.ADMIN.toString())
+                        .requestMatchers("/camperPlace/**").hasAuthority(Role.ADMIN.toString())
                         .anyRequest().authenticated()
                 )
                 .sessionManagement(session -> session
@@ -39,5 +39,6 @@ public class SecurityConfiguration {
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
         return httpSecurity.build();
     }
+
 
 }

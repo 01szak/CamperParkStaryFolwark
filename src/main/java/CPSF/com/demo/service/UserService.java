@@ -5,6 +5,8 @@ import CPSF.com.demo.entity.User;
 import CPSF.com.demo.entity.UserDto;
 import CPSF.com.demo.repository.UserRepository;
 import org.checkerframework.checker.units.qual.A;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
@@ -15,14 +17,10 @@ import java.util.regex.Pattern;
 @Service
 public class UserService {
     private final UserRepository userRepository;
-    private final CamperPlaceService camperPlaceService;
-    private final ReservationService reservationService;
     private final Mapper mapper;
 
-    public UserService(UserRepository userRepository, CamperPlaceService camperPlaceService, ReservationService reservationService, Mapper mapper) {
+    public UserService(UserRepository userRepository,Mapper mapper) {
         this.userRepository = userRepository;
-        this.camperPlaceService = camperPlaceService;
-        this.reservationService = reservationService;
         this.mapper = mapper;
     }
 

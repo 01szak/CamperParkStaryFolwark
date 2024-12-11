@@ -1,7 +1,9 @@
 package CPSF.com.demo.entity;
 
 import CPSF.com.demo.enums.ReservationStatus;
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.AssertTrue;
 import jakarta.validation.constraints.NotNull;
@@ -9,6 +11,8 @@ import lombok.*;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+
+import static CPSF.com.demo.enums.ReservationStatus.*;
 
 @Entity
 @Builder
@@ -33,14 +37,17 @@ public class Reservation {
 
     @ManyToOne
     @JoinColumn(name = "camper_place_id")
+    @JsonBackReference
     private CamperPlace camperPlace;
 
     @ManyToOne
     @JoinColumn(name =  "user_id")
+    @JsonBackReference
     private User user;
     @Enumerated(EnumType.STRING)
     @Column(name =  "status")
-    private ReservationStatus reservationStatus;
+    @Builder.Default
+    private ReservationStatus reservationStatus = COMING;
 
     public Reservation(int id, LocalDate checkin, LocalDate checkout, CamperPlace camperPlace, User user) {
         this.id = id;

@@ -1,10 +1,17 @@
 package CPSF.com.demo.service;
 
+import CPSF.com.demo.configuration.auth.JwtAuthenticationFilter;
+import CPSF.com.demo.controller.AuthenticationController;
 import CPSF.com.demo.entity.CamperPlace;
 import CPSF.com.demo.entity.Reservation;
+import CPSF.com.demo.entity.User;
 import CPSF.com.demo.enums.ReservationStatus;
 import CPSF.com.demo.repository.ReservationRepository;
+import CPSF.com.demo.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -18,15 +25,22 @@ public class ReservationService {
 
     private final ReservationRepository reservationRepository;
     private final CamperPlaceService camperPlaceService;
+    private final UserRepository userRepository;
+
+    private final Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 
     @Autowired
-    public ReservationService(ReservationRepository theReservationRepository, CamperPlaceService camperPlaceService) {
+    public ReservationService(ReservationRepository theReservationRepository, CamperPlaceService camperPlaceService, UserService userService, UserRepository userRepository) {
         this.reservationRepository = theReservationRepository;
         this.camperPlaceService = camperPlaceService;
+        this.userRepository = userRepository;
     }
 
     @Transactional
     public void setReservation(Reservation reservation, CamperPlace camperPlace, LocalDate checkin, LocalDate checkout,ReservationStatus reservationStatus) {
+        User theUser = userRepository.findByEmail(authentication.getName()).orElseThrow();
+        reservation.setUser(theUser);
+        System.out.println(theUser);
         reservation.setCamperPlace(camperPlace);
         reservation.setCheckin(checkin);
         reservation.setCheckout(checkout);
@@ -35,7 +49,8 @@ public class ReservationService {
     }
 
     @Transactional
-    public void createReservation(int camperPlaceNumber, LocalDate enter, LocalDate checkout) {
+    public void createReservation( int camperPlaceNumber, LocalDate enter, LocalDate checkout) {
+
         if (camperPlaceService.isCamperPlaceOccupied(camperPlaceNumber).equals(false)) {
 
             CamperPlace camperPlace = camperPlaceService.findCamperPlaceById(camperPlaceNumber);
@@ -99,5 +114,8 @@ public class ReservationService {
     }
 
 
+    public List<Reservation> findAllUserReservations(int id) {
+        return reservationRepository.findByUserId(id);
+    }
 }
 
