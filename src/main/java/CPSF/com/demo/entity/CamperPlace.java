@@ -1,6 +1,7 @@
 package CPSF.com.demo.entity;
 
 import CPSF.com.demo.enums.Type;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.NotNull;

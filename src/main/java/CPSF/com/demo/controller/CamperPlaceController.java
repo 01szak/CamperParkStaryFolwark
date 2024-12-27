@@ -9,6 +9,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
 import java.math.BigDecimal;
+import java.util.Arrays;
 import java.util.List;
 
 @RestController
@@ -23,8 +24,8 @@ private final CamperPlaceService camperPlaceService;
     @PostMapping("/create")
     @Transactional
     public void createCamperPlace(
-        @RequestParam Type type,
-        @RequestParam @Positive(message = "Price can't be negative") BigDecimal price){
+        @RequestBody Type type,
+        @RequestBody @Positive(message = "Price can't be negative") BigDecimal price){
 
         camperPlaceService.createCamperPlace(type,price);
 
@@ -33,5 +34,9 @@ private final CamperPlaceService camperPlaceService;
     public List<CamperPlace> finAllCamperPlaces(){
         return camperPlaceService.findAllCamperPlaces();
 
+    }
+    @GetMapping("/getCamperPlaceTypes")
+    public List<Type> getTypes(){
+        return Arrays.stream(Type.values()).toList();
     }
 }

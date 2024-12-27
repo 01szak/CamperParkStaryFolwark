@@ -24,13 +24,14 @@ public class SecurityConfiguration {
         httpSecurity
                 .csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(authorize -> authorize
-
-                        .requestMatchers("/swagger-ui/**", "/v3/api-docs/**", "/swagger-resources/**").permitAll()
-                        .requestMatchers("/auth/register","/auth/authenticate").permitAll()
-                        .requestMatchers("/reservations/createReservation","/reservations/updateReservation","/reservations/findAll").hasAnyAuthority(Role.ADMIN.toString(), Role.GUEST.toString())
-                        .requestMatchers("/users/**","/camperPlace/**","/reservations/find","/reservations/find/user","/reservations/findByReservationStatus").hasAuthority(Role.ADMIN.toString())
-                        .requestMatchers("/camperPlace/**").hasAuthority(Role.ADMIN.toString())
-                        .anyRequest().authenticated()
+//
+//                        .requestMatchers("/swagger-ui/**", "/v3/api-docs/**", "/swagger-resources/**").permitAll()
+//                        .requestMatchers("/auth/register","/auth/authenticate").permitAll()
+//                        .requestMatchers("/reservations/createReservation","/reservations/updateReservation","/reservations/findAll").hasAnyAuthority(Role.ADMIN.toString(), Role.GUEST.toString())
+//                        .requestMatchers("/users/**","/camperPlace/**","/reservations/find","/reservations/find/user","/reservations/findByReservationStatus").permitAll()
+//                        .requestMatchers("/camperPlace/**").permitAll()
+                                .requestMatchers("/camperPlace/**").permitAll()
+                        .anyRequest().permitAll()
                 )
                 .sessionManagement(session -> session
                         .sessionCreationPolicy(SessionCreationPolicy.STATELESS)

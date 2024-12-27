@@ -11,6 +11,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.math.BigDecimal;
 import java.time.Clock;
 import java.time.LocalDate;
+import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Stream;
 
@@ -34,8 +35,8 @@ public class CamperPlaceService {
 
         setCamperPlace(type, price);
     }
-
-        private void setCamperPlace(Type type, BigDecimal price) {
+        @Transactional
+        public void setCamperPlace(Type type, BigDecimal price) {
         CamperPlace camperPlace = new CamperPlace();
         if(camperPlace.getIsOccupied() == null)camperPlace.setIsOccupied(false);
         camperPlace.setType(type);
