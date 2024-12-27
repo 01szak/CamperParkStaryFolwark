@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.*;
 import java.math.BigDecimal;
 import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Stream;
 
 @RestController
 @RequestMapping("/camperPlace")
@@ -36,7 +37,7 @@ private final CamperPlaceService camperPlaceService;
 
     }
     @GetMapping("/getCamperPlaceTypes")
-    public List<Type> getTypes(){
-        return Arrays.stream(Type.values()).toList();
+    public List<String> getTypes(){
+        return Arrays.stream(Type.values()).map(Enum::toString).toList();
     }
 }
