@@ -4,15 +4,8 @@ import CPSF.com.demo.entity.Mapper;
 import CPSF.com.demo.entity.User;
 import CPSF.com.demo.entity.UserDto;
 import CPSF.com.demo.repository.UserRepository;
-import org.checkerframework.checker.units.qual.A;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
-
-import java.util.ArrayList;
 import java.util.List;
-import java.util.regex.Pattern;
 
 @Service
 public class UserService {

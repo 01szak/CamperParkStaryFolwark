@@ -1,8 +1,9 @@
 services:
   backend:
-    build:
-
-    image:
+    build: '.'
+    command: java -jar camperparkstaryfolwark.jar
+    ports:
+      - '8080:8080'
   database:
     image: 'mysql:latest'
     ports:
