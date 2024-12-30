@@ -27,7 +27,8 @@
         <url/>
     </scm>
     <properties>
-        <java.version>22</java.version>
+     <maven.compiler.source>17</maven.compiler.source>
+     <maven.compiler.target>17</maven.compiler.target>
     </properties>
     <dependencies>
 
@@ -49,13 +50,6 @@
             <artifactId>mysql-connector-java</artifactId>
             <version>8.0.32</version>
         </dependency>
-
-
-<!--        <dependency>-->
-<!--            <groupId>org.springframework.hateoas</groupId>-->
-<!--            <artifactId>spring-hateoas</artifactId>-->
-<!--            <version>2.3.3</version>-->
-<!--        </dependency>-->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-web</artifactId>
@@ -146,7 +140,7 @@
                 <artifactId>maven-surefire-plugin</artifactId>
                 <version>2.19.1</version>
                 <configuration>
-                <testFailureIgnore>true</testFailureIgnore>
+                    <testFailureIgnore>true</testFailureIgnore>
                 </configuration>
 		    </plugin>
         </plugins>

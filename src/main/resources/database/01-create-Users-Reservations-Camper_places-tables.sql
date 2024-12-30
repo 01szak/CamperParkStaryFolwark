@@ -1,6 +1,7 @@
 --liquibase formatted sql
 --changeset kacper:1
---validCheckSum: 9:637036636767df5bdb843aee2d0351b8
+
+CREATE DATABASE demo_camper_park_sf;
 
 CREATE TABLE demo_camper_park_sf.users
 (
