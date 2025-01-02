@@ -16,7 +16,7 @@ import static CPSF.com.demo.enums.ReservationStatus.*;
 
 @Entity
 @Builder
-@Table(name = "reservation")
+@Table(name = "reservations")
 @Data
 @NoArgsConstructor
 @AllArgsConstructor

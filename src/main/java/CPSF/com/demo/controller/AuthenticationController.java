@@ -7,6 +7,7 @@ import CPSF.com.demo.service.AuthenticationService;
 import CPSF.com.demo.configuration.auth.RegisterRequest;
 import CPSF.com.demo.service.UserService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -16,11 +17,17 @@ import org.springframework.web.bind.annotation.RestController;
 
 
 @RestController
-@RequiredArgsConstructor
 @RequestMapping("/auth")
 public class AuthenticationController {
     private final AuthenticationService authenticationService;
     private  final UserService userService;
+
+    @Autowired
+    public AuthenticationController(AuthenticationService authenticationService, UserService userService) {
+        this.authenticationService = authenticationService;
+        this.userService = userService;
+    }
+
     @Transactional
     @PostMapping("/register")
     public ResponseEntity<AuthenticationResponse> register(@RequestBody RegisterRequest request) {
@@ -32,9 +39,9 @@ public class AuthenticationController {
         return ResponseEntity.ok(authenticationService.register(request));
     }
 
-    @PostMapping("/authenticate")
-    public ResponseEntity<AuthenticationResponse> authenticate(@RequestBody AuthenticationRequest request) {
-        return ResponseEntity.ok(authenticationService.authenticate(request));
+    @PostMapping("/login")
+    public ResponseEntity<AuthenticationResponse> login(@RequestBody AuthenticationRequest request) {
+        return ResponseEntity.ok(authenticationService.login(request));
 
     }
 

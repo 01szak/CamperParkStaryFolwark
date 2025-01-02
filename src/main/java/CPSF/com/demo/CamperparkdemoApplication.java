@@ -1,39 +1,16 @@
 package CPSF.com.demo;
-
-import io.swagger.v3.oas.models.media.EmailSchema;
-import jakarta.validation.constraints.Email;
-import org.apache.naming.factory.SendMailFactory;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.boot.autoconfigure.mail.MailSenderAutoConfiguration;
+import org.springframework.context.annotation.ComponentScan;
+import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 
-import java.util.Random;
-import java.util.UUID;
 
 @SpringBootApplication
+@EnableJpaRepositories
 public class CamperparkdemoApplication {
 
 	public static void main(String[] args) {
 		SpringApplication.run(CamperparkdemoApplication.class, args);
-//		for (int i = 0; i <=20 ; i++) {
-//			String firstName = "firstName" + i;
-//			String lastName = "lastName" + i;
-//			String randomString1 =  generateRandomUUIDString(6);
-//			String randomString2 =  generateRandomUUIDString(7);
-//
-//			String query = String.format("INSERT INTO users(first_name,last_name,phone_number,email,car_registration,role_id)" +
-//					"Values('%s','%s',null,'%s@mail.com','%s','guest')",
-//							firstName,lastName,randomString1,randomString2);
-//			System.out.println(query);
-//		}
-//
-//	}
-//	public static String generateRandomUUIDString(int length) {
-//		String uuid = UUID.randomUUID().toString().replace("-", "");
-//		if (length > uuid.length()) {
-//			throw new IllegalArgumentException("Maksymalna długość wynosi " + uuid.length());
-//		}
-//
-//		return uuid.substring(0, length);
+
 	}
 }
