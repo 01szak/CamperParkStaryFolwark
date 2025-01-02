@@ -1,13 +1,18 @@
 services:
-  backend:
-    build: '.'
-    command: java -jar camperparkstaryfolwark.jar
-    ports:
-      - '8080:8080'
+#  backend:
+#    build: '.'
+#    command: java -jar camperparkstaryfolwark.jar
+#    ports:
+#      - '8080:8080'
+#    depends_on:
+#      - database
+
   database:
-    image: 'mysql:latest'
+    image: 'mysql:9.1'
     ports:
       - '3306:3306'
     environment:
+      - 'MYSQL_ROOT_HOSTS=%'
       - 'MYSQL_ROOT_PASSWORD=qwer'
       - 'MYSQL_DATABASE=demo_camper_park_sf'
+      - 'MYSQL_ALLOW_EMPTY_PASSWORD=1'

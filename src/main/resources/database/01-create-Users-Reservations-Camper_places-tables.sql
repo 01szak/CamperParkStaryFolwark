@@ -1,7 +1,6 @@
---liquibase formatted sql
---changeset kacper:1
+-- liquibase formatted sql
+-- changeset kacper:1
 
-CREATE DATABASE demo_camper_park_sf;
 
 CREATE TABLE demo_camper_park_sf.users
 (
@@ -19,6 +18,16 @@ CREATE TABLE demo_camper_park_sf.users
     CONSTRAINT uk_user_email UNIQUE (email)
 );
 
+CREATE TABLE demo_camper_park_sf.camper_places
+(
+    id          BIGINT AUTO_INCREMENT PRIMARY KEY,
+    is_occupied BOOLEAN  NOT NULL default FALSE,
+    type        VARCHAR(400)          NOT NULL,
+    price       DECIMAL(10, 2)        NOT NULL,
+    CONSTRAINT chk_price_positive CHECK (price >= 0),
+    CONSTRAINT chk_valid_type CHECK (type IN ('STANDARD', 'VIP', 'PLUS'))
+);
+
 CREATE TABLE demo_camper_park_sf.reservations
 (
     id              BIGINT AUTO_INCREMENT PRIMARY KEY,
@@ -34,14 +43,6 @@ CREATE TABLE demo_camper_park_sf.reservations
     INDEX idx_reservation_camper_place (camper_place_id),
     CONSTRAINT chk_valid_status CHECK (status IN ('EXPIRED', 'ACTIVE', 'COMING'))
 );
-
-CREATE TABLE demo_camper_park_sf.camper_places
-(
-    id          BIGINT AUTO_INCREMENT PRIMARY KEY,
-    is_occupied BOOLEAN  NOT NULL default FALSE,
-    type        VARCHAR(400)          NOT NULL,
-    price       DECIMAL(10, 2)        NOT NULL,
-    CONSTRAINT chk_price_positive CHECK (price >= 0),
-    CONSTRAINT chk_valid_type CHECK (type IN ('STANDARD', 'VIP', 'PLUS'))
-);
+-- changeset kacper:2
+alter table users add column password varchar(400) not null unique ;
 
