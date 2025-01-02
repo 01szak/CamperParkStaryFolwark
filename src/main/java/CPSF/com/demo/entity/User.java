@@ -44,7 +44,7 @@ public class User implements UserDetails {
 
     @Column(name = "street_address")
     private String streetAddress;
-    @Column(name = "password")
+    @Column(name = "password_hash")
     private String password;
 
     @Enumerated(EnumType.STRING)

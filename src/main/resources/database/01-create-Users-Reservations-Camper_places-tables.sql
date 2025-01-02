@@ -43,6 +43,4 @@ CREATE TABLE demo_camper_park_sf.reservations
     INDEX idx_reservation_camper_place (camper_place_id),
     CONSTRAINT chk_valid_status CHECK (status IN ('EXPIRED', 'ACTIVE', 'COMING'))
 );
--- changeset kacper:2
-alter table users add column password varchar(400) not null unique ;
 
