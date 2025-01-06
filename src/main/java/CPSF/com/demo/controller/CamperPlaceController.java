@@ -23,10 +23,9 @@ private final CamperPlaceService camperPlaceService;
     }
 
     @PostMapping("/create")
-    @Transactional
     public void createCamperPlace(
-        @RequestBody Type type,
-        @RequestBody @Positive(message = "Price can't be negative") BigDecimal price){
+        @RequestBody String type,
+        @RequestBody @Positive(message = "Price can't be negative") double price){
 
         camperPlaceService.createCamperPlace(type,price);
 

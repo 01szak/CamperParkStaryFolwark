@@ -25,22 +25,22 @@ public class CamperPlaceService {
     }
 
     @Transactional
-    public void createCamperPlace(Type type, BigDecimal price) {
+    public void createCamperPlace(String type, double price) {
         if (type == null) {
             throw new IllegalArgumentException("Type is required");
         }
-        if (price == null || price.intValue() == 0) {
+        if (price <= 0) {
             throw new IllegalArgumentException("Price must be positive");
         }
 
         setCamperPlace(type, price);
     }
         @Transactional
-        public void setCamperPlace(Type type, BigDecimal price) {
+        public void setCamperPlace(String type, double price) {
         CamperPlace camperPlace = new CamperPlace();
         if(camperPlace.getIsOccupied() == null)camperPlace.setIsOccupied(false);
-        camperPlace.setType(type);
-        camperPlace.setPrice(price);
+        camperPlace.setType(Type.valueOf(type));
+        camperPlace.setPrice(BigDecimal.valueOf(price));
         camperPlaceRepository.save(camperPlace);
     }
 

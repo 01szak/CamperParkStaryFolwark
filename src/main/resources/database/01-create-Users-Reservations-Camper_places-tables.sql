@@ -43,4 +43,5 @@ CREATE TABLE demo_camper_park_sf.reservations
     INDEX idx_reservation_camper_place (camper_place_id),
     CONSTRAINT chk_valid_status CHECK (status IN ('EXPIRED', 'ACTIVE', 'COMING'))
 );
-
+-- changeset kacper:2
+insert into users(first_name,last_name,email,password_hash,role)value ('test','test','test','$2a$10$2DwqzkRT5DSeSOUjKkJe/.QPXCDj6JZRePHmd2YNmtKEBBoRYgrWO','ADMIN')
