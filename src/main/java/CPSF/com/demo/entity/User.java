@@ -7,15 +7,17 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
 @Entity
 @Table(name = "users")
-@Data
 @Builder
-@AllArgsConstructor
+@Getter
+@Setter
 @NoArgsConstructor
+@AllArgsConstructor
 public class User implements UserDetails {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -59,9 +61,11 @@ public class User implements UserDetails {
    })
     private List<Reservation> reservations;
 
+
+
     public User(String firstName, String lastName, String email, String phoneNumber, String carRegistration, String country, String city, String streetAddress, String password, Role role, List<Reservation> reservations) {
         this.firstName = firstName;
-        lastName = lastName;
+        this.lastName = lastName;
         this.email = email;
         this.phoneNumber = phoneNumber;
         this.carRegistration = carRegistration;

@@ -1,19 +1,22 @@
 package CPSF.com.demo.entity;
 
-import CPSF.com.demo.configuration.auth.RegisterRequest;
+import CPSF.com.demo.A_security.module.AuthDTO;
 import CPSF.com.demo.enums.Role;
+import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
 
 @Component
+@RequiredArgsConstructor
 public class Mapper {
-private final PasswordEncoder passwordEncoder;
 
-    public Mapper(PasswordEncoder passwordEncoder) {
-        this.passwordEncoder = passwordEncoder;
-    }
+//    @Autowired
+//    private final PasswordEncoder passwordEncoder;
+//
+//
 
     public UserDto toDto(User user) {
         return UserDto.builder()
@@ -29,23 +32,23 @@ private final PasswordEncoder passwordEncoder;
                 .build();
 
     }
-
-
-    public User toUser(RegisterRequest request) {
-        return User.builder()
-                .firstName(request.getFirstName())
-                .lastName(request.getLastName())
-                .email(request.getEmail())
-                .phoneNumber(request.getPhoneNumber())
-                .carRegistration(request.getCarRegistration())
-                .country(request.getCountry())
-                .city(request.getCity())
-                .streetAddress(request.getStreetAddress())
-                .password(passwordEncoder.encode(request.getPassword()))
-                .role(Role.GUEST)
-                .reservations(new ArrayList<Reservation>())
-                .build();
-
-    }
+//
+//
+//    public User toUser(AuthDTO.RegisterRequest request) {
+//        return User.builder()
+//                .firstName(request.firstName())
+//                .lastName(request.lastName())
+//                .email(request.email())
+//                .phoneNumber(request.phoneNumber())
+//                .carRegistration(request.carRegistration())
+//                .country(request.country())
+//                .city(request.city())
+//                .streetAddress(request.streetAddress())
+//                .password(passwordEncoder.encode(request.streetAddress()))
+//                .role(Role.GUEST)
+//                .reservations(new ArrayList<Reservation>())
+//                .build();
+//
+//    }
 }
 

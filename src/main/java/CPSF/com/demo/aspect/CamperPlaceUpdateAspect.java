@@ -5,6 +5,7 @@ import CPSF.com.demo.entity.Reservation;
 import CPSF.com.demo.enums.ReservationStatus;
 import CPSF.com.demo.service.CamperPlaceService;
 import CPSF.com.demo.service.ReservationService;
+import lombok.RequiredArgsConstructor;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Before;
 import org.springframework.context.annotation.EnableAspectJAutoProxy;
@@ -18,12 +19,12 @@ import java.util.stream.Stream;
 @Aspect
 @Component
 @EnableAspectJAutoProxy
+@RequiredArgsConstructor
 public class CamperPlaceUpdateAspect {
+
     private final ReservationService reservationService;
 
-    public CamperPlaceUpdateAspect( ReservationService reservationService) {
-        this.reservationService = reservationService;
-    }
+
     @Before("execution(* CPSF.com.demo.controller.*.*(..))")
     @Transactional
     public void setIsOccupiedAndReservationStatusDependingOnReservationDay(){

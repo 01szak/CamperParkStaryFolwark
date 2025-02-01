@@ -26,7 +26,7 @@ public class UserController {
     }
     @GetMapping("/findBy{email}")
     public UserDto findByEmail(@PathVariable String email){
-        return userService.findByEmail(email);
+        return (UserDto) userService.loadUserByUsername(email);
     }
 
 

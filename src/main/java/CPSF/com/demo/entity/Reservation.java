@@ -3,7 +3,6 @@ package CPSF.com.demo.entity;
 import CPSF.com.demo.enums.ReservationStatus;
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonFormat;
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.AssertTrue;
 import jakarta.validation.constraints.NotNull;
@@ -64,10 +63,9 @@ public class Reservation {
         return daysDifference;
     }
 
-    public BigDecimal calculateFinalPrice(){
-        BigDecimal price = camperPlace.getPrice();
-        BigDecimal finalPrice = price.multiply(BigDecimal.valueOf(daysDifference())) ;
-        return finalPrice;
+    public double calculateFinalPrice(){
+        double price = camperPlace.getPrice();
+        return price * daysDifference();
     }
     @AssertTrue(message = "Check-out date must be after check-in date")
     private boolean sCheckoutAfterCheckin() {

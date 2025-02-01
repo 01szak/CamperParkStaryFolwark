@@ -33,14 +33,14 @@ public class ReservationController {
         this.userService = userService;
     }
 
-    @PostMapping("/createReservation")
-    public void createReservation(
-            @RequestParam int camperPlaceNumber,
-            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate enter,
-            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate checkout) {
-
-        reservationService.createReservation(camperPlaceNumber, enter, checkout);
-    }
+//    @PostMapping("/createReservation")
+//    public void createReservation(
+//            @RequestParam int camperPlaceNumber,
+//            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate enter,
+//            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate checkout) {
+//
+//        reservationService.createReservation(camperPlaceNumber, enter, checkout);
+//    }
 
     @GetMapping("/find/{reservationId}")
     public Reservation findReservationById(@PathVariable int reservationId) {

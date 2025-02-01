@@ -4,15 +4,19 @@ import CPSF.com.demo.entity.Mapper;
 import CPSF.com.demo.entity.User;
 import CPSF.com.demo.entity.UserDto;
 import CPSF.com.demo.repository.UserRepository;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
+
 import java.util.List;
 
 @Service
-public class UserService {
+public class UserService implements UserDetailsService {
     private final UserRepository userRepository;
     private final Mapper mapper;
 
-    public UserService(UserRepository userRepository,Mapper mapper) {
+    public UserService(UserRepository userRepository, Mapper mapper) {
         this.userRepository = userRepository;
         this.mapper = mapper;
     }
@@ -23,11 +27,15 @@ public class UserService {
                 .map(mapper::toDto)
                 .toList();
     }
-    public UserDto findByEmail(String email) {
-        User user = userRepository.findByEmail(email).orElseThrow();
 
-        return mapper.toDto(user);
-    }    public User findUserByEmailForAuthenticationPurpose(String email) {
+    @Override
+    public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
+
+        return userRepository.findByEmail(email).orElseThrow();
+
+    }
+
+    public User findUserByEmailForAuthenticationPurpose(String email) {
 
         return userRepository.findByEmail(email).orElseThrow();
     }
@@ -36,4 +44,6 @@ public class UserService {
     public void save(User user) {
         userRepository.save(user);
     }
+
+
 }

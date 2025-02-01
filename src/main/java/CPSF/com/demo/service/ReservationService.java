@@ -1,15 +1,13 @@
 package CPSF.com.demo.service;
 
-import CPSF.com.demo.configuration.auth.JwtAuthenticationFilter;
-import CPSF.com.demo.controller.AuthenticationController;
 import CPSF.com.demo.entity.CamperPlace;
 import CPSF.com.demo.entity.Reservation;
 import CPSF.com.demo.entity.User;
 import CPSF.com.demo.enums.ReservationStatus;
 import CPSF.com.demo.repository.ReservationRepository;
 import CPSF.com.demo.repository.UserRepository;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Lazy;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
@@ -21,51 +19,48 @@ import java.util.Arrays;
 import java.util.List;
 
 @Service
+@RequiredArgsConstructor
 public class ReservationService {
 
+    @Autowired
     private final ReservationRepository reservationRepository;
-    private final CamperPlaceService camperPlaceService;
-    private final UserRepository userRepository;
-
+//    @Autowired
+//    private final CamperPlaceService camperPlaceService;
+//    @Autowired
+//    private final UserService userService;
     private final Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 
-    @Autowired
-    public ReservationService(ReservationRepository theReservationRepository, CamperPlaceService camperPlaceService, UserService userService, UserRepository userRepository) {
-        this.reservationRepository = theReservationRepository;
-        this.camperPlaceService = camperPlaceService;
-        this.userRepository = userRepository;
-    }
 
-    @Transactional
-    public void setReservation(Reservation reservation, CamperPlace camperPlace, LocalDate checkin, LocalDate checkout,ReservationStatus reservationStatus) {
-        User theUser = userRepository.findByEmail(authentication.getName()).orElseThrow();
-        reservation.setUser(theUser);
-        System.out.println(theUser);
-        reservation.setCamperPlace(camperPlace);
-        reservation.setCheckin(checkin);
-        reservation.setCheckout(checkout);
-        reservation.setReservationStatus(reservationStatus);
-        reservationRepository.save(reservation);
-    }
+//    @Transactional
+//    public void setReservation(CamperPlace camperPlace, LocalDate checkin, LocalDate checkout) {
+//        Reservation reservation = new Reservation();
+//        User theUser = (User) userService.loadUserByUsername(authentication.getName());
+//        reservation.setUser(theUser);
+//        System.out.println(theUser);
+//        reservation.setCamperPlace(camperPlace);
+//        reservation.setCheckin(checkin);
+//        reservation.setCheckout(checkout);
+//        reservationRepository.save(reservation);
+//    }
 
-    @Transactional
-    public void createReservation( int camperPlaceNumber, LocalDate enter, LocalDate checkout) {
-
-        if (camperPlaceService.isCamperPlaceOccupied(camperPlaceNumber).equals(false)) {
-
-            CamperPlace camperPlace = camperPlaceService.findCamperPlaceById(camperPlaceNumber);
-             setReservation(new Reservation(), camperPlace, enter, checkout,ReservationStatus.COMING);
-
-            System.out.println(
-                    "You have successfully made a reservation: \nid: "
-                            + camperPlace.getId()
-                            + "\ndate: " + enter + "/" + checkout);
-        } else {
-
-            System.out.println("The place you have chosen is occupied");
-
-        }
-    }
+//    @Transactional
+//    public void createReservation(int camperPlaceNumber, LocalDate checkin, LocalDate checkout) {
+//
+//        if (camperPlaceService.isCamperPlaceOccupied(camperPlaceNumber).equals(false)) {
+//
+//            CamperPlace camperPlace = camperPlaceService.findCamperPlaceById(camperPlaceNumber);
+//            setReservation(camperPlace, checkin, checkout);
+//
+//            System.out.println(
+//                    "You have successfully made a reservation: \nid: "
+//                            + camperPlace.getId()
+//                            + "\ndate: " + checkin + "/" + checkout);
+//        } else {
+//
+//            System.out.println("The place you have chosen is occupied");
+//
+//        }
+//    }
 
     public List<Reservation> findAllReservations() {
         List<Reservation> allReservations = reservationRepository.findAll();
@@ -86,12 +81,13 @@ public class ReservationService {
         List<Reservation> reservations = reservationRepository.findAllByCamperPlaceId(camperPlaceId);
         return reservations;
     }
-    public List<Reservation>findReservationByReservationStatus(ReservationStatus ...args){
+
+    public List<Reservation> findReservationByReservationStatus(ReservationStatus... args) {
         List<Reservation> allReservations = reservationRepository.findAll();
         List<Reservation> reservations = new ArrayList<>();
-        for(Reservation reservation : allReservations){
-            if(Arrays.stream(args)
-                    .anyMatch(status -> status == reservation.getReservationStatus())){
+        for (Reservation reservation : allReservations) {
+            if (Arrays.stream(args)
+                    .anyMatch(status -> status == reservation.getReservationStatus())) {
                 reservations.add(reservation);
             }
         }
@@ -102,7 +98,6 @@ public class ReservationService {
     public void deleteReservation(Reservation reservation) {
         reservationRepository.delete(reservation);
     }
-
 
 
     @Transactional
