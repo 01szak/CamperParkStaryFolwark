@@ -1,5 +1,6 @@
-package CPSF.com.demo.entity;
+package CPSF.com.demo.entity.DTO;
 
+import CPSF.com.demo.entity.Reservation;
 import jakarta.persistence.Entity;
 import lombok.AllArgsConstructor;
 import lombok.Builder;

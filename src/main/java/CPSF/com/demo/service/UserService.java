@@ -2,7 +2,7 @@ package CPSF.com.demo.service;
 
 import CPSF.com.demo.entity.Mapper;
 import CPSF.com.demo.entity.User;
-import CPSF.com.demo.entity.UserDto;
+import CPSF.com.demo.entity.DTO.UserDto;
 import CPSF.com.demo.repository.UserRepository;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;

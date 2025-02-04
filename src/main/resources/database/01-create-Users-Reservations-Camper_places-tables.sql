@@ -1,7 +1,5 @@
 -- liquibase formatted sql
 -- changeset kacper:1
-
-
 CREATE TABLE demo_camper_park_sf.users
 (
     id               BIGINT AUTO_INCREMENT PRIMARY KEY,
@@ -44,5 +42,10 @@ CREATE TABLE demo_camper_park_sf.reservations
     CONSTRAINT chk_valid_status CHECK (status IN ('EXPIRED', 'ACTIVE', 'COMING'))
 );
 -- changeset kacper:2
-insert into users(first_name,last_name,email,password_hash,role)value ('test','test','test','$2a$10$2DwqzkRT5DSeSOUjKkJe/.QPXCDj6JZRePHmd2YNmtKEBBoRYgrWO','ADMIN')
+-- validCheckSum: 9:054846e02e4e354624b21659cfb4bec5
+insert into users(first_name,last_name,email,password_hash,role)value ('test','test','test','$2a$10$2DwqzkRT5DSeSOUjKkJe/.QPXCDj6JZRePHmd2YNmtKEBBoRYgrWO','ADMIN');
+
+-- changeset kacper:3
+-- validCheckSum: 9:de39d94f7b173dfc055cbce6287ed736
+alter table camper_places add column number Integer not null;
 

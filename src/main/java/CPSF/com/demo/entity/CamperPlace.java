@@ -22,6 +22,9 @@ public class CamperPlace {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
 
+    @Column(name = "number")
+    @NonNull
+    private int number;
 
     @Column(name = "is_Occupied")
     @NonNull

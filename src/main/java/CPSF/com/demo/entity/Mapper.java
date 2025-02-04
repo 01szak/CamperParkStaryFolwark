@@ -1,10 +1,7 @@
 package CPSF.com.demo.entity;
 
-import CPSF.com.demo.A_security.module.AuthDTO;
-import CPSF.com.demo.enums.Role;
+import CPSF.com.demo.entity.DTO.UserDto;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;

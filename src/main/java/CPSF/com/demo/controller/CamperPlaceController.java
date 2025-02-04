@@ -13,16 +13,19 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/camperPlace")
-@RequiredArgsConstructor
 public class CamperPlaceController {
-    @Autowired
     private final CamperPlaceService camperPlaceService;
+
+    @Autowired
+    public CamperPlaceController(CamperPlaceService camperPlaceService) {
+        this.camperPlaceService = camperPlaceService;
+    }
 
 
     @PostMapping("/create")
-    public void createCamperPlace (@RequestBody CamperPlaceRequest request) {
+    public void createCamperPlace(@RequestBody CamperPlaceRequest request) {
 
-        camperPlaceService.createCamperPlace(request.type(),request.price());
+        camperPlaceService.createCamperPlace(request.type(), request.price());
 
     }
 
@@ -38,7 +41,7 @@ public class CamperPlaceController {
     }
 
     @DeleteMapping("/deleteCamperPlace/{camperPlaceNumber}")
-    public void deleteCamperPlace(@PathVariable int camperPlaceNumber){
+    public void deleteCamperPlace(@PathVariable int camperPlaceNumber) {
         camperPlaceService.deleteCamperPlace(camperPlaceNumber);
     }
 }

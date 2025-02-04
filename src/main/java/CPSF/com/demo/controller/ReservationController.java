@@ -54,14 +54,15 @@ public class ReservationController {
         return reservations;
     }
 
+
     @GetMapping("/findAll")
     public List<Reservation> findAllReservations() {
 
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        User user = userService.findUserByEmailForAuthenticationPurpose(authentication.getName());
-        if (user.getRole().equals(Role.GUEST)) {
-            return reservationService.findAllUserReservations(user.getId());
-        }
+//        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+//        User user = userService.findUserByEmailForAuthenticationPurpose(authentication.getName());
+//        if (user.getRole().equals(Role.GUEST)) {
+//            return reservationService.findAllUserReservations(user.getId());
+//        }
         return reservationService.findAllReservations();
     }
 

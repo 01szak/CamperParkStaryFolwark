@@ -5,6 +5,8 @@ import CPSF.com.demo.entity.Reservation;
 import CPSF.com.demo.enums.ReservationStatus;
 import CPSF.com.demo.enums.Type;
 import CPSF.com.demo.repository.CamperPlaceRepository;
+import jakarta.persistence.Id;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -20,21 +22,33 @@ public class CamperPlaceService {
 
     private final CamperPlaceRepository camperPlaceRepository;
 
+    @Autowired
     public CamperPlaceService(CamperPlaceRepository camperPlaceRepository) {
         this.camperPlaceRepository = camperPlaceRepository;
     }
-public void deleteCamperPlace(int camperPlaceNumber){
-        camperPlaceRepository.delete(findCamperPlaceById(camperPlaceNumber));
-}
+
+    @Transactional
+    public void deleteCamperPlace(int camperPlaceNumber) {
+
+        camperPlaceRepository.delete(camperPlaceRepository.findCamperPlaceByNumber(camperPlaceNumber));
+
+        camperPlaceRepository.findAll().forEach(camperPlace -> {
+            if (camperPlace.getNumber() > camperPlaceNumber) {
+                camperPlace.setNumber(camperPlace.getNumber() - 1);
+            }
+        });
+    }
+
     @Transactional
     public void createCamperPlace(Type type, double price) {
-        if(Stream.of(Type.values()).noneMatch(type::equals)) {
+        if (Stream.of(Type.values()).noneMatch(type::equals)) {
             throw new IllegalArgumentException("Invalid type");
         }
         if (price <= 0) {
             throw new IllegalArgumentException("Price must be positive");
         }
-        camperPlaceRepository.save(new CamperPlace(false,type, price));
+        int id = camperPlaceRepository.findMaxNumber() + 1;
+        camperPlaceRepository.save(new CamperPlace(id, false, type, price));
     }
 
 
