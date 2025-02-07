@@ -6,6 +6,7 @@ import CPSF.com.demo.entity.Reservation;
 import CPSF.com.demo.entity.User;
 import CPSF.com.demo.enums.Role;
 import CPSF.com.demo.service.UserService;
+import ch.qos.logback.core.pattern.util.RegularEscapeUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -45,22 +46,22 @@ public class AuthController {
 
     @PostMapping("/register")
     public ResponseEntity<?> register(@RequestBody AuthDTO.RegisterRequest request) throws SQLIntegrityConstraintViolationException {
-        User user = new User(
-                request.firstName(),
-                request.lastName(),
-                request.email(),
-                request.phoneNumber(),
-                request.carRegistration(),
-                request.country(),
-                request.city(),
-                request.streetAddress(),
-                request.password(),
-                Role.GUEST,
-                new ArrayList<Reservation>()
+        User user;
+        userService.create(
+                user = User.builder()
+                        .firstName(request.firstName())
+                        .lastName(request.lastName())
+                        .email(request.email())
+                        .phoneNumber(request.phoneNumber())
+                        .carRegistration(request.carRegistration())
+                        .country(request.country())
+                        .city(request.city())
+                        .streetAddress(request.streetAddress())
+                        .password(request.password())
+                        .reservations(new ArrayList<Reservation>())
+                        .role(Role.GUEST)
+                        .build()
         );
-        userService.save(user);
-
-
         UsernamePasswordAuthenticationToken a = new UsernamePasswordAuthenticationToken(user.getUsername(), user.getPassword());
         Authentication authentication = authenticationManager.authenticate(a);
         SecurityContextHolder.getContext().setAuthentication(authentication);

@@ -4,7 +4,6 @@ import CPSF.com.demo.entity.CamperPlace;
 import CPSF.com.demo.entity.DTO.CamperPlaceRequest;
 import CPSF.com.demo.enums.Type;
 import CPSF.com.demo.service.CamperPlaceService;
-import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -40,8 +39,12 @@ public class CamperPlaceController {
         return Arrays.stream(Type.values()).map(Enum::toString).toList();
     }
 
-    @DeleteMapping("/deleteCamperPlace/{camperPlaceNumber}")
-    public void deleteCamperPlace(@PathVariable int camperPlaceNumber) {
-        camperPlaceService.deleteCamperPlace(camperPlaceNumber);
+    @DeleteMapping("/deleteCamperPlace/{number}")
+    public void deleteCamperPlace(@PathVariable int number) {
+        camperPlaceService.deleteCamperPlace(number);
+    }
+    @GetMapping("/find/{number}")
+    public CamperPlace findCamperPlaceByCamperPlaceNumber(@PathVariable int number) {
+        return camperPlaceService.findCamperPlaceByNumber(number);
     }
 }

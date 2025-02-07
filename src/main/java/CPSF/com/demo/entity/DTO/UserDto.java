@@ -1,7 +1,6 @@
 package CPSF.com.demo.entity.DTO;
 
 import CPSF.com.demo.entity.Reservation;
-import jakarta.persistence.Entity;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -25,5 +24,11 @@ public class UserDto {
     private String city;
     private String streetAddress;
 
-
+    @Override
+    public String toString() {
+        return "UserDto{" +
+                "firstName='" + firstName + '\'' +
+                ", lastName='" + lastName + '\'' +
+                '}';
+    }
 }

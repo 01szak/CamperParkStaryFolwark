@@ -1,6 +1,8 @@
 package CPSF.com.demo.entity;
 
 import CPSF.com.demo.enums.Role;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.*;
 import org.springframework.security.core.GrantedAuthority;
@@ -53,29 +55,16 @@ public class User implements UserDetails {
     @Column(name = "role")
     private Role role;
 
-    @OneToMany(mappedBy = "user",fetch = FetchType.EAGER,cascade = {
+    @OneToMany(mappedBy = "user",fetch = FetchType.LAZY,cascade = {
            CascadeType.DETACH,
            CascadeType.MERGE,
            CascadeType.PERSIST,
            CascadeType.REFRESH
    })
+    @JsonManagedReference("user-reservations")
     private List<Reservation> reservations;
 
 
-
-    public User(String firstName, String lastName, String email, String phoneNumber, String carRegistration, String country, String city, String streetAddress, String password, Role role, List<Reservation> reservations) {
-        this.firstName = firstName;
-        this.lastName = lastName;
-        this.email = email;
-        this.phoneNumber = phoneNumber;
-        this.carRegistration = carRegistration;
-        this.country = country;
-        this.city = city;
-        this.streetAddress = streetAddress;
-        this.password = password;
-        this.role = role;
-        this.reservations = reservations;
-    }
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {

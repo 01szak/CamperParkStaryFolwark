@@ -2,6 +2,8 @@ package CPSF.com.demo.entity;
 
 import CPSF.com.demo.enums.Type;
 import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.*;
 import lombok.*;
@@ -45,7 +47,7 @@ public class CamperPlace {
             CascadeType.PERSIST,
             CascadeType.REFRESH
     })
-
+    @JsonManagedReference("camperPlace-reservations")
     private List<Reservation> reservations;
 
 

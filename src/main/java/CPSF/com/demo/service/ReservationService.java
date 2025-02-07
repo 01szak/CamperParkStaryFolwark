@@ -5,7 +5,6 @@ import CPSF.com.demo.entity.Reservation;
 import CPSF.com.demo.entity.User;
 import CPSF.com.demo.enums.ReservationStatus;
 import CPSF.com.demo.repository.ReservationRepository;
-import CPSF.com.demo.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
@@ -22,68 +21,55 @@ import java.util.List;
 @RequiredArgsConstructor
 public class ReservationService {
 
-    @Autowired
-    private final ReservationRepository reservationRepository;
-//    @Autowired
-//    private final CamperPlaceService camperPlaceService;
-//    @Autowired
-//    private final UserService userService;
+    ReservationRepository reservationRepository;
+     CamperPlaceService camperPlaceService;
+    UserService userService;
+@Autowired
+    public ReservationService(ReservationRepository reservationRepository, CamperPlaceService camperPlaceService, UserService userService) {
+        this.reservationRepository = reservationRepository;
+        this.camperPlaceService = camperPlaceService;
+        this.userService = userService;
+    }
+
     private final Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 
 
-//    @Transactional
-//    public void setReservation(CamperPlace camperPlace, LocalDate checkin, LocalDate checkout) {
-//        Reservation reservation = new Reservation();
-//        User theUser = (User) userService.loadUserByUsername(authentication.getName());
-//        reservation.setUser(theUser);
-//        System.out.println(theUser);
-//        reservation.setCamperPlace(camperPlace);
-//        reservation.setCheckin(checkin);
-//        reservation.setCheckout(checkout);
-//        reservationRepository.save(reservation);
-//    }
+    @Transactional
+    public void createReservation(LocalDate checkin, LocalDate checkout, CamperPlace camperPlace, User user) {
+        userService.create(user);
 
-//    @Transactional
-//    public void createReservation(int camperPlaceNumber, LocalDate checkin, LocalDate checkout) {
-//
-//        if (camperPlaceService.isCamperPlaceOccupied(camperPlaceNumber).equals(false)) {
-//
-//            CamperPlace camperPlace = camperPlaceService.findCamperPlaceById(camperPlaceNumber);
-//            setReservation(camperPlace, checkin, checkout);
-//
-//            System.out.println(
-//                    "You have successfully made a reservation: \nid: "
-//                            + camperPlace.getId()
-//                            + "\ndate: " + checkin + "/" + checkout);
-//        } else {
-//
-//            System.out.println("The place you have chosen is occupied");
-//
-//        }
-//    }
+        System.out.println(
+                "You have successfully made a reservation: \nid: "
+                        + camperPlace.getId()
+                        + "\ndate: " + checkin + "/" + checkout);
+
+        reservationRepository.save(Reservation.builder()
+                .checkin(checkin)
+                .checkout(checkout)
+                .camperPlace(camperPlace)
+                .user(user)
+                .build());
+
+    }
 
     public List<Reservation> findAllReservations() {
-        List<Reservation> allReservations = reservationRepository.findAll();
-        return allReservations;
+        return reservationRepository.findAll();
     }
 
     public Reservation findReservationById(int reservationId) {
-        Reservation reservation = reservationRepository.findById(reservationId).orElseThrow();
-        return reservation;
+        return reservationRepository.findById(reservationId).orElseThrow();
     }
 
     public List<Reservation> findByUserId(int userId) {
-        List<Reservation> reservations = reservationRepository.findByUserId(userId);
-        return reservations;
+        return reservationRepository.findByUserId(userId);
     }
 
     public List<Reservation> findAllReservationsByCamperPlace(int camperPlaceId) {
-        List<Reservation> reservations = reservationRepository.findAllByCamperPlaceId(camperPlaceId);
-        return reservations;
+        return reservationRepository.findAllByCamperPlaceId(camperPlaceId);
     }
 
     public List<Reservation> findReservationByReservationStatus(ReservationStatus... args) {
-        List<Reservation> allReservations = reservationRepository.findAll();
+        List<Reservation> allReservations = findAllReservations();
         List<Reservation> reservations = new ArrayList<>();
         for (Reservation reservation : allReservations) {
             if (Arrays.stream(args)

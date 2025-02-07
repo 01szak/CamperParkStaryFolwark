@@ -56,18 +56,14 @@ public class CamperPlaceService {
         return camperPlaceRepository.findAll();
     }
 
-    public CamperPlace findCamperPlaceById(int camperPlaceId) {
-        return camperPlaceRepository.findById(camperPlaceId).orElseThrow();
+    public CamperPlace findCamperPlaceByNumber(int number) {
+        return camperPlaceRepository.findCamperPlaceByNumber(number);
     }
 
-    public Boolean isCamperPlaceOccupied(int camperPlaceNumber) {
-        CamperPlace camperPlace = findCamperPlaceById(camperPlaceNumber);
+    public Boolean isCamperPlaceOccupied(int number) {
+        CamperPlace camperPlace = findCamperPlaceByNumber(number);
 
-        if (camperPlace.getIsOccupied().equals(true)) {
-            return true;
-        }
-
-        return false;
+        return camperPlace.getIsOccupied();
     }
 
 

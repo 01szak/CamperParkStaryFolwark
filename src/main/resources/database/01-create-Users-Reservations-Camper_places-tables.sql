@@ -49,3 +49,6 @@ insert into users(first_name,last_name,email,password_hash,role)value ('test','t
 -- validCheckSum: 9:de39d94f7b173dfc055cbce6287ed736
 alter table camper_places add column number Integer not null;
 
+-- changeset kacper:4
+ALTER TABLE users MODIFY COLUMN password_hash VARCHAR(255) DEFAULT NULL;
+

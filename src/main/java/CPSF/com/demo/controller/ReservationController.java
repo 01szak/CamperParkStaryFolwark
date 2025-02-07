@@ -1,6 +1,8 @@
 package CPSF.com.demo.controller;
 
 import CPSF.com.demo.entity.CamperPlace;
+import CPSF.com.demo.entity.DTO.ReservationDto;
+import CPSF.com.demo.entity.DTO.ReservationRequest;
 import CPSF.com.demo.entity.Reservation;
 import CPSF.com.demo.entity.User;
 import CPSF.com.demo.enums.ReservationStatus;
@@ -17,7 +19,9 @@ import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeParseException;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Stream;
 
 @Transactional
 @RestController
@@ -33,14 +37,11 @@ public class ReservationController {
         this.userService = userService;
     }
 
-//    @PostMapping("/createReservation")
-//    public void createReservation(
-//            @RequestParam int camperPlaceNumber,
-//            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate enter,
-//            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate checkout) {
-//
-//        reservationService.createReservation(camperPlaceNumber, enter, checkout);
-//    }
+    @PostMapping("/createReservation")
+    public void createReservation(@RequestBody ReservationRequest request) {
+        reservationService.createReservation(request.checkin(), request.checkout(), request.camperPlace(), request.user());
+    }
+
 
     @GetMapping("/find/{reservationId}")
     public Reservation findReservationById(@PathVariable int reservationId) {
@@ -56,14 +57,11 @@ public class ReservationController {
 
 
     @GetMapping("/findAll")
-    public List<Reservation> findAllReservations() {
-
-//        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-//        User user = userService.findUserByEmailForAuthenticationPurpose(authentication.getName());
-//        if (user.getRole().equals(Role.GUEST)) {
-//            return reservationService.findAllUserReservations(user.getId());
-//        }
-        return reservationService.findAllReservations();
+    public List<ReservationDto> findAllReservations() {
+        List<ReservationDto> allReservationDto = new ArrayList<>();
+        List<Reservation> allReservations = reservationService.findAllReservations();
+        allReservations.forEach(reservation -> allReservationDto.add(new ReservationDto(reservation)));
+        return allReservationDto;
     }
 
     @PutMapping("/updateReservation")
