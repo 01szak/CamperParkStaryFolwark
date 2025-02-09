@@ -49,20 +49,20 @@ public class ReservationController {
         return reservation;
     }
 
-    @GetMapping("/findByReservationStatus")
-    public List<Reservation> findReservationsDependingOnStatus(@RequestParam ReservationStatus... args) {
-        List<Reservation> reservations = reservationService.findReservationByReservationStatus(args);
-        return reservations;
-    }
+//    @GetMapping("/findByReservationStatus")
+//    public List<Reservation> findReservationsDependingOnStatus(@RequestParam ReservationStatus... args) {
+//        List<Reservation> reservations = reservationService.findReservationByReservationStatus(args);
+//        return reservations;
+//    }
 
 
-    @GetMapping("/findAll")
-    public List<ReservationDto> findAllReservations() {
-        List<ReservationDto> allReservationDto = new ArrayList<>();
-        List<Reservation> allReservations = reservationService.findAllReservations();
-        allReservations.forEach(reservation -> allReservationDto.add(new ReservationDto(reservation)));
-        return allReservationDto;
-    }
+//    @GetMapping("/findAll")
+//    public List<ReservationDto> findAllReservations() {
+//        List<ReservationDto> allReservationDto = new ArrayList<>();
+//        List<Reservation> allReservations = reservationService.findAllReservations();
+//        allReservations.forEach(reservation -> allReservationDto.add(new ReservationDto(reservation)));
+//        return allReservationDto;
+//    }
 
     @PutMapping("/updateReservation")
     public void updateReservation(

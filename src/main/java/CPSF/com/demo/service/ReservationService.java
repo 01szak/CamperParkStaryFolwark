@@ -1,6 +1,8 @@
 package CPSF.com.demo.service;
 
 import CPSF.com.demo.entity.CamperPlace;
+import CPSF.com.demo.entity.DTO.ReservationDto;
+import CPSF.com.demo.entity.Mapper;
 import CPSF.com.demo.entity.Reservation;
 import CPSF.com.demo.entity.User;
 import CPSF.com.demo.enums.ReservationStatus;
@@ -16,20 +18,17 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Stream;
 
 @Service
 @RequiredArgsConstructor
 public class ReservationService {
-
+    @Autowired
     ReservationRepository reservationRepository;
-     CamperPlaceService camperPlaceService;
+    @Autowired
     UserService userService;
-@Autowired
-    public ReservationService(ReservationRepository reservationRepository, CamperPlaceService camperPlaceService, UserService userService) {
-        this.reservationRepository = reservationRepository;
-        this.camperPlaceService = camperPlaceService;
-        this.userService = userService;
-    }
+    @Autowired
+    Mapper mapper;
 
     private final Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 
@@ -52,8 +51,8 @@ public class ReservationService {
 
     }
 
-    public List<Reservation> findAllReservations() {
-        return reservationRepository.findAll();
+    public List<ReservationDto> findAllReservations() {
+        return reservationRepository.findAll().stream().map(mapper::toReservationDto).toList();
     }
 
     public Reservation findReservationById(int reservationId) {
@@ -68,17 +67,6 @@ public class ReservationService {
         return reservationRepository.findAllByCamperPlaceId(camperPlaceId);
     }
 
-    public List<Reservation> findReservationByReservationStatus(ReservationStatus... args) {
-        List<Reservation> allReservations = findAllReservations();
-        List<Reservation> reservations = new ArrayList<>();
-        for (Reservation reservation : allReservations) {
-            if (Arrays.stream(args)
-                    .anyMatch(status -> status == reservation.getReservationStatus())) {
-                reservations.add(reservation);
-            }
-        }
-        return reservations;
-    }
 
     @Transactional
     public void deleteReservation(Reservation reservation) {
@@ -97,6 +85,26 @@ public class ReservationService {
 
     public List<Reservation> findAllUserReservations(int id) {
         return reservationRepository.findByUserId(id);
+    }
+
+    public List<ReservationDto> getFilteredData(String value) {
+        List<ReservationDto> allReservationsDto = findAllReservations();
+
+        List<ReservationDto> filteredList = new ArrayList<>();
+        String filterValue = value.toLowerCase();
+        allReservationsDto.forEach(reservationDto -> {
+            if (reservationDto.getCheckin().toString().contains(filterValue) ||
+                    reservationDto.getCheckout().toString().contains(filterValue) ||
+                    reservationDto.getUserFirstName().contains(filterValue) ||
+                    reservationDto.getUserLastName().contains(filterValue) ||
+                    reservationDto.getCamperPlaceNumber() == Integer.parseInt(filterValue) ||
+                    reservationDto.getReservationStatus().contains(filterValue)
+            ) {
+                filteredList.add(reservationDto);
+            }
+
+        });
+        return filteredList;
     }
 }
 

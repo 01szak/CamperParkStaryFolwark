@@ -1,5 +1,6 @@
 package CPSF.com.demo.entity;
 
+import CPSF.com.demo.entity.DTO.ReservationDto;
 import CPSF.com.demo.entity.DTO.UserDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
@@ -15,7 +16,7 @@ public class Mapper {
 //
 //
 
-    public UserDto toDto(User user) {
+    public UserDto toUserDto(User user) {
         return UserDto.builder()
                 .firstName(user.getFirstName())
                 .lastName(user.getLastName())
@@ -28,6 +29,19 @@ public class Mapper {
                 .reservations(new ArrayList<Reservation>())
                 .build();
 
+    }
+
+    public ReservationDto toReservationDto(Reservation reservation) {
+        return ReservationDto.builder()
+                .id(reservation.getId())
+                .checkin(reservation.getCheckin())
+                .checkout(reservation.getCheckout())
+                .camperPlaceNumber(reservation.getCamperPlace().getNumber())
+                .userFirstName(reservation.getUser().getFirstName())
+                .userLastName(reservation.getUser().getLastName())
+                .userEmail(reservation.getUser().getEmail())
+                .reservationStatus(String.valueOf(reservation.getReservationStatus()))
+                .build();
     }
 //
 //

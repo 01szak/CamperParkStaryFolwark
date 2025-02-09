@@ -25,32 +25,32 @@ public class CamperPlaceUpdateAspect {
     private final ReservationService reservationService;
 
 
-    @Before("execution(* CPSF.com.demo.controller.*.*(..))")
-    @Transactional
-    public void setIsOccupiedAndReservationStatusDependingOnReservationDay(){
-        List<Reservation> allReservations = reservationService.findAllReservations();
-        for(Reservation reservation : allReservations){
-       setIsOccupiedAndReservationStatusDependingOnReservationDay(reservation);
-        }
+//    @Before("execution(* CPSF.com.demo.controller.*.*(..))")
+//    @Transactional
+//    public void setIsOccupiedAndReservationStatusDependingOnReservationDay(){
+//        List<Reservation> allReservations = reservationService.findAllReservations();
+//        for(Reservation reservation : allReservations){
+//       setIsOccupiedAndReservationStatusDependingOnReservationDay(reservation);
+//        }
 
-    }
-    public void setIsOccupiedAndReservationStatusDependingOnReservationDay(Reservation reservation) {
-        CamperPlace camperPlace = reservation.getCamperPlace();
-        Stream<LocalDate> daysBetweenEnterAndCheckout = reservation.getCheckin().datesUntil(reservation.getCheckout());
-        Stream<LocalDate> daysBetweenEnterAndCheckout2 = reservation.getCheckin().datesUntil(reservation.getCheckout());
-
-        if (daysBetweenEnterAndCheckout.anyMatch(date -> date.equals(LocalDate.now()))) {
-            reservation.setReservationStatus(ReservationStatus.ACTIVE);
-            camperPlace.setIsOccupied(true);
-        } else if (daysBetweenEnterAndCheckout2.anyMatch(date -> date.isBefore(LocalDate.now()))) {
-            reservation.setReservationStatus(ReservationStatus.EXPIRED);
-            camperPlace.setIsOccupied(false);
-        } else {
-            reservation.setReservationStatus(ReservationStatus.COMING);
-            camperPlace.setIsOccupied(false);
-
-        }
-
-
-    }
+//    }
+//    public void setIsOccupiedAndReservationStatusDependingOnReservationDay(Reservation reservation) {
+//        CamperPlace camperPlace = reservation.getCamperPlace();
+//        Stream<LocalDate> daysBetweenEnterAndCheckout = reservation.getCheckin().datesUntil(reservation.getCheckout());
+//        Stream<LocalDate> daysBetweenEnterAndCheckout2 = reservation.getCheckin().datesUntil(reservation.getCheckout());
+//
+//        if (daysBetweenEnterAndCheckout.anyMatch(date -> date.equals(LocalDate.now()))) {
+//            reservation.setReservationStatus(ReservationStatus.ACTIVE);
+//            camperPlace.setIsOccupied(true);
+//        } else if (daysBetweenEnterAndCheckout2.anyMatch(date -> date.isBefore(LocalDate.now()))) {
+//            reservation.setReservationStatus(ReservationStatus.EXPIRED);
+//            camperPlace.setIsOccupied(false);
+//        } else {
+//            reservation.setReservationStatus(ReservationStatus.COMING);
+//            camperPlace.setIsOccupied(false);
+//
+//        }
+//
+//
+//    }
 }
