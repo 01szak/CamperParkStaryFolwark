@@ -5,7 +5,6 @@ import CPSF.com.demo.entity.DTO.ReservationDto;
 import CPSF.com.demo.entity.Mapper;
 import CPSF.com.demo.entity.Reservation;
 import CPSF.com.demo.entity.User;
-import CPSF.com.demo.enums.ReservationStatus;
 import CPSF.com.demo.repository.ReservationRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,9 +15,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
-import java.util.stream.Stream;
 
 @Service
 @RequiredArgsConstructor
@@ -119,6 +116,54 @@ public class ReservationService {
             return false;
         }
         return true;
+    }
+
+    public List<ReservationDto> getSortedReservations(String sortedHeader,int isAsc) {
+        if (isAsc == 1){
+            return sortAsc(sortedHeader);
+        }
+        return sortDesc(sortedHeader);
+
+
+    }
+
+    private List<ReservationDto> sortAsc(String sortedHeader) {
+        switch (sortedHeader) {
+            case "checkin" -> {
+                return reservationRepository.orderByCheckinAsc().stream().map(mapper::toReservationDto).toList();
+            }
+            case "checkout" -> {
+                return reservationRepository.orderByCheckoutAsc().stream().map(mapper::toReservationDto).toList();
+            }
+            case "guest" -> {
+                return reservationRepository.orderByLastNameAsc().stream().map(mapper::toReservationDto).toList();
+            }
+            case "number" -> {
+                return reservationRepository.orderByCamperPlaceNumberAsc().stream().map(mapper::toReservationDto).toList();
+            }
+            default -> {
+                return findAllReservations();
+            }
+        }
+    }
+    private List<ReservationDto> sortDesc(String sortedHeader) {
+        switch (sortedHeader) {
+            case "checkin" -> {
+                return reservationRepository.orderByCheckinDesc().stream().map(mapper::toReservationDto).toList();
+            }
+            case "checkout" -> {
+                return reservationRepository.orderByCheckoutDesc().stream().map(mapper::toReservationDto).toList();
+            }
+            case "guest" -> {
+                return reservationRepository.orderByLastNameDesc().stream().map(mapper::toReservationDto).toList();
+            }
+            case "number" -> {
+                return reservationRepository.orderByCamperPlaceNumberDesc().stream().map(mapper::toReservationDto).toList();
+            }
+            default -> {
+                return findAllReservations();
+            }
+        }
     }
 }
 
