@@ -88,23 +88,37 @@ public class ReservationService {
     }
 
     public List<ReservationDto> getFilteredData(String value) {
+
         List<ReservationDto> allReservationsDto = findAllReservations();
+        if (value.equals("empty") || value.isEmpty() || value.equals(" ")) {
+            return allReservationsDto;
+        }
 
         List<ReservationDto> filteredList = new ArrayList<>();
         String filterValue = value.toLowerCase();
         allReservationsDto.forEach(reservationDto -> {
             if (reservationDto.getCheckin().toString().contains(filterValue) ||
                     reservationDto.getCheckout().toString().contains(filterValue) ||
-                    reservationDto.getUserFirstName().contains(filterValue) ||
-                    reservationDto.getUserLastName().contains(filterValue) ||
-                    reservationDto.getCamperPlaceNumber() == Integer.parseInt(filterValue) ||
-                    reservationDto.getReservationStatus().contains(filterValue)
+                    reservationDto.getUserFirstName().toLowerCase().contains(filterValue) ||
+                    reservationDto.getUserLastName().toLowerCase().contains(filterValue) ||
+                    reservationDto.getReservationStatus().toLowerCase().contains(filterValue) ||
+                    (isNumber(value) && reservationDto.getCamperPlaceNumber() == Integer.parseInt(value))
+
             ) {
                 filteredList.add(reservationDto);
             }
 
         });
         return filteredList;
+    }
+
+    private boolean isNumber(String value) {
+        try {
+            Integer.parseInt(value);
+        } catch (NumberFormatException e) {
+            return false;
+        }
+        return true;
     }
 }
 

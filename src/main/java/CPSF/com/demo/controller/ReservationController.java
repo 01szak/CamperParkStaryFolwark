@@ -10,6 +10,7 @@ import CPSF.com.demo.enums.Role;
 import CPSF.com.demo.service.CamperPlaceService;
 import CPSF.com.demo.service.ReservationService;
 import CPSF.com.demo.service.UserService;
+import org.springframework.boot.context.properties.bind.DefaultValue;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.security.core.Authentication;
@@ -56,13 +57,10 @@ public class ReservationController {
 //    }
 
 
-//    @GetMapping("/findAll")
-//    public List<ReservationDto> findAllReservations() {
-//        List<ReservationDto> allReservationDto = new ArrayList<>();
-//        List<Reservation> allReservations = reservationService.findAllReservations();
-//        allReservations.forEach(reservation -> allReservationDto.add(new ReservationDto(reservation)));
-//        return allReservationDto;
-//    }
+    @GetMapping("/getFilteredReservations/{value}")
+    public List<ReservationDto> getFilteredReservations(@PathVariable @DefaultValue(value = "") String value) {
+        return reservationService.getFilteredData(value);
+    }
 
     @PutMapping("/updateReservation")
     public void updateReservation(
