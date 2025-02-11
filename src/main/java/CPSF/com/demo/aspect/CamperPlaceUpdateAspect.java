@@ -3,8 +3,8 @@ package CPSF.com.demo.aspect;
 import CPSF.com.demo.entity.CamperPlace;
 import CPSF.com.demo.entity.Reservation;
 import CPSF.com.demo.enums.ReservationStatus;
-import CPSF.com.demo.service.CamperPlaceService;
 import CPSF.com.demo.service.ReservationService;
+import lombok.RequiredArgsConstructor;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Before;
 import org.springframework.context.annotation.EnableAspectJAutoProxy;
@@ -13,35 +13,31 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.util.List;
-import java.util.stream.Stream;
 
 @Aspect
 @Component
 @EnableAspectJAutoProxy
+@RequiredArgsConstructor
 public class CamperPlaceUpdateAspect {
+
     private final ReservationService reservationService;
 
-    public CamperPlaceUpdateAspect( ReservationService reservationService) {
-        this.reservationService = reservationService;
-    }
+
     @Before("execution(* CPSF.com.demo.controller.*.*(..))")
     @Transactional
-    public void setIsOccupiedAndReservationStatusDependingOnReservationDay(){
+    public void setReservationStatusAndIsCamperPlaceOccupied(){
         List<Reservation> allReservations = reservationService.findAllReservations();
-        for(Reservation reservation : allReservations){
-       setIsOccupiedAndReservationStatusDependingOnReservationDay(reservation);
-        }
-
+        allReservations.forEach(this::setReservationStatusAndIsCamperPlaceOccupied);
     }
-    public void setIsOccupiedAndReservationStatusDependingOnReservationDay(Reservation reservation) {
+    @Transactional
+    public void setReservationStatusAndIsCamperPlaceOccupied(Reservation reservation) {
         CamperPlace camperPlace = reservation.getCamperPlace();
-        Stream<LocalDate> daysBetweenEnterAndCheckout = reservation.getCheckin().datesUntil(reservation.getCheckout());
-        Stream<LocalDate> daysBetweenEnterAndCheckout2 = reservation.getCheckin().datesUntil(reservation.getCheckout());
+        List<LocalDate> reservedDays = reservation.getCheckin().datesUntil(reservation.getCheckout()).toList();
 
-        if (daysBetweenEnterAndCheckout.anyMatch(date -> date.equals(LocalDate.now()))) {
+        if (reservedDays.contains(LocalDate.now())) {
             reservation.setReservationStatus(ReservationStatus.ACTIVE);
             camperPlace.setIsOccupied(true);
-        } else if (daysBetweenEnterAndCheckout2.anyMatch(date -> date.isBefore(LocalDate.now()))) {
+        } else if (reservedDays.get(reservedDays.size() - 1).isBefore(LocalDate.now())) {
             reservation.setReservationStatus(ReservationStatus.EXPIRED);
             camperPlace.setIsOccupied(false);
         } else {

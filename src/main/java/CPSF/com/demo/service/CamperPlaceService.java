@@ -5,6 +5,8 @@ import CPSF.com.demo.entity.Reservation;
 import CPSF.com.demo.enums.ReservationStatus;
 import CPSF.com.demo.enums.Type;
 import CPSF.com.demo.repository.CamperPlaceRepository;
+import jakarta.persistence.Id;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -20,48 +22,48 @@ public class CamperPlaceService {
 
     private final CamperPlaceRepository camperPlaceRepository;
 
+    @Autowired
     public CamperPlaceService(CamperPlaceRepository camperPlaceRepository) {
         this.camperPlaceRepository = camperPlaceRepository;
     }
 
     @Transactional
-    public void createCamperPlace(Type type, BigDecimal price) {
-        if (type == null) {
-            throw new IllegalArgumentException("Type is required");
+    public void deleteCamperPlace(int camperPlaceNumber) {
+
+        camperPlaceRepository.delete(camperPlaceRepository.findCamperPlaceByNumber(camperPlaceNumber));
+
+        camperPlaceRepository.findAll().forEach(camperPlace -> {
+            if (camperPlace.getNumber() > camperPlaceNumber) {
+                camperPlace.setNumber(camperPlace.getNumber() - 1);
+            }
+        });
+    }
+
+    @Transactional
+    public void createCamperPlace(Type type, double price) {
+        if (Stream.of(Type.values()).noneMatch(type::equals)) {
+            throw new IllegalArgumentException("Invalid type");
         }
-        if (price == null || price.intValue() == 0) {
+        if (price <= 0) {
             throw new IllegalArgumentException("Price must be positive");
         }
+        int id = camperPlaceRepository.findMaxNumber() + 1;
+        camperPlaceRepository.save(new CamperPlace(id, false, type, price));
+    }
 
-        setCamperPlace(type, price);
-    }
-        @Transactional
-        public void setCamperPlace(Type type, BigDecimal price) {
-        CamperPlace camperPlace = new CamperPlace();
-        if(camperPlace.getIsOccupied() == null)camperPlace.setIsOccupied(false);
-        camperPlace.setType(type);
-        camperPlace.setPrice(price);
-        camperPlaceRepository.save(camperPlace);
-    }
 
     public List<CamperPlace> findAllCamperPlaces() {
-        List<CamperPlace> camperPlaces = camperPlaceRepository.findAll();
-        return camperPlaces;
+        return camperPlaceRepository.findAll();
     }
 
-    public CamperPlace findCamperPlaceById(int camperPlaceId) {
-        CamperPlace camperPlace = camperPlaceRepository.findById(camperPlaceId).orElseThrow();
-        return camperPlace;
+    public CamperPlace findCamperPlaceByNumber(int number) {
+        return camperPlaceRepository.findCamperPlaceByNumber(number);
     }
 
-    public Boolean isCamperPlaceOccupied(int camperPlaceNumber) {
-        CamperPlace camperPlace = findCamperPlaceById(camperPlaceNumber);
+    public Boolean isCamperPlaceOccupied(int number) {
+        CamperPlace camperPlace = findCamperPlaceByNumber(number);
 
-        if (camperPlace.getIsOccupied().equals(true)) {
-            return true;
-        }
-
-        return false;
+        return camperPlace.getIsOccupied();
     }
 
 

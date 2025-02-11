@@ -1,6 +1,8 @@
 package CPSF.com.demo.controller;
 
 import CPSF.com.demo.entity.CamperPlace;
+import CPSF.com.demo.entity.DTO.ReservationDto;
+import CPSF.com.demo.entity.DTO.ReservationRequest;
 import CPSF.com.demo.entity.Reservation;
 import CPSF.com.demo.entity.User;
 import CPSF.com.demo.enums.ReservationStatus;
@@ -8,6 +10,7 @@ import CPSF.com.demo.enums.Role;
 import CPSF.com.demo.service.CamperPlaceService;
 import CPSF.com.demo.service.ReservationService;
 import CPSF.com.demo.service.UserService;
+import org.springframework.boot.context.properties.bind.DefaultValue;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.security.core.Authentication;
@@ -15,9 +18,12 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
+import java.math.BigInteger;
 import java.time.LocalDate;
 import java.time.format.DateTimeParseException;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Stream;
 
 @Transactional
 @RestController
@@ -34,13 +40,10 @@ public class ReservationController {
     }
 
     @PostMapping("/createReservation")
-    public void createReservation(
-            @RequestParam int camperPlaceNumber,
-            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate enter,
-            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate checkout) {
-
-        reservationService.createReservation(camperPlaceNumber, enter, checkout);
+    public void createReservation(@RequestBody ReservationRequest request) {
+        reservationService.createReservation(request.checkin(), request.checkout(), request.camperPlace(), request.user());
     }
+
 
     @GetMapping("/find/{reservationId}")
     public Reservation findReservationById(@PathVariable int reservationId) {
@@ -48,35 +51,27 @@ public class ReservationController {
         return reservation;
     }
 
-    @GetMapping("/findByReservationStatus")
-    public List<Reservation> findReservationsDependingOnStatus(@RequestParam ReservationStatus... args) {
-        List<Reservation> reservations = reservationService.findReservationByReservationStatus(args);
-        return reservations;
+
+    @GetMapping("/getFilteredReservations/{value}")
+    public List<ReservationDto> getFilteredReservations(@PathVariable @DefaultValue(value = "") String value) {
+        return reservationService.getFilteredData(value);
     }
 
-    @GetMapping("/findAll")
-    public List<Reservation> findAllReservations() {
+    @GetMapping("sortTable/{header}/{isAsc}")
+    public List<ReservationDto> getSortedReservations(@PathVariable String header,@PathVariable int isAsc){
+        return reservationService.getSortedReservations(header,isAsc);
+    }
+    @PatchMapping("updateReservation/{id}")
+    public void updateReservation(@PathVariable int id,@RequestBody ReservationRequest request){
+        reservationService.updateReservation(id,request);
 
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        User user = userService.findUserByEmailForAuthenticationPurpose(authentication.getName());
-        if (user.getRole().equals(Role.GUEST)) {
-            return reservationService.findAllUserReservations(user.getId());
-        }
-        return reservationService.findAllReservations();
     }
 
-    @PutMapping("/updateReservation")
-    public void updateReservation(
-            @RequestParam int reservationId,
-            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate newCheckin,
-            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate newCheckout) {
-        reservationService.updateReservation(reservationId, newCheckin, newCheckout);
-    }
 
-    @GetMapping("/find/user/{userId}")
-    public List<Reservation> findReservationByUserId(@PathVariable int userId) {
-        List<Reservation> reservations = reservationService.findByUserId(userId);
-        return reservations;
-    }
+
 }
+
+
+
+
 

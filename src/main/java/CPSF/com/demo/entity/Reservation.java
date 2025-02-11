@@ -4,10 +4,12 @@ import CPSF.com.demo.enums.ReservationStatus;
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.AssertTrue;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
+import org.springframework.context.annotation.Lazy;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -37,40 +39,31 @@ public class Reservation {
 
     @ManyToOne
     @JoinColumn(name = "camper_place_id")
-    @JsonBackReference
+    @Lazy
+    @JsonBackReference("camperPlace-reservations")
     private CamperPlace camperPlace;
 
     @ManyToOne
-    @JoinColumn(name =  "user_id")
-    @JsonBackReference
+    @JoinColumn(name = "user_id")
+    @Lazy
+    @JsonBackReference("user-reservations")
     private User user;
     @Enumerated(EnumType.STRING)
-    @Column(name =  "status")
+    @Column(name = "status")
     @Builder.Default
     private ReservationStatus reservationStatus = COMING;
 
-    public Reservation(int id, LocalDate checkin, LocalDate checkout, CamperPlace camperPlace, User user) {
-        this.id = id;
-        this.checkin = checkin;
-        this.checkout = checkout;
-        this.camperPlace = camperPlace;
-        this.user = user;
 
+    public int daysDifference() {
+        return checkin.until(checkout).getDays();
     }
 
-
-    public int daysDifference(){
-        int daysDifference = checkin.until(checkout).getDays();
-        return daysDifference;
+    public double calculateFinalPrice() {
+        return camperPlace.getPrice() * daysDifference();
     }
 
-    public BigDecimal calculateFinalPrice(){
-        BigDecimal price = camperPlace.getPrice();
-        BigDecimal finalPrice = price.multiply(BigDecimal.valueOf(daysDifference())) ;
-        return finalPrice;
-    }
     @AssertTrue(message = "Check-out date must be after check-in date")
-    private boolean sCheckoutAfterCheckin() {
+    private boolean isCheckoutAfterCheckin() {
         return checkout.isAfter(checkin);
     }
 }

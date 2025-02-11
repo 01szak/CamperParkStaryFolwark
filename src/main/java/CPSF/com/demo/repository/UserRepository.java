@@ -1,11 +1,9 @@
 package CPSF.com.demo.repository;
 
 import CPSF.com.demo.entity.User;
-import CPSF.com.demo.entity.UserDto;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
-import javax.swing.text.html.Option;
 import java.util.Optional;
 
 

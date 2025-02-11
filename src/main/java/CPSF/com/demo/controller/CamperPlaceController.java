@@ -1,43 +1,50 @@
 package CPSF.com.demo.controller;
 
 import CPSF.com.demo.entity.CamperPlace;
+import CPSF.com.demo.entity.DTO.CamperPlaceRequest;
 import CPSF.com.demo.enums.Type;
 import CPSF.com.demo.service.CamperPlaceService;
-import jakarta.validation.constraints.Positive;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
-import java.math.BigDecimal;
 import java.util.Arrays;
 import java.util.List;
-import java.util.stream.Stream;
 
 @RestController
 @RequestMapping("/camperPlace")
 public class CamperPlaceController {
-private final CamperPlaceService camperPlaceService;
+    private final CamperPlaceService camperPlaceService;
+
     @Autowired
     public CamperPlaceController(CamperPlaceService camperPlaceService) {
         this.camperPlaceService = camperPlaceService;
     }
 
-    @PostMapping("/create")
-    @Transactional
-    public void createCamperPlace(
-        @RequestBody Type type,
-        @RequestBody @Positive(message = "Price can't be negative") BigDecimal price){
 
-        camperPlaceService.createCamperPlace(type,price);
+    @PostMapping("/create")
+    public void createCamperPlace(@RequestBody CamperPlaceRequest request) {
+
+        camperPlaceService.createCamperPlace(request.type(), request.price());
 
     }
+
     @GetMapping("/findAll")
-    public List<CamperPlace> finAllCamperPlaces(){
+    public List<CamperPlace> finAllCamperPlaces() {
         return camperPlaceService.findAllCamperPlaces();
 
     }
+
     @GetMapping("/getCamperPlaceTypes")
-    public List<String> getTypes(){
+    public List<String> getTypes() {
         return Arrays.stream(Type.values()).map(Enum::toString).toList();
+    }
+
+    @DeleteMapping("/deleteCamperPlace/{number}")
+    public void deleteCamperPlace(@PathVariable int number) {
+        camperPlaceService.deleteCamperPlace(number);
+    }
+    @GetMapping("/find/{number}")
+    public CamperPlace findCamperPlaceByCamperPlaceNumber(@PathVariable int number) {
+        return camperPlaceService.findCamperPlaceByNumber(number);
     }
 }

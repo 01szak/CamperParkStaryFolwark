@@ -1,21 +1,22 @@
 package CPSF.com.demo.entity;
 
-import CPSF.com.demo.configuration.auth.RegisterRequest;
-import CPSF.com.demo.enums.Role;
-import org.springframework.security.crypto.password.PasswordEncoder;
+import CPSF.com.demo.entity.DTO.ReservationDto;
+import CPSF.com.demo.entity.DTO.UserDto;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
 
 @Component
+@RequiredArgsConstructor
 public class Mapper {
-private final PasswordEncoder passwordEncoder;
 
-    public Mapper(PasswordEncoder passwordEncoder) {
-        this.passwordEncoder = passwordEncoder;
-    }
+//    @Autowired
+//    private final PasswordEncoder passwordEncoder;
+//
+//
 
-    public UserDto toDto(User user) {
+    public UserDto toUserDto(User user) {
         return UserDto.builder()
                 .firstName(user.getFirstName())
                 .lastName(user.getLastName())
@@ -30,22 +31,35 @@ private final PasswordEncoder passwordEncoder;
 
     }
 
-
-    public User toUser(RegisterRequest request) {
-        return User.builder()
-                .firstName(request.getFirstName())
-                .lastName(request.getLastName())
-                .email(request.getEmail())
-                .phoneNumber(request.getPhoneNumber())
-                .carRegistration(request.getCarRegistration())
-                .country(request.getCountry())
-                .city(request.getCity())
-                .streetAddress(request.getStreetAddress())
-                .password(passwordEncoder.encode(request.getPassword()))
-                .role(Role.GUEST)
-                .reservations(new ArrayList<Reservation>())
+    public ReservationDto toReservationDto(Reservation reservation) {
+        return ReservationDto.builder()
+                .id(reservation.getId())
+                .checkin(reservation.getCheckin())
+                .checkout(reservation.getCheckout())
+                .camperPlaceNumber(reservation.getCamperPlace().getNumber())
+                .userFirstName(reservation.getUser().getFirstName())
+                .userLastName(reservation.getUser().getLastName())
+                .userEmail(reservation.getUser().getEmail())
+                .reservationStatus(String.valueOf(reservation.getReservationStatus()))
                 .build();
-
     }
+//
+//
+//    public User toUser(AuthDTO.RegisterRequest request) {
+//        return User.builder()
+//                .firstName(request.firstName())
+//                .lastName(request.lastName())
+//                .email(request.email())
+//                .phoneNumber(request.phoneNumber())
+//                .carRegistration(request.carRegistration())
+//                .country(request.country())
+//                .city(request.city())
+//                .streetAddress(request.streetAddress())
+//                .password(passwordEncoder.encode(request.streetAddress()))
+//                .role(Role.GUEST)
+//                .reservations(new ArrayList<Reservation>())
+//                .build();
+//
+//    }
 }
 
