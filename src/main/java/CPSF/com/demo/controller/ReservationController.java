@@ -18,6 +18,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
+import java.math.BigInteger;
 import java.time.LocalDate;
 import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
@@ -60,6 +61,12 @@ public class ReservationController {
     public List<ReservationDto> getSortedReservations(@PathVariable String header,@PathVariable int isAsc){
         return reservationService.getSortedReservations(header,isAsc);
     }
+    @PatchMapping("updateReservation/{id}")
+    public void updateReservation(@PathVariable int id,@RequestBody ReservationRequest request){
+        reservationService.updateReservation(id,request);
+
+    }
+
 
 
 }

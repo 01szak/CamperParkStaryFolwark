@@ -43,7 +43,7 @@ public class ReservationServiceTest {
 
         };
         String value = "Expired";
-        when(reservationService.findAllReservations()).thenReturn(Arrays.stream(testList).toList());
+        when(reservationService.findAllReservationsDto()).thenReturn(Arrays.stream(testList).toList());
 
         List<ReservationDto> filteredList = reservationService.getFilteredData("Expired");
 

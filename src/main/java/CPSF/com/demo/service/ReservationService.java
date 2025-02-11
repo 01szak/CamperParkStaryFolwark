@@ -2,6 +2,7 @@ package CPSF.com.demo.service;
 
 import CPSF.com.demo.entity.CamperPlace;
 import CPSF.com.demo.entity.DTO.ReservationDto;
+import CPSF.com.demo.entity.DTO.ReservationRequest;
 import CPSF.com.demo.entity.Mapper;
 import CPSF.com.demo.entity.Reservation;
 import CPSF.com.demo.entity.User;
@@ -16,6 +17,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -24,6 +26,8 @@ public class ReservationService {
     ReservationRepository reservationRepository;
     @Autowired
     UserService userService;
+    @Autowired
+    CamperPlaceService camperPlaceService;
     @Autowired
     Mapper mapper;
 
@@ -48,12 +52,16 @@ public class ReservationService {
 
     }
 
-    public List<ReservationDto> findAllReservations() {
+    public List<ReservationDto> findAllReservationsDto() {
         return reservationRepository.findAll().stream().map(mapper::toReservationDto).toList();
     }
 
-    public Reservation findReservationById(int reservationId) {
-        return reservationRepository.findById(reservationId).orElseThrow();
+    public List<Reservation> findAllReservations() {
+        return reservationRepository.findAll();
+    }
+
+    public Reservation findReservationById(int id) {
+        return reservationRepository.findById(id).orElseThrow();
     }
 
     public List<Reservation> findByUserId(int userId) {
@@ -71,13 +79,7 @@ public class ReservationService {
     }
 
 
-    @Transactional
-    public void updateReservation(int reservationId, LocalDate newCheckin, LocalDate newCheckout) {
-        Reservation reservation = reservationRepository.findById(reservationId).orElseThrow();
-        reservation.setCheckin(newCheckin);
-        reservation.setCheckout(newCheckout);
-        reservationRepository.save(reservation);
-    }
+
 
 
     public List<Reservation> findAllUserReservations(int id) {
@@ -86,7 +88,7 @@ public class ReservationService {
 
     public List<ReservationDto> getFilteredData(String value) {
 
-        List<ReservationDto> allReservationsDto = findAllReservations();
+        List<ReservationDto> allReservationsDto = findAllReservationsDto();
         if (value.equals("empty") || value.isEmpty() || value.equals(" ")) {
             return allReservationsDto;
         }
@@ -118,8 +120,8 @@ public class ReservationService {
         return true;
     }
 
-    public List<ReservationDto> getSortedReservations(String sortedHeader,int isAsc) {
-        if (isAsc == 1){
+    public List<ReservationDto> getSortedReservations(String sortedHeader, int isAsc) {
+        if (isAsc == 1) {
             return sortAsc(sortedHeader);
         }
         return sortDesc(sortedHeader);
@@ -142,10 +144,11 @@ public class ReservationService {
                 return reservationRepository.orderByCamperPlaceNumberAsc().stream().map(mapper::toReservationDto).toList();
             }
             default -> {
-                return findAllReservations();
+                return findAllReservationsDto();
             }
         }
     }
+
     private List<ReservationDto> sortDesc(String sortedHeader) {
         switch (sortedHeader) {
             case "checkin" -> {
@@ -161,9 +164,21 @@ public class ReservationService {
                 return reservationRepository.orderByCamperPlaceNumberDesc().stream().map(mapper::toReservationDto).toList();
             }
             default -> {
-                return findAllReservations();
+                return findAllReservationsDto();
             }
         }
+    }
+
+    @Transactional
+    public void updateReservation(int id, ReservationRequest request) {
+        Reservation reservation = findReservationById(id);
+
+        Optional.ofNullable(request.checkin()).ifPresent(reservation::setCheckin);
+        Optional.ofNullable(request.checkout()).ifPresent(reservation::setCheckout);
+        Optional.ofNullable(request.camperPlace()).filter(
+                        camperPlace -> !camperPlace.getIsOccupied())
+                .ifPresent(reservation::setCamperPlace);
+        reservationRepository.save(reservation);
     }
 }
 
