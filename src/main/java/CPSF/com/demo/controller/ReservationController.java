@@ -52,8 +52,11 @@ public class ReservationController {
     }
 
 
-    @GetMapping("/getFilteredReservations/{value}")
-    public List<ReservationDto> getFilteredReservations(@PathVariable @DefaultValue(value = "") String value) {
+    @GetMapping({"/getFilteredReservations/{value}", "/getFilteredReservations"})
+    public List<ReservationDto> getFilteredReservations(@PathVariable(required = false)  String value) {
+        if(value != null && value.trim().isEmpty()) {
+            value = null;
+        }
         return reservationService.getFilteredData(value);
     }
 

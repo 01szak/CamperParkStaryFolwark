@@ -79,19 +79,12 @@ public class ReservationService {
     }
 
 
-
-
-
-    public List<Reservation> findAllUserReservations(int id) {
-        return reservationRepository.findByUserId(id);
-    }
-
     public List<ReservationDto> getFilteredData(String value) {
 
-        List<ReservationDto> allReservationsDto = findAllReservationsDto();
-        if (value.equals("empty") || value.isEmpty() || value.equals(" ")) {
-            return allReservationsDto;
+        if (value == null) {
+            return findAllReservationsDto();
         }
+        List<ReservationDto> allReservationsDto = findAllReservationsDto();
 
         List<ReservationDto> filteredList = new ArrayList<>();
         String filterValue = value.toLowerCase();

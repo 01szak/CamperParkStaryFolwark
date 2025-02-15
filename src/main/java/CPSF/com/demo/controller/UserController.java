@@ -2,8 +2,11 @@ package CPSF.com.demo.controller;
 
 import CPSF.com.demo.entity.DTO.UserDto;
 import CPSF.com.demo.entity.User;
+import CPSF.com.demo.entity.DTO.UserRequest;
 import CPSF.com.demo.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.context.properties.bind.DefaultValue;
+import org.springframework.lang.Nullable;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -19,20 +22,20 @@ public class UserController {
         userService = theUserService;
     }
 
-    @GetMapping("/findAll")
-    public List<UserDto> findAll() {
-
-        return userService.findAll();
-
+    @GetMapping({"/getFilteredUsers/{value}", "/getFilteredUsers"})
+    public List<UserDto> getFilteredUsers(@PathVariable(required = false) String value) {
+        if(value != null && value.trim().isEmpty()) {
+            value = null;
+        }
+        return userService.getFilteredUsers(value);
     }
-
-    @GetMapping("/findBy{email}")
-    public UserDto findByEmail(@PathVariable String email) {
-        return (UserDto) userService.loadUserByUsername(email);
+    @GetMapping("/getAll")
+    public List<UserDto> getAll() {
+        return userService.findAllUsersDto();
     }
-
-    public void createUser(@RequestBody User user) {
-        userService.create(user);
+    @PatchMapping("updateUser/{id}")
+    public void updateUser(@PathVariable int id,@RequestBody UserRequest request){
+        userService.updateUser(id,request);
     }
 }
 

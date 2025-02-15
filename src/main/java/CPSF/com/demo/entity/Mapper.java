@@ -18,6 +18,7 @@ public class Mapper {
 
     public UserDto toUserDto(User user) {
         return UserDto.builder()
+                .id(user.getId())
                 .firstName(user.getFirstName())
                 .lastName(user.getLastName())
                 .email(user.getEmail())
@@ -26,7 +27,7 @@ public class Mapper {
                 .country(user.getCountry())
                 .city(user.getCity())
                 .streetAddress(user.getStreetAddress())
-                .reservations(new ArrayList<Reservation>())
+                .reservations(user.getReservations() )
                 .build();
 
     }
