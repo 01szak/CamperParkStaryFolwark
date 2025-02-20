@@ -7,6 +7,7 @@ import CPSF.com.demo.entity.Mapper;
 import CPSF.com.demo.entity.Reservation;
 import CPSF.com.demo.entity.User;
 import CPSF.com.demo.repository.ReservationRepository;
+import jakarta.validation.ConstraintViolationException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
@@ -17,6 +18,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.Optional;
 
 @Service
@@ -36,20 +38,26 @@ public class ReservationService {
 
     @Transactional
     public void createReservation(LocalDate checkin, LocalDate checkout, CamperPlace camperPlace, User user) {
-        userService.create(user);
 
-        System.out.println(
-                "You have successfully made a reservation: \nid: "
-                        + camperPlace.getId()
-                        + "\ndate: " + checkin + "/" + checkout);
+        try {
 
-        reservationRepository.save(Reservation.builder()
-                .checkin(checkin)
-                .checkout(checkout)
-                .camperPlace(camperPlace)
-                .user(user)
-                .build());
+            userService.findUserDtoById(user.getId());
 
+        } catch (NoSuchElementException e) {
+
+            userService.create(user);
+
+        }
+        try {
+            reservationRepository.save(Reservation.builder()
+                    .checkin(checkin)
+                    .checkout(checkout)
+                    .camperPlace(camperPlace)
+                    .user(user)
+                    .build());
+        } catch (ConstraintViolationException e) {
+            throw new ValidationExceptions("Can't Checkout Before Checkin... Adjust Dates");
+        }
     }
 
     public List<ReservationDto> findAllReservationsDto() {
@@ -164,14 +172,19 @@ public class ReservationService {
 
     @Transactional
     public void updateReservation(int id, ReservationRequest request) {
-        Reservation reservation = findReservationById(id);
-
-        Optional.ofNullable(request.checkin()).ifPresent(reservation::setCheckin);
-        Optional.ofNullable(request.checkout()).ifPresent(reservation::setCheckout);
-        Optional.ofNullable(request.camperPlace()).filter(
-                        camperPlace -> !camperPlace.getIsOccupied())
-                .ifPresent(reservation::setCamperPlace);
-        reservationRepository.save(reservation);
+        try {
+            Reservation reservation = findReservationById(id);
+            Optional.ofNullable(request.checkin()).ifPresent(reservation::setCheckin);
+            Optional.ofNullable(request.checkout()).ifPresent(reservation::setCheckout);
+            Optional.ofNullable(request.camperPlace()).filter(
+                            camperPlace -> !camperPlace.getIsOccupied())
+                    .ifPresent(reservation::setCamperPlace);
+            reservationRepository.save(reservation);
+        } catch (ConstraintViolationException e) {
+            throw new ValidationExceptions("Can't Checkout Before Checkin... Adjust Dates");//TODO: nie działa jak trzeba
+        }
     }
+
+
 }
 

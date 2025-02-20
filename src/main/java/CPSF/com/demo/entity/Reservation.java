@@ -9,6 +9,7 @@ import jakarta.persistence.*;
 import jakarta.validation.constraints.AssertTrue;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
+import org.hibernate.validator.internal.engine.ConstraintViolationImpl;
 import org.springframework.context.annotation.Lazy;
 
 import java.math.BigDecimal;
@@ -62,7 +63,7 @@ public class Reservation {
         return camperPlace.getPrice() * daysDifference();
     }
 
-    @AssertTrue(message = "Check-out date must be after check-in date")
+    @AssertTrue(message = "Checkout date must be after checkin date")
     private boolean isCheckoutAfterCheckin() {
         return checkout.isAfter(checkin);
     }

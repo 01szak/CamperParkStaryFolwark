@@ -1,29 +1,17 @@
 package CPSF.com.demo.controller;
 
-import CPSF.com.demo.entity.CamperPlace;
 import CPSF.com.demo.entity.DTO.ReservationDto;
 import CPSF.com.demo.entity.DTO.ReservationRequest;
 import CPSF.com.demo.entity.Reservation;
-import CPSF.com.demo.entity.User;
-import CPSF.com.demo.enums.ReservationStatus;
-import CPSF.com.demo.enums.Role;
-import CPSF.com.demo.service.CamperPlaceService;
 import CPSF.com.demo.service.ReservationService;
 import CPSF.com.demo.service.UserService;
-import org.springframework.boot.context.properties.bind.DefaultValue;
+import jakarta.validation.ConstraintViolationException;
 import org.springframework.context.annotation.Lazy;
-import org.springframework.format.annotation.DateTimeFormat;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.http.ResponseEntity;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
-import java.math.BigInteger;
-import java.time.LocalDate;
-import java.time.format.DateTimeParseException;
-import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Stream;
 
 @Transactional
 @RestController
@@ -40,8 +28,13 @@ public class ReservationController {
     }
 
     @PostMapping("/createReservation")
-    public void createReservation(@RequestBody ReservationRequest request) {
-        reservationService.createReservation(request.checkin(), request.checkout(), request.camperPlace(), request.user());
+    public ResponseEntity<String> createReservation(@RequestBody ReservationRequest request) {
+        try{
+            reservationService.createReservation(request.checkin(), request.checkout(), request.camperPlace(), request.user());
+         }catch (ConstraintViolationException exception){
+            return ResponseEntity.badRequest().body(exception.getLocalizedMessage());
+        }
+        return  ResponseEntity.ok().build();
     }
 
 

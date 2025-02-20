@@ -100,6 +100,9 @@ public class UserService implements UserDetailsService {
         userRepository.save(user);
     }
 
+    public UserDto findUserDtoById(int id) {
+        return userRepository.findById(id).map(mapper::toUserDto).orElseThrow();
+    }
     private User findUserById(int id) {
         return userRepository.findById(id).orElseThrow();
     }
