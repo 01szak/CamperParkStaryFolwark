@@ -1,26 +1,22 @@
 package CPSF.com.demo.service;
 
 import CPSF.com.demo.entity.CamperPlace;
-import CPSF.com.demo.entity.Reservation;
 import CPSF.com.demo.enums.ReservationStatus;
 import CPSF.com.demo.enums.Type;
 import CPSF.com.demo.repository.CamperPlaceRepository;
-import jakarta.persistence.Id;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.math.BigDecimal;
-import java.time.Clock;
-import java.time.LocalDate;
-import java.util.Arrays;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.stream.Stream;
 
 @Service
 public class CamperPlaceService {
 
     private final CamperPlaceRepository camperPlaceRepository;
+
 
     @Autowired
     public CamperPlaceService(CamperPlaceRepository camperPlaceRepository) {
@@ -64,6 +60,16 @@ public class CamperPlaceService {
         CamperPlace camperPlace = findCamperPlaceByNumber(number);
 
         return camperPlace.getIsOccupied();
+    }
+
+    @Transactional
+    public void setIsCamperPlaceOccupied(CamperPlace camperPlace) {
+
+        boolean isOccupied = camperPlace.getReservations().stream().anyMatch(reservation ->
+                reservation.getReservationStatus().equals(ReservationStatus.ACTIVE));
+
+        camperPlace.setIsOccupied(isOccupied);
+        camperPlaceRepository.save(camperPlace);
     }
 
 

@@ -1,11 +1,13 @@
 package CPSF.com.demo.service;
 
+import CPSF.com.demo.ValidationExceptions;
 import CPSF.com.demo.entity.CamperPlace;
 import CPSF.com.demo.entity.DTO.ReservationDto;
 import CPSF.com.demo.entity.DTO.ReservationRequest;
 import CPSF.com.demo.entity.Mapper;
 import CPSF.com.demo.entity.Reservation;
 import CPSF.com.demo.entity.User;
+import CPSF.com.demo.enums.ReservationStatus;
 import CPSF.com.demo.repository.ReservationRepository;
 import jakarta.validation.ConstraintViolationException;
 import lombok.RequiredArgsConstructor;
@@ -49,15 +51,20 @@ public class ReservationService {
 
         }
         try {
-            reservationRepository.save(Reservation.builder()
-                    .checkin(checkin)
-                    .checkout(checkout)
-                    .camperPlace(camperPlace)
-                    .user(user)
-                    .build());
+//            if (!camperPlace.getIsOccupied()) {
+                reservationRepository.save(Reservation.builder()
+                        .checkin(checkin)
+                        .checkout(checkout)
+                        .camperPlace(camperPlace)
+                        .user(user)
+                        .build());
+//            }
         } catch (ConstraintViolationException e) {
-            throw new ValidationExceptions("Can't Checkout Before Checkin... Adjust Dates");
+
+            throw new ValidationExceptions("Can't Checkout Before Checkin!!");
+
         }
+
     }
 
     public List<ReservationDto> findAllReservationsDto() {
@@ -172,19 +179,41 @@ public class ReservationService {
 
     @Transactional
     public void updateReservation(int id, ReservationRequest request) {
-        try {
-            Reservation reservation = findReservationById(id);
-            Optional.ofNullable(request.checkin()).ifPresent(reservation::setCheckin);
-            Optional.ofNullable(request.checkout()).ifPresent(reservation::setCheckout);
-            Optional.ofNullable(request.camperPlace()).filter(
-                            camperPlace -> !camperPlace.getIsOccupied())
-                    .ifPresent(reservation::setCamperPlace);
-            reservationRepository.save(reservation);
-        } catch (ConstraintViolationException e) {
-            throw new ValidationExceptions("Can't Checkout Before Checkin... Adjust Dates");//TODO: nie działa jak trzeba
+
+        Reservation reservation = findReservationById(id);
+        Optional.ofNullable(request.checkin()).ifPresent(reservation::setCheckin);
+        Optional.ofNullable(request.checkout()).ifPresent(reservation::setCheckout);
+        Optional.ofNullable(request.camperPlace()).filter(
+                        camperPlace -> !camperPlace.getIsOccupied())
+                .ifPresent(reservation::setCamperPlace);
+        if (!reservation.isCheckoutAfterCheckin()) {
+            throw new ValidationExceptions("Can't Checkout Before Checkin!!");
         }
+        reservationRepository.save(reservation);
     }
 
+    @Transactional
+    public void updateReservationStatus(Reservation reservation) {
 
+        if (isInBetween(reservation)) {
+
+            reservation.setReservationStatus(ReservationStatus.ACTIVE);
+
+        } else if (!isInBetween(reservation) && LocalDate.now().isBefore(reservation.getCheckin())) {
+
+            reservation.setReservationStatus(ReservationStatus.COMING);
+
+        } else {
+
+            reservation.setReservationStatus(ReservationStatus.EXPIRED);
+
+        }
+        reservationRepository.save(reservation);
+    }
+
+    private boolean isInBetween(Reservation reservation) {
+        return (LocalDate.now().isEqual(reservation.getCheckin()) || LocalDate.now().isAfter(reservation.getCheckin()))
+                && (LocalDate.now().isEqual(reservation.getCheckout()) || LocalDate.now().isBefore(reservation.getCheckout()));
+    }
 }
 
