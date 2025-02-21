@@ -1,6 +1,6 @@
 package CPSF.com.demo.service;
 
-import CPSF.com.demo.ValidationExceptions;
+import CPSF.com.demo.ClientInputException;
 import CPSF.com.demo.entity.CamperPlace;
 import CPSF.com.demo.entity.DTO.ReservationDto;
 import CPSF.com.demo.entity.DTO.ReservationRequest;
@@ -12,15 +12,12 @@ import CPSF.com.demo.repository.ReservationRepository;
 import jakarta.validation.ConstraintViolationException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.NoSuchElementException;
 import java.util.Optional;
 
 @Service
@@ -35,37 +32,39 @@ public class ReservationService {
     @Autowired
     Mapper mapper;
 
-    private final Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 
 
     @Transactional
     public void createReservation(LocalDate checkin, LocalDate checkout, CamperPlace camperPlace, User user) {
 
-        try {
+        if ((user.getLastName().isEmpty() && user.getFirstName().isEmpty() )|| (user.getEmail().isEmpty() && user.getPhoneNumber().isEmpty())) {
+            throw new ClientInputException("Empty Guest Form");
+        }
 
-            userService.findUserDtoById(user.getId());
+        userService.createUserIfDontExist(user);
 
-        } catch (NoSuchElementException e) {
-
-            userService.create(user);
-
+        if(camperPlace == null) {
+            throw new ClientInputException("Camper Place Form Is Empty");
         }
         try {
-//            if (!camperPlace.getIsOccupied()) {
+            if (camperPlaceService.checkIsCamperPlaceOccupied(camperPlace, checkin, checkout)) {
+                throw new ClientInputException("Camper Place Is Already Occupied");
+            } else {
                 reservationRepository.save(Reservation.builder()
                         .checkin(checkin)
                         .checkout(checkout)
                         .camperPlace(camperPlace)
                         .user(user)
                         .build());
-//            }
+            }
         } catch (ConstraintViolationException e) {
 
-            throw new ValidationExceptions("Can't Checkout Before Checkin!!");
+            throw new ClientInputException("Can't Checkout Before Checkin");
 
         }
 
     }
+
 
     public List<ReservationDto> findAllReservationsDto() {
         return reservationRepository.findAll().stream().map(mapper::toReservationDto).toList();
@@ -187,7 +186,7 @@ public class ReservationService {
                         camperPlace -> !camperPlace.getIsOccupied())
                 .ifPresent(reservation::setCamperPlace);
         if (!reservation.isCheckoutAfterCheckin()) {
-            throw new ValidationExceptions("Can't Checkout Before Checkin!!");
+            throw new ClientInputException("Can't Checkout Before Checkin!!");
         }
         reservationRepository.save(reservation);
     }
@@ -195,11 +194,11 @@ public class ReservationService {
     @Transactional
     public void updateReservationStatus(Reservation reservation) {
 
-        if (isInBetween(reservation)) {
+        if (isLocalDateInBetweenCheckinAndCheckout(reservation.getCheckin(), reservation.getCheckout())) {
 
             reservation.setReservationStatus(ReservationStatus.ACTIVE);
 
-        } else if (!isInBetween(reservation) && LocalDate.now().isBefore(reservation.getCheckin())) {
+        } else if (!isLocalDateInBetweenCheckinAndCheckout(reservation.getCheckin(), reservation.getCheckout()) && LocalDate.now().isBefore(reservation.getCheckin())) {
 
             reservation.setReservationStatus(ReservationStatus.COMING);
 
@@ -211,9 +210,9 @@ public class ReservationService {
         reservationRepository.save(reservation);
     }
 
-    private boolean isInBetween(Reservation reservation) {
-        return (LocalDate.now().isEqual(reservation.getCheckin()) || LocalDate.now().isAfter(reservation.getCheckin()))
-                && (LocalDate.now().isEqual(reservation.getCheckout()) || LocalDate.now().isBefore(reservation.getCheckout()));
+    private boolean isLocalDateInBetweenCheckinAndCheckout(LocalDate checkin, LocalDate checkout) {
+        return (LocalDate.now().isEqual(checkin) || LocalDate.now().isAfter(checkin))
+                && (LocalDate.now().isEqual(checkout) || LocalDate.now().isBefore(checkout));
     }
 }
 

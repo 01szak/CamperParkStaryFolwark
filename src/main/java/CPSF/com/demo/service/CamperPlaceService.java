@@ -1,6 +1,7 @@
 package CPSF.com.demo.service;
 
 import CPSF.com.demo.entity.CamperPlace;
+import CPSF.com.demo.entity.Reservation;
 import CPSF.com.demo.enums.ReservationStatus;
 import CPSF.com.demo.enums.Type;
 import CPSF.com.demo.repository.CamperPlaceRepository;
@@ -8,14 +9,15 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDate;
 import java.util.List;
-import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.Optional;
 import java.util.stream.Stream;
 
 @Service
 public class CamperPlaceService {
 
-    private final CamperPlaceRepository camperPlaceRepository;
+   CamperPlaceRepository camperPlaceRepository;
 
 
     @Autowired
@@ -72,6 +74,17 @@ public class CamperPlaceService {
         camperPlaceRepository.save(camperPlace);
     }
 
+
+
+    public boolean checkIsCamperPlaceOccupied(CamperPlace camperPlace, LocalDate checkin,LocalDate checkout) {
+        return camperPlace.getReservations().stream()
+                .anyMatch(reservation -> ((
+                        (!checkin.isBefore(reservation.getCheckin())  && !checkin.isAfter(reservation.getCheckout()) && !checkin.equals(reservation.getCheckout()))
+                                || (checkin.isBefore(reservation.getCheckin()) && checkout.isAfter(reservation.getCheckout())) &&
+                                (!checkout.isBefore(reservation.getCheckin()) && !checkout.isEqual(reservation.getCheckin()))
+                                || checkout.isEqual(reservation.getCheckout())))
+                );
+    }
 
 }
 

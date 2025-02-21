@@ -1,9 +1,7 @@
 package CPSF.com.demo.service;
 
-import CPSF.com.demo.entity.DTO.ReservationDto;
 import CPSF.com.demo.entity.DTO.UserRequest;
 import CPSF.com.demo.entity.Mapper;
-import CPSF.com.demo.entity.Reservation;
 import CPSF.com.demo.entity.User;
 import CPSF.com.demo.entity.DTO.UserDto;
 import CPSF.com.demo.enums.Role;
@@ -16,7 +14,6 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 import java.util.Optional;
 
 @Service
@@ -45,8 +42,7 @@ public class UserService implements UserDetailsService {
     }
 
 
-
-    public void create(User user) {
+    public User create(User user) {
         if (user.getRole() == null) {
             user.setRole(Role.GUEST);
         }
@@ -54,6 +50,7 @@ public class UserService implements UserDetailsService {
             user.setReservations(new ArrayList<>());
         }
         userRepository.save(user);
+        return user;
     }
 
 
@@ -68,16 +65,16 @@ public class UserService implements UserDetailsService {
         String filterValue = value.toLowerCase();
         allUsersDto.forEach(userDto -> {
             if (
-                            ((userDto.getFirstName() != null) && userDto.getFirstName().toLowerCase().contains(filterValue)) ||
+                    ((userDto.getFirstName() != null) && userDto.getFirstName().toLowerCase().contains(filterValue)) ||
                             ((userDto.getLastName() != null) && userDto.getLastName().toLowerCase().contains(filterValue)) ||
                             ((userDto.getEmail() != null) && userDto.getEmail().toLowerCase().contains(filterValue)) ||
                             ((userDto.getPhoneNumber() != null) && userDto.getPhoneNumber().toLowerCase().contains(filterValue) ||
-                            ((userDto.getCarRegistration() != null) && (userDto.getCarRegistration()).toLowerCase().contains(filterValue))||
-                            ((userDto.getCountry() != null) && (userDto.getCountry()).toLowerCase().contains(filterValue)) ||
-                            ((userDto.getCity() != null) && (userDto.getCity()).toLowerCase().contains(filterValue)) ||
-                            ((userDto.getStreetAddress() != null) && (userDto.getStreetAddress()).toLowerCase().contains(filterValue))
+                                    ((userDto.getCarRegistration() != null) && (userDto.getCarRegistration()).toLowerCase().contains(filterValue)) ||
+                                    ((userDto.getCountry() != null) && (userDto.getCountry()).toLowerCase().contains(filterValue)) ||
+                                    ((userDto.getCity() != null) && (userDto.getCity()).toLowerCase().contains(filterValue)) ||
+                                    ((userDto.getStreetAddress() != null) && (userDto.getStreetAddress()).toLowerCase().contains(filterValue))
 
-            )) {
+                            )) {
                 filteredList.add(userDto);
             }
 
@@ -103,8 +100,13 @@ public class UserService implements UserDetailsService {
     public UserDto findUserDtoById(int id) {
         return userRepository.findById(id).map(mapper::toUserDto).orElseThrow();
     }
+
     private User findUserById(int id) {
         return userRepository.findById(id).orElseThrow();
+    }
+
+    public User createUserIfDontExist(User user) {
+         return userRepository.findById(user.getId()).orElse(create(user));
     }
 }
 
