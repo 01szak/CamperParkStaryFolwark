@@ -6,6 +6,7 @@ import CPSF.com.demo.enums.ReservationStatus;
 import CPSF.com.demo.enums.Type;
 import CPSF.com.demo.repository.CamperPlaceRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -17,7 +18,8 @@ import java.util.stream.Stream;
 @Service
 public class CamperPlaceService {
 
-   CamperPlaceRepository camperPlaceRepository;
+
+    CamperPlaceRepository camperPlaceRepository;
 
 
     @Autowired
@@ -75,18 +77,18 @@ public class CamperPlaceService {
     }
 
 
+    public CamperPlace findById(int id) {
+        return camperPlaceRepository.findById(id).orElseThrow(() -> new RuntimeException("CamperPlace not found!"));
+    }
 
-    public boolean checkIsCamperPlaceOccupied(CamperPlace camperPlace, LocalDate checkin,LocalDate checkout) {
-        return camperPlace.getReservations().stream()
+    public boolean checkIsCamperPlaceOccupied(CamperPlace camperPlace, LocalDate checkin, LocalDate checkout, int reservationId) {
+        return camperPlace.getReservations().stream().filter(reservation -> reservation.getId() != reservationId)
                 .anyMatch(reservation -> ((
-                        (!checkin.isBefore(reservation.getCheckin())  && !checkin.isAfter(reservation.getCheckout()) && !checkin.equals(reservation.getCheckout()))
+                        (!checkin.isBefore(reservation.getCheckin()) && !checkin.isAfter(reservation.getCheckout()) && !checkin.equals(reservation.getCheckout()))
                                 || (checkin.isBefore(reservation.getCheckin()) && checkout.isAfter(reservation.getCheckout())) &&
                                 (!checkout.isBefore(reservation.getCheckin()) && !checkout.isEqual(reservation.getCheckin()))
                                 || checkout.isEqual(reservation.getCheckout())))
                 );
     }
-public CamperPlace findById(int id){
-        return camperPlaceRepository.findById(id).orElseThrow(() -> new RuntimeException("CamperPlace not found!"));
-}
 }
 

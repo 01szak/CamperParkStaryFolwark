@@ -9,16 +9,13 @@ import CPSF.com.demo.entity.Reservation;
 import CPSF.com.demo.entity.User;
 import CPSF.com.demo.enums.ReservationStatus;
 import CPSF.com.demo.repository.ReservationRepository;
-import jakarta.persistence.EntityManager;
-import jakarta.persistence.PersistenceContext;
 import jakarta.validation.ConstraintViolationException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.swing.text.html.parser.Entity;
-import java.sql.SQLIntegrityConstraintViolationException;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
@@ -54,7 +51,7 @@ public class ReservationService {
         }
 
         try {
-            if (camperPlaceService.checkIsCamperPlaceOccupied(camperPlace, checkin, checkout)) {
+            if (camperPlaceService.checkIsCamperPlaceOccupied(camperPlace, checkin, checkout,0)) {
                 throw new ClientInputException("Camper Place Is Already Occupied");
             } else {
                 System.out.println("Reservation being saved: " + Reservation.builder()
@@ -194,7 +191,7 @@ public class ReservationService {
 
     @Transactional
     public void updateReservation(int id, ReservationRequest request) {
-        if (camperPlaceService.checkIsCamperPlaceOccupied(request.camperPlace(), request.checkin(), request.checkout())) {
+        if (camperPlaceService.checkIsCamperPlaceOccupied(request.camperPlace(), request.checkin(), request.checkout(),id)) {
             throw new ClientInputException("Camper Place Is Already Occupied");
         }
         Reservation reservation = findReservationById(id);
@@ -230,5 +227,6 @@ public class ReservationService {
         return (LocalDate.now().isEqual(checkin) || LocalDate.now().isAfter(checkin))
                 && (LocalDate.now().isEqual(checkout) || LocalDate.now().isBefore(checkout));
     }
+
 }
 
