@@ -9,6 +9,7 @@ import jakarta.persistence.*;
 import jakarta.validation.constraints.AssertTrue;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
+import org.hibernate.validator.internal.engine.ConstraintViolationImpl;
 import org.springframework.context.annotation.Lazy;
 
 import java.math.BigDecimal;
@@ -37,7 +38,7 @@ public class Reservation {
     @NotNull(message = "Check-out date is required")
     private LocalDate checkout;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "camper_place_id")
     @Lazy
     @JsonBackReference("camperPlace-reservations")
@@ -62,8 +63,8 @@ public class Reservation {
         return camperPlace.getPrice() * daysDifference();
     }
 
-    @AssertTrue(message = "Check-out date must be after check-in date")
-    private boolean isCheckoutAfterCheckin() {
+    @AssertTrue(message = "Checkout date must be after checkin date")
+    public boolean isCheckoutAfterCheckin() {
         return checkout.isAfter(checkin);
     }
 }

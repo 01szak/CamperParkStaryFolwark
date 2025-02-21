@@ -1,16 +1,18 @@
 package CPSF.com.demo.service;
 
+import CPSF.com.demo.ClientInputException;
 import CPSF.com.demo.entity.CamperPlace;
 import CPSF.com.demo.entity.DTO.ReservationDto;
 import CPSF.com.demo.entity.DTO.ReservationRequest;
 import CPSF.com.demo.entity.Mapper;
 import CPSF.com.demo.entity.Reservation;
 import CPSF.com.demo.entity.User;
+import CPSF.com.demo.enums.ReservationStatus;
 import CPSF.com.demo.repository.ReservationRepository;
+import jakarta.validation.ConstraintViolationException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -31,26 +33,51 @@ public class ReservationService {
     @Autowired
     Mapper mapper;
 
-    private final Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-
-
     @Transactional
     public void createReservation(LocalDate checkin, LocalDate checkout, CamperPlace camperPlace, User user) {
-        userService.create(user);
+        CamperPlace cp;
 
-        System.out.println(
-                "You have successfully made a reservation: \nid: "
-                        + camperPlace.getId()
-                        + "\ndate: " + checkin + "/" + checkout);
+        if ((user.getLastName().isEmpty() && user.getFirstName().isEmpty()) || (user.getEmail().isEmpty() && user.getPhoneNumber().isEmpty())) {
+            throw new ClientInputException("Empty Guest Form");
+        }
 
-        reservationRepository.save(Reservation.builder()
-                .checkin(checkin)
-                .checkout(checkout)
-                .camperPlace(camperPlace)
-                .user(user)
-                .build());
+        User u = userService.createUserIfDontExist(user);
+
+        if (camperPlace == null) {
+            throw new ClientInputException("Camper Place Form Is Empty");
+        } else {
+            cp = camperPlaceService.findById(camperPlace.getId());
+
+        }
+
+        try {
+            if (camperPlaceService.checkIsCamperPlaceOccupied(camperPlace, checkin, checkout,0)) {
+                throw new ClientInputException("Camper Place Is Already Occupied");
+            } else {
+                System.out.println("Reservation being saved: " + Reservation.builder()
+                        .checkin(checkin)
+                        .checkout(checkout)
+                        .camperPlace(cp)
+                        .user(u)
+                        .build()
+                );
+                reservationRepository.save(Reservation.builder()
+                        .checkin(checkin)
+                        .checkout(checkout)
+                        .camperPlace(cp)
+                        .user(u)
+                        .build());
+                System.out.println("CamperPlace ID before save: " + cp.getId());
+
+            }
+        } catch (ConstraintViolationException e) {
+
+            throw new ClientInputException("Can't Checkout Before Checkin");
+
+        }
 
     }
+
 
     public List<ReservationDto> findAllReservationsDto() {
         return reservationRepository.findAll().stream().map(mapper::toReservationDto).toList();
@@ -164,14 +191,42 @@ public class ReservationService {
 
     @Transactional
     public void updateReservation(int id, ReservationRequest request) {
+        if (camperPlaceService.checkIsCamperPlaceOccupied(request.camperPlace(), request.checkin(), request.checkout(),id)) {
+            throw new ClientInputException("Camper Place Is Already Occupied");
+        }
         Reservation reservation = findReservationById(id);
-
         Optional.ofNullable(request.checkin()).ifPresent(reservation::setCheckin);
         Optional.ofNullable(request.checkout()).ifPresent(reservation::setCheckout);
-        Optional.ofNullable(request.camperPlace()).filter(
-                        camperPlace -> !camperPlace.getIsOccupied())
-                .ifPresent(reservation::setCamperPlace);
+        Optional.of(request.camperPlace()).ifPresent(reservation::setCamperPlace);
+        if (!reservation.isCheckoutAfterCheckin()) {
+            throw new ClientInputException("Can't Checkout Before Checkin!!");
+        }
         reservationRepository.save(reservation);
     }
+
+    @Transactional
+    public void updateReservationStatus(Reservation reservation) {
+
+        if (isLocalDateInBetweenCheckinAndCheckout(reservation.getCheckin(), reservation.getCheckout())) {
+
+            reservation.setReservationStatus(ReservationStatus.ACTIVE);
+
+        } else if (!isLocalDateInBetweenCheckinAndCheckout(reservation.getCheckin(), reservation.getCheckout()) && LocalDate.now().isBefore(reservation.getCheckin())) {
+
+            reservation.setReservationStatus(ReservationStatus.COMING);
+
+        } else {
+
+            reservation.setReservationStatus(ReservationStatus.EXPIRED);
+
+        }
+        reservationRepository.save(reservation);
+    }
+
+    private boolean isLocalDateInBetweenCheckinAndCheckout(LocalDate checkin, LocalDate checkout) {
+        return (LocalDate.now().isEqual(checkin) || LocalDate.now().isAfter(checkin))
+                && (LocalDate.now().isEqual(checkout) || LocalDate.now().isBefore(checkout));
+    }
+
 }
 
