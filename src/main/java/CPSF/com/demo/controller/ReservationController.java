@@ -6,6 +6,7 @@ import CPSF.com.demo.entity.Reservation;
 import CPSF.com.demo.service.ReservationService;
 import CPSF.com.demo.service.UserService;
 import jakarta.validation.ConstraintViolationException;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.http.ResponseEntity;
 import org.springframework.transaction.annotation.Transactional;
@@ -18,10 +19,10 @@ import java.util.List;
 @RequestMapping("/reservations")
 public class ReservationController {
 
-    private final ReservationService reservationService;
-    private final UserService userService;
+    ReservationService reservationService;
+    UserService userService;
 
-
+    @Autowired
     public ReservationController(ReservationService theReservationService, @Lazy UserService userService) {
         this.reservationService = theReservationService;
         this.userService = userService;
@@ -29,12 +30,10 @@ public class ReservationController {
 
     @PostMapping("/createReservation")
     public ResponseEntity<String> createReservation(@RequestBody ReservationRequest request) {
-        try{
-            reservationService.createReservation(request.checkin(), request.checkout(), request.camperPlace(), request.user());
-         }catch (ConstraintViolationException exception){
-            return ResponseEntity.badRequest().body(exception.getLocalizedMessage());
-        }
-        return  ResponseEntity.ok().build();
+
+        reservationService.createReservation(request.checkin(), request.checkout(), request.camperPlace(), request.user());
+
+        return ResponseEntity.ok().build();
     }
 
 
@@ -46,23 +45,23 @@ public class ReservationController {
 
 
     @GetMapping({"/getFilteredReservations/{value}", "/getFilteredReservations"})
-    public List<ReservationDto> getFilteredReservations(@PathVariable(required = false)  String value) {
-        if(value != null && value.trim().isEmpty()) {
+    public List<ReservationDto> getFilteredReservations(@PathVariable(required = false) String value) {
+        if (value != null && value.trim().isEmpty()) {
             value = null;
         }
         return reservationService.getFilteredData(value);
     }
 
     @GetMapping("sortTable/{header}/{isAsc}")
-    public List<ReservationDto> getSortedReservations(@PathVariable String header,@PathVariable int isAsc){
-        return reservationService.getSortedReservations(header,isAsc);
+    public List<ReservationDto> getSortedReservations(@PathVariable String header, @PathVariable int isAsc) {
+        return reservationService.getSortedReservations(header, isAsc);
     }
+
     @PatchMapping("updateReservation/{id}")
-    public void updateReservation(@PathVariable int id,@RequestBody ReservationRequest request){
-        reservationService.updateReservation(id,request);
+    public void updateReservation(@PathVariable int id, @RequestBody ReservationRequest request) {
+        reservationService.updateReservation(id, request);
 
     }
-
 
 
 }

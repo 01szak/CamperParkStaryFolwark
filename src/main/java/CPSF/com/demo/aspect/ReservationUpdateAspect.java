@@ -19,7 +19,8 @@ public class ReservationUpdateAspect {
     private final ReservationService reservationService;
 
 
-    @Before("execution(* CPSF.com.demo.controller.*.*(..))")
+    @Before("execution(* CPSF.com.demo.controller.CamperPlaceController.finAllCamperPlaces(..)) || " +
+            "execution(* CPSF.com.demo.controller.ReservationController.getFilteredReservations(..))")
     public void setReservationStatusAndIsCamperPlaceOccupied() {
         List<Reservation> reservations = reservationService.findAllReservations();
         reservations.forEach(reservationService::updateReservationStatus);

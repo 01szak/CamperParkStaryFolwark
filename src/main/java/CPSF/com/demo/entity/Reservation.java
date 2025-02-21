@@ -38,7 +38,7 @@ public class Reservation {
     @NotNull(message = "Check-out date is required")
     private LocalDate checkout;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "camper_place_id")
     @Lazy
     @JsonBackReference("camperPlace-reservations")

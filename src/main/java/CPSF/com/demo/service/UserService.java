@@ -106,7 +106,9 @@ public class UserService implements UserDetailsService {
     }
 
     public User createUserIfDontExist(User user) {
-         return userRepository.findById(user.getId()).orElse(create(user));
+
+        return userRepository.findById(user.getId()).orElseGet(() -> create(user));
+
     }
 }
 

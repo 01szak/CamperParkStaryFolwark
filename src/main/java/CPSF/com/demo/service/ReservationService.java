@@ -9,12 +9,16 @@ import CPSF.com.demo.entity.Reservation;
 import CPSF.com.demo.entity.User;
 import CPSF.com.demo.enums.ReservationStatus;
 import CPSF.com.demo.repository.ReservationRepository;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
 import jakarta.validation.ConstraintViolationException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.swing.text.html.parser.Entity;
+import java.sql.SQLIntegrityConstraintViolationException;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
@@ -32,30 +36,42 @@ public class ReservationService {
     @Autowired
     Mapper mapper;
 
-
-
     @Transactional
     public void createReservation(LocalDate checkin, LocalDate checkout, CamperPlace camperPlace, User user) {
+        CamperPlace cp;
 
-        if ((user.getLastName().isEmpty() && user.getFirstName().isEmpty() )|| (user.getEmail().isEmpty() && user.getPhoneNumber().isEmpty())) {
+        if ((user.getLastName().isEmpty() && user.getFirstName().isEmpty()) || (user.getEmail().isEmpty() && user.getPhoneNumber().isEmpty())) {
             throw new ClientInputException("Empty Guest Form");
         }
 
-        userService.createUserIfDontExist(user);
+        User u = userService.createUserIfDontExist(user);
 
-        if(camperPlace == null) {
+        if (camperPlace == null) {
             throw new ClientInputException("Camper Place Form Is Empty");
+        } else {
+            cp = camperPlaceService.findById(camperPlace.getId());
+
         }
+
         try {
             if (camperPlaceService.checkIsCamperPlaceOccupied(camperPlace, checkin, checkout)) {
                 throw new ClientInputException("Camper Place Is Already Occupied");
             } else {
+                System.out.println("Reservation being saved: " + Reservation.builder()
+                        .checkin(checkin)
+                        .checkout(checkout)
+                        .camperPlace(cp)
+                        .user(u)
+                        .build()
+                );
                 reservationRepository.save(Reservation.builder()
                         .checkin(checkin)
                         .checkout(checkout)
-                        .camperPlace(camperPlace)
-                        .user(user)
+                        .camperPlace(cp)
+                        .user(u)
                         .build());
+                System.out.println("CamperPlace ID before save: " + cp.getId());
+
             }
         } catch (ConstraintViolationException e) {
 
@@ -178,13 +194,13 @@ public class ReservationService {
 
     @Transactional
     public void updateReservation(int id, ReservationRequest request) {
-
+        if (camperPlaceService.checkIsCamperPlaceOccupied(request.camperPlace(), request.checkin(), request.checkout())) {
+            throw new ClientInputException("Camper Place Is Already Occupied");
+        }
         Reservation reservation = findReservationById(id);
         Optional.ofNullable(request.checkin()).ifPresent(reservation::setCheckin);
         Optional.ofNullable(request.checkout()).ifPresent(reservation::setCheckout);
-        Optional.ofNullable(request.camperPlace()).filter(
-                        camperPlace -> !camperPlace.getIsOccupied())
-                .ifPresent(reservation::setCamperPlace);
+        Optional.of(request.camperPlace()).ifPresent(reservation::setCamperPlace);
         if (!reservation.isCheckoutAfterCheckin()) {
             throw new ClientInputException("Can't Checkout Before Checkin!!");
         }

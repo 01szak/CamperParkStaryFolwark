@@ -85,6 +85,8 @@ public class CamperPlaceService {
                                 || checkout.isEqual(reservation.getCheckout())))
                 );
     }
-
+public CamperPlace findById(int id){
+        return camperPlaceRepository.findById(id).orElseThrow(() -> new RuntimeException("CamperPlace not found!"));
+}
 }
 
