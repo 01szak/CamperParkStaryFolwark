@@ -15,21 +15,25 @@ public interface ReservationRepository extends JpaRepository<Reservation,Integer
     List<Reservation> findAllByCamperPlaceId (int camperPlaceId);
 
     @Query("select reservation  from Reservation  reservation order by reservation.checkin desc ")
-    public List<Reservation> orderByCheckinDesc();
+     List<Reservation> orderByCheckinDesc();
     @Query("select reservation  from Reservation  reservation order by reservation.checkin desc ")
-    public List<Reservation> orderByCheckoutDesc();
+     List<Reservation> orderByCheckoutDesc();
     @Query("select reservation  from Reservation  reservation order by reservation.user.lastName desc ")
-    public List<Reservation> orderByLastNameDesc();
+     List<Reservation> orderByLastNameDesc();
     @Query("select reservation  from Reservation  reservation order by reservation.camperPlace.number desc ")
-    public List<Reservation> orderByCamperPlaceNumberDesc();
+     List<Reservation> orderByCamperPlaceNumberDesc();
     @Query("select reservation  from Reservation  reservation order by reservation.checkin asc ")
-    public List<Reservation> orderByCheckinAsc();
+     List<Reservation> orderByCheckinAsc();
     @Query("select reservation  from Reservation  reservation order by reservation.checkin asc ")
-    public List<Reservation> orderByCheckoutAsc();
+     List<Reservation> orderByCheckoutAsc();
     @Query("select reservation  from Reservation  reservation order by reservation.user.lastName asc ")
-    public List<Reservation> orderByLastNameAsc();
+     List<Reservation> orderByLastNameAsc();
     @Query("select reservation  from Reservation  reservation order by reservation.camperPlace.number asc ")
-    public List<Reservation> orderByCamperPlaceNumberAsc();
+     List<Reservation> orderByCamperPlaceNumberAsc();
+    @Query(value = "select  reservation from Reservation reservation where reservation.camperPlace.id = ?1 and  month(reservation.checkin) = ?2 and  year(reservation.checkin) = ?3")
+     List<Reservation> findReservationByCamperPlace_IdAndCheckin_MonthAndAndCheckin_Year(int id, int month, int year);
+    @Query(value = "select  reservation from Reservation reservation where reservation.camperPlace.id = ?1  and  year(reservation.checkin) = ?2")
+     List<Reservation> findReservationByCamperPlace_IdAndAndCheckin_Year(int id, int year);
 
 
 }

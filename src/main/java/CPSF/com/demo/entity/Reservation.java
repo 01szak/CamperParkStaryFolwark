@@ -56,7 +56,7 @@ public class Reservation {
 
 
     public int daysDifference() {
-        return checkin.until(checkout).getDays();
+        return checkin.until(checkout.plusDays(1)).getDays();
     }
 
     public double calculateFinalPrice() {
