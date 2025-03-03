@@ -3,10 +3,9 @@ package CPSF.com.demo.controller;
 import CPSF.com.demo.service.StatisticsService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.Map;
 
 @RestController
 @RequestMapping("/statistics")
@@ -25,4 +24,9 @@ public class StatisticsController {
     public double getCamperPlaceMonthlyRevenue(@PathVariable int camperPlaceId, @PathVariable int month, @PathVariable int year) {
         return statisticsService.revenueCount(camperPlaceId, month, year);
     }
+    @GetMapping("/getReservationCountForChart/{month}/{year}/{camperPlaceId}")
+    public int[] getReservationCountForChart(@PathVariable int month, @PathVariable int year, @PathVariable int...camperPlaceId) {
+        return statisticsService.getReservationCountForChart(month,year,camperPlaceId);
+    }
+
 }
