@@ -8,8 +8,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Map;
-import java.util.TreeMap;
 
 @Service
 @AllArgsConstructor
@@ -36,10 +34,19 @@ public class StatisticsService {
         return reservations.stream().mapToDouble(Reservation::calculateFinalPrice).sum();
     }
 
-    public int[] getReservationCountForChart(int month,int year,int...camperPlaceId){
+    public int[] getReservationCountForChart(int month, int year, int... camperPlaceId) {
         int[] dataForChart = new int[camperPlaceId.length - 1];
         for (int i = 0; i < camperPlaceId.length - 1; i++) {
-            dataForChart[i ] = (reservationCount(camperPlaceId[i],month,year));
+            dataForChart[i] = (reservationCount(camperPlaceId[i], month, year));
+
+        }
+        return dataForChart;
+    }
+
+    public double[] getRevenueForChart(int month, int year, int... camperPlaceId) {
+        double[] dataForChart = new double[camperPlaceId.length - 1];
+        for (int i = 0; i < camperPlaceId.length - 1; i++) {
+            dataForChart[i] = (revenueCount(camperPlaceId[i], month, year));
 
         }
         return dataForChart;

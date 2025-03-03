@@ -5,8 +5,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.Map;
-
 @RestController
 @RequestMapping("/statistics")
 @RequiredArgsConstructor
@@ -27,6 +25,10 @@ public class StatisticsController {
     @GetMapping("/getReservationCountForChart/{month}/{year}/{camperPlaceId}")
     public int[] getReservationCountForChart(@PathVariable int month, @PathVariable int year, @PathVariable int...camperPlaceId) {
         return statisticsService.getReservationCountForChart(month,year,camperPlaceId);
+    }
+    @GetMapping("/getRevenueForChart/{month}/{year}/{camperPlaceId}")
+    public double[] getRevenueForChart(@PathVariable int month, @PathVariable int year, @PathVariable int...camperPlaceId) {
+        return statisticsService.getRevenueForChart(month,year,camperPlaceId);
     }
 
 }
