@@ -16,15 +16,19 @@ public interface ReservationRepository extends JpaRepository<Reservation,Integer
 
     @Query("select reservation  from Reservation  reservation order by reservation.checkin desc ")
      List<Reservation> orderByCheckinDesc();
-    @Query("select reservation  from Reservation  reservation order by reservation.checkin desc ")
+
+    @Query("select reservation  from Reservation  reservation order by reservation.checkout desc ")
+
      List<Reservation> orderByCheckoutDesc();
     @Query("select reservation  from Reservation  reservation order by reservation.user.lastName desc ")
      List<Reservation> orderByLastNameDesc();
     @Query("select reservation  from Reservation  reservation order by reservation.camperPlace.number desc ")
      List<Reservation> orderByCamperPlaceNumberDesc();
+
     @Query("select reservation  from Reservation  reservation order by reservation.checkin asc ")
      List<Reservation> orderByCheckinAsc();
-    @Query("select reservation  from Reservation  reservation order by reservation.checkin asc ")
+    @Query("select reservation  from Reservation  reservation order by reservation.checkout asc ")
+
      List<Reservation> orderByCheckoutAsc();
     @Query("select reservation  from Reservation  reservation order by reservation.user.lastName asc ")
      List<Reservation> orderByLastNameAsc();
@@ -33,7 +37,8 @@ public interface ReservationRepository extends JpaRepository<Reservation,Integer
     @Query(value = "select  reservation from Reservation reservation where reservation.camperPlace.id = ?1 and  month(reservation.checkin) = ?2 and  year(reservation.checkin) = ?3")
      List<Reservation> findReservationByCamperPlace_IdAndCheckin_MonthAndAndCheckin_Year(int id, int month, int year);
     @Query(value = "select  reservation from Reservation reservation where reservation.camperPlace.id = ?1  and  year(reservation.checkin) = ?2")
-     List<Reservation> findReservationByCamperPlace_IdAndAndCheckin_Year(int id, int year);
+
+     List<Reservation> findReservationByCamperPlace_IdAndCheckin_Year(int id, int year);
 
 
 }
