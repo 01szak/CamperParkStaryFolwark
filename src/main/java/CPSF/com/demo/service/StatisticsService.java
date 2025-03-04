@@ -35,8 +35,8 @@ public class StatisticsService {
     }
 
     public int[] getReservationCountForChart(int month, int year, int... camperPlaceId) {
-        int[] dataForChart = new int[camperPlaceId.length - 1];
-        for (int i = 0; i < camperPlaceId.length - 1; i++) {
+        int[] dataForChart = new int[camperPlaceId.length ];
+        for (int i = 0; i <= camperPlaceId.length - 1; i++) {
             dataForChart[i] = (reservationCount(camperPlaceId[i], month, year));
 
         }
@@ -44,8 +44,8 @@ public class StatisticsService {
     }
 
     public double[] getRevenueForChart(int month, int year, int... camperPlaceId) {
-        double[] dataForChart = new double[camperPlaceId.length - 1];
-        for (int i = 0; i < camperPlaceId.length - 1; i++) {
+        double[] dataForChart = new double[camperPlaceId.length ];
+        for (int i = 0; i <= camperPlaceId.length - 1; i++) {
             dataForChart[i] = (revenueCount(camperPlaceId[i], month, year));
 
         }
