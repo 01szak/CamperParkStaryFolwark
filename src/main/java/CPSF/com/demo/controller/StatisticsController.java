@@ -3,6 +3,7 @@ package CPSF.com.demo.controller;
 import CPSF.com.demo.service.StatisticsService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
+
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -22,6 +23,7 @@ public class StatisticsController {
     public double getCamperPlaceMonthlyRevenue(@PathVariable int camperPlaceId, @PathVariable int month, @PathVariable int year) {
         return statisticsService.revenueCount(camperPlaceId, month, year);
     }
+
     @GetMapping("/getReservationCountForChart/{month}/{year}/{camperPlaceId}")
     public int[] getReservationCountForChart(@PathVariable int month, @PathVariable int year, @PathVariable int...camperPlaceId) {
         return statisticsService.getReservationCountForChart(month,year,camperPlaceId);
@@ -30,5 +32,6 @@ public class StatisticsController {
     public double[] getRevenueForChart(@PathVariable int month, @PathVariable int year, @PathVariable int...camperPlaceId) {
         return statisticsService.getRevenueForChart(month,year,camperPlaceId);
     }
+
 
 }

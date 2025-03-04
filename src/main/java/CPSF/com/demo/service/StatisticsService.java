@@ -19,7 +19,9 @@ public class StatisticsService {
 
     public int reservationCount(int camperPlaceId, int month, int year) {
         if (month == 0) {
+
             return reservationRepository.findReservationByCamperPlace_IdAndCheckin_Year(camperPlaceId, year).size();
+
 
         }
         return reservationRepository.findReservationByCamperPlace_IdAndCheckin_MonthAndAndCheckin_Year(camperPlaceId, month, year).size();
@@ -27,12 +29,15 @@ public class StatisticsService {
 
     public double revenueCount(int camperPlaceId, int month, int year) {
         if (month == 0) {
+
             List<Reservation> reservations = reservationRepository.findReservationByCamperPlace_IdAndCheckin_Year(camperPlaceId, year);
+
             return reservations.stream().mapToDouble(Reservation::calculateFinalPrice).sum();
         }
         List<Reservation> reservations = reservationRepository.findReservationByCamperPlace_IdAndCheckin_MonthAndAndCheckin_Year(camperPlaceId, month, year);
         return reservations.stream().mapToDouble(Reservation::calculateFinalPrice).sum();
     }
+
 
     public int[] getReservationCountForChart(int month, int year, int... camperPlaceId) {
         int[] dataForChart = new int[camperPlaceId.length ];
@@ -51,6 +56,7 @@ public class StatisticsService {
         }
         return dataForChart;
     }
+
 
 
 }
