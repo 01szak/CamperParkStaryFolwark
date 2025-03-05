@@ -59,7 +59,8 @@ public class User implements UserDetails {
            CascadeType.DETACH,
            CascadeType.MERGE,
            CascadeType.PERSIST,
-           CascadeType.REFRESH
+           CascadeType.REFRESH,
+            CascadeType.REMOVE
    })
     @JsonManagedReference("user-reservations")
     private List<Reservation> reservations;

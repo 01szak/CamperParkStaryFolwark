@@ -5,8 +5,6 @@ import CPSF.com.demo.entity.DTO.UserDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
-import java.util.ArrayList;
-
 @Component
 @RequiredArgsConstructor
 public class Mapper {
@@ -42,6 +40,7 @@ public class Mapper {
                 .userLastName(reservation.getUser().getLastName())
                 .userEmail(reservation.getUser().getEmail())
                 .reservationStatus(String.valueOf(reservation.getReservationStatus()))
+                .paid(reservation.getPaid())
                 .build();
     }
 //

@@ -3,16 +3,12 @@ package CPSF.com.demo.entity;
 import CPSF.com.demo.enums.ReservationStatus;
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonFormat;
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.AssertTrue;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
-import org.hibernate.validator.internal.engine.ConstraintViolationImpl;
 import org.springframework.context.annotation.Lazy;
 
-import java.math.BigDecimal;
 import java.time.LocalDate;
 
 import static CPSF.com.demo.enums.ReservationStatus.*;
@@ -53,10 +49,15 @@ public class Reservation {
     @Column(name = "status")
     @Builder.Default
     private ReservationStatus reservationStatus = COMING;
-
+    @Column(name = "is_paid")
+    private Boolean paid = false;
 
     public int daysDifference() {
-        return checkin.until(checkout.plusDays(1)).getDays();
+        if (this.paid) {
+            return checkin.until(checkout.plusDays(1)).getDays();
+        }else {
+            return 0;
+        }
     }
 
     public double calculateFinalPrice() {

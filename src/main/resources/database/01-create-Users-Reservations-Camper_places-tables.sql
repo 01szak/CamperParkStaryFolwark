@@ -52,3 +52,6 @@ alter table camper_places add column number Integer not null;
 -- changeset kacper:4
 ALTER TABLE users MODIFY COLUMN password_hash VARCHAR(255) DEFAULT NULL;
 
+-- changeset kacper:5
+-- validCheckSum: 9:a36e44820ff7e435a247e1820604e7c6
+alter table  reservations add column is_paid boolean default false;

@@ -1,6 +1,5 @@
 package CPSF.com.demo.entity.DTO;
 
-import CPSF.com.demo.entity.Reservation;
 import lombok.*;
 
 import java.time.LocalDate;
@@ -18,5 +17,5 @@ public class ReservationDto {
     private String userFirstName;
     private String userLastName;
     private String userEmail;
-
+    private boolean paid;
 }

@@ -12,7 +12,6 @@ import CPSF.com.demo.repository.ReservationRepository;
 import jakarta.validation.ConstraintViolationException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -51,7 +50,7 @@ public class ReservationService {
         }
 
         try {
-            if (camperPlaceService.checkIsCamperPlaceOccupied(camperPlace, checkin, checkout,0)) {
+            if (camperPlaceService.checkIsCamperPlaceOccupied(camperPlace, checkin, checkout, 0)) {
                 throw new ClientInputException("Camper Place Is Already Occupied");
             } else {
                 System.out.println("Reservation being saved: " + Reservation.builder()
@@ -59,13 +58,16 @@ public class ReservationService {
                         .checkout(checkout)
                         .camperPlace(cp)
                         .user(u)
+                        .paid(false)
                         .build()
                 );
+
                 reservationRepository.save(Reservation.builder()
                         .checkin(checkin)
                         .checkout(checkout)
                         .camperPlace(cp)
                         .user(u)
+                        .paid(false)
                         .build());
                 System.out.println("CamperPlace ID before save: " + cp.getId());
 
@@ -101,8 +103,12 @@ public class ReservationService {
 
 
     @Transactional
-    public void deleteReservation(Reservation reservation) {
+    public void deleteReservation(int id) {
+        Reservation reservation = findReservationById(id);
+        reservation.getCamperPlace().setReservations(null);
         reservationRepository.delete(reservation);
+        reservationRepository.flush();
+
     }
 
 
@@ -191,13 +197,14 @@ public class ReservationService {
 
     @Transactional
     public void updateReservation(int id, ReservationRequest request) {
-        if (camperPlaceService.checkIsCamperPlaceOccupied(request.camperPlace(), request.checkin(), request.checkout(),id)) {
+        if (camperPlaceService.checkIsCamperPlaceOccupied(request.camperPlace(), request.checkin(), request.checkout(), id)) {
             throw new ClientInputException("Camper Place Is Already Occupied");
         }
         Reservation reservation = findReservationById(id);
         Optional.ofNullable(request.checkin()).ifPresent(reservation::setCheckin);
         Optional.ofNullable(request.checkout()).ifPresent(reservation::setCheckout);
         Optional.of(request.camperPlace()).ifPresent(reservation::setCamperPlace);
+        Optional.ofNullable(request.paid()).ifPresent(reservation::setPaid);
         if (!reservation.isCheckoutAfterCheckin()) {
             throw new ClientInputException("Can't Checkout Before Checkin!!");
         }
