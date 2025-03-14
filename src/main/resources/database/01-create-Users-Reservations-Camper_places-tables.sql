@@ -19,9 +19,9 @@ CREATE TABLE demo_camper_park_sf.users
 CREATE TABLE demo_camper_park_sf.camper_places
 (
     id          BIGINT AUTO_INCREMENT PRIMARY KEY,
-    is_occupied BOOLEAN  NOT NULL default FALSE,
-    type        VARCHAR(400)          NOT NULL,
-    price       DECIMAL(10, 2)        NOT NULL,
+    is_occupied BOOLEAN        NOT NULL default FALSE,
+    type        VARCHAR(400)   NOT NULL,
+    price       DECIMAL(10, 2) NOT NULL,
     CONSTRAINT chk_price_positive CHECK (price >= 0),
     CONSTRAINT chk_valid_type CHECK (type IN ('STANDARD', 'VIP', 'PLUS'))
 );
@@ -34,7 +34,7 @@ CREATE TABLE demo_camper_park_sf.reservations
     camper_place_id BIGINT      NOT NULL,
     user_id         BIGINT      NOT NULL,
     status          VARCHAR(10) NOT NULL DEFAULT 'COMING',
-    CONSTRAINT fk_reservation_user FOREIGN KEY (user_id) REFERENCES users(id),
+    CONSTRAINT fk_reservation_user FOREIGN KEY (user_id) REFERENCES users (id),
     CONSTRAINT fk_reservation_camper_place FOREIGN KEY (camper_place_id) REFERENCES camper_places (id),
     CONSTRAINT chk_valid_dates CHECK (checkout > checkin),
     INDEX idx_reservation_user (user_id),
@@ -43,15 +43,33 @@ CREATE TABLE demo_camper_park_sf.reservations
 );
 -- changeset kacper:2
 -- validCheckSum: 9:054846e02e4e354624b21659cfb4bec5
-insert into users(first_name,last_name,email,password_hash,role)value ('test','test','test','$2a$10$2DwqzkRT5DSeSOUjKkJe/.QPXCDj6JZRePHmd2YNmtKEBBoRYgrWO','ADMIN');
+insert into users(first_name, last_name, email, password_hash, role) value ('test', 'test', 'test',
+                                                                            '$2a$10$2DwqzkRT5DSeSOUjKkJe/.QPXCDj6JZRePHmd2YNmtKEBBoRYgrWO',
+                                                                            'ADMIN');
 
 -- changeset kacper:3
 -- validCheckSum: 9:de39d94f7b173dfc055cbce6287ed736
-alter table camper_places add column number Integer not null;
+alter table camper_places
+    add column number Integer not null;
 
 -- changeset kacper:4
-ALTER TABLE users MODIFY COLUMN password_hash VARCHAR(255) DEFAULT NULL;
+ALTER TABLE users
+    MODIFY COLUMN password_hash VARCHAR(255) DEFAULT NULL;
 
 -- changeset kacper:5
 -- validCheckSum: 9:a36e44820ff7e435a247e1820604e7c6
-alter table  reservations add column is_paid boolean default false;
+alter table reservations
+    add column is_paid boolean default false;
+-- changeset kacper:6
+-- validCheckSum: 9:58b8fd45d0e5ea391f5b3979d0e3111f
+create table statistics
+(
+    id                BIGINT AUTO_INCREMENT PRIMARY KEY,
+    camper_place_id   BIGINT NOT NULL,
+    reservation_count BIGINT not null default 0,
+    revenue           BIGINT not null default 0,
+    month             int,
+    year              int,
+    CONSTRAINT fk_statistics_camper_place FOREIGN KEY (camper_place_id) REFERENCES camper_places (id),
+    INDEX idx_reservation_camper_place (camper_place_id)
+)

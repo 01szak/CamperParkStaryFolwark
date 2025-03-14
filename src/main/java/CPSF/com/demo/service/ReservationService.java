@@ -31,6 +31,8 @@ public class ReservationService {
     CamperPlaceService camperPlaceService;
     @Autowired
     Mapper mapper;
+    @Autowired
+    StatisticsService statisticsService;
 
     @Transactional
     public void createReservation(LocalDate checkin, LocalDate checkout, CamperPlace camperPlace, User user) {
@@ -68,9 +70,8 @@ public class ReservationService {
                         .camperPlace(cp)
                         .user(u)
                         .paid(false)
-                        .build());
-                System.out.println("CamperPlace ID before save: " + cp.getId());
-
+                        .build()
+                );
             }
         } catch (ConstraintViolationException e) {
 
@@ -93,13 +94,6 @@ public class ReservationService {
         return reservationRepository.findById(id).orElseThrow();
     }
 
-    public List<Reservation> findByUserId(int userId) {
-        return reservationRepository.findByUserId(userId);
-    }
-
-    public List<Reservation> findAllReservationsByCamperPlace(int camperPlaceId) {
-        return reservationRepository.findAllByCamperPlaceId(camperPlaceId);
-    }
 
 
     @Transactional
@@ -204,7 +198,10 @@ public class ReservationService {
         Optional.ofNullable(request.checkin()).ifPresent(reservation::setCheckin);
         Optional.ofNullable(request.checkout()).ifPresent(reservation::setCheckout);
         Optional.of(request.camperPlace()).ifPresent(reservation::setCamperPlace);
-        Optional.ofNullable(request.paid()).ifPresent(reservation::setPaid);
+        Optional.ofNullable(request.paid()).ifPresent(paid -> {
+            reservation.setPaid(paid);
+            statisticsService.update(reservation);
+        });
         if (!reservation.isCheckoutAfterCheckin()) {
             throw new ClientInputException("Can't Checkout Before Checkin!!");
         }
