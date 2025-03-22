@@ -1,0 +1,50 @@
+#name: Deploy Backend
+#
+#on:
+#  push:
+#    branches:
+#      - main
+#
+#jobs:
+#  build:
+#    runs-on: ubuntu-latest
+#
+#    steps:
+#      - name: Pobranie kodu
+#        uses: actions/checkout@v3
+#
+#      - name: Instalacja JDK 22
+#        uses: actions/setup-java@v3
+#        with:
+#          distribution: 'temurin'
+#          java-version: '22'
+#
+#      - name: Budowanie aplikacji
+#        run: mvn clean package
+#
+#      - name: Przesłanie artefaktu
+#        uses: actions/upload-artifact@v3
+#        with:
+#          name: backend-jar
+#          path: target/demo-0.0.1-SNAPSHOT.jar
+#
+#  deploy:
+#    needs: build
+#    runs-on: ubuntu-latest
+#
+#    steps:
+#      - name: Pobranie artefaktu
+#        uses: actions/download-artifact@v3
+#        with:
+#          name: backend-jar
+#          path: target/
+#
+#      - name: Wdrożenie na serwer (SSH)
+#        env:
+#          HOST: ${{ secrets.SSH_HOST }}
+#          USER: ${{ secrets.SSH_USER }}
+#          KEY: ${{ secrets.SSH_PRIVATE_KEY }}
+#        run: |
+#          echo "$KEY" > private_key && chmod 600 private_key
+#          scp -i private_key target/*.jar $USER@$HOST:/home/$USER/backend.jar
+#          ssh -i private_key $USER@$HOST "nohup java -jar /home/$USER/backend.jar > output.log 2>&1 &"

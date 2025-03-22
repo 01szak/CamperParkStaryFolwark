@@ -13,7 +13,8 @@ public class GlobalExceptionHandler {
     public ResponseEntity<String> handleValidationException(ClientInputException exception) {
         return ResponseEntity.badRequest().body(exception.getMessage());
 
-    }    @ExceptionHandler(SQLIntegrityConstraintViolationException.class)
+    }
+    @ExceptionHandler(SQLIntegrityConstraintViolationException.class)
     public ResponseEntity<String> handleValidationException(RuntimeException exception) {
         return ResponseEntity.badRequest().body(exception.getMessage());
 

@@ -16,12 +16,12 @@ public class StatisticsController {
 
     @GetMapping("/getMonthlyReservationCount/{camperPlaceId}/{month}/{year}")
     public int getMonthlyReservationCount(@PathVariable int camperPlaceId, @PathVariable int month, @PathVariable int year) {
-        return statisticsService.reservationCount(camperPlaceId, month, year);
+        return statisticsService.getReservationCountForCamperPlace(camperPlaceId, month, year);
     }
 
     @GetMapping("/getCamperPlaceMonthlyRevenue/{camperPlaceId}/{month}/{year}")
     public double getCamperPlaceMonthlyRevenue(@PathVariable int camperPlaceId, @PathVariable int month, @PathVariable int year) {
-        return statisticsService.revenueCount(camperPlaceId, month, year);
+        return statisticsService.getRevenueForCamperPlace(camperPlaceId, month, year);
     }
 
     @GetMapping("/getReservationCountForChart/{month}/{year}/{camperPlaceId}")
