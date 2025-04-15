@@ -1,6 +1,6 @@
 -- liquibase formatted sql
 -- changeset kacper:1
-CREATE TABLE demo_camper_park_sf.users
+CREATE TABLE users
 (
     id               BIGINT AUTO_INCREMENT PRIMARY KEY,
     first_name       VARCHAR(50)  NOT NULL,
@@ -16,7 +16,7 @@ CREATE TABLE demo_camper_park_sf.users
     CONSTRAINT uk_user_email UNIQUE (email)
 );
 
-CREATE TABLE demo_camper_park_sf.camper_places
+CREATE TABLE camper_places
 (
     id          BIGINT AUTO_INCREMENT PRIMARY KEY,
     is_occupied BOOLEAN        NOT NULL default FALSE,
@@ -26,7 +26,7 @@ CREATE TABLE demo_camper_park_sf.camper_places
     CONSTRAINT chk_valid_type CHECK (type IN ('STANDARD', 'VIP', 'PLUS'))
 );
 
-CREATE TABLE demo_camper_park_sf.reservations
+CREATE TABLE reservations
 (
     id              BIGINT AUTO_INCREMENT PRIMARY KEY,
     checkin         DATE        NOT NULL,
