@@ -33,7 +33,7 @@ public class UserController {
     public List<UserDto> getAll() {
         return userService.findAllUsersDto();
     }
-    @PatchMapping("updateUser/{id}")
+    @PatchMapping("/updateUser/{id}")
     public void updateUser(@PathVariable int id,@RequestBody UserRequest request){
         userService.updateUser(id,request);
     }
@@ -41,7 +41,7 @@ public class UserController {
     public UserDto getUserById(@PathVariable int id){
         return userService.findUserDtoById(id);
     }
-    @DeleteMapping("delete/{id}")
+    @DeleteMapping("/delete/{id}")
     public void deleteUser(@PathVariable int id){
          userService.deleteUser(id);
     }
