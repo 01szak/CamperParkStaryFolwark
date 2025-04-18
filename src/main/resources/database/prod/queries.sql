@@ -28,3 +28,6 @@ values
     (default,'PLUS',170.00,18),
     (default,'PLUS',170.00,19),
     (default,'PLUS',170.00,20);
+-- changeset kacper:3
+insert into camper_park.users(first_name, last_name, email, password_hash, role)
+    value ('Paweł', 'Olszewski', 'camperpark.sfolwark@gmail.com','$2y$10$.SkN425//TLbbYJi91hMNuYxbN5SLMjQq0EyFCX.i9oCuK.vT.d7u','ADMIN');
