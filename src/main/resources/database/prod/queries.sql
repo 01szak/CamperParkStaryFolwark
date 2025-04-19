@@ -28,3 +28,21 @@ values
     (default,'PLUS',170.00,18),
     (default,'PLUS',170.00,19),
     (default,'PLUS',170.00,20);
+
+-- changeset kacper:3
+
+ALTER TABLE reservations
+    DROP FOREIGN KEY fk_reservation_user;
+
+ALTER TABLE reservations
+    ADD CONSTRAINT fk_reservation_user
+        FOREIGN KEY (user_id) REFERENCES users (id)
+            ON DELETE CASCADE;
+
+ALTER TABLE reservations
+    DROP FOREIGN KEY fk_reservation_camper_place;
+
+ALTER TABLE reservations
+    ADD CONSTRAINT fk_reservation_camper_place
+        FOREIGN KEY (camper_place_id) REFERENCES camper_places (id)
+            ON DELETE CASCADE;

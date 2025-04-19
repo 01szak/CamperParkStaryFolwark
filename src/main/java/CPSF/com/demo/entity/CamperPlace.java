@@ -46,7 +46,6 @@ public class CamperPlace {
             CascadeType.MERGE,
             CascadeType.PERSIST,
             CascadeType.REFRESH,
-            CascadeType.REMOVE
     })
     @JsonManagedReference("camperPlace-reservations")
     private List<Reservation> reservations;
