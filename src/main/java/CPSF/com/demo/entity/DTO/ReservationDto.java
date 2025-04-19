@@ -13,7 +13,7 @@ public class ReservationDto {
     private LocalDate checkin;
     private LocalDate checkout;
     private String reservationStatus;
-    private int camperPlaceNumber;
+    private String camperPlaceIndex;
     private String userFirstName;
     private String userLastName;
     private String userEmail;

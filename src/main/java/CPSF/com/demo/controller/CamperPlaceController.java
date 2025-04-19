@@ -39,12 +39,12 @@ public class CamperPlaceController {
         return Arrays.stream(Type.values()).map(Enum::toString).toList();
     }
 
-    @DeleteMapping("/deleteCamperPlace/{number}")
-    public void deleteCamperPlace(@PathVariable int number) {
-        camperPlaceService.deleteCamperPlace(number);
+    @DeleteMapping("/deleteCamperPlace/{index}")
+    public void deleteCamperPlace(@PathVariable String index) {
+        camperPlaceService.deleteCamperPlace(index);
     }
-    @GetMapping("/find/{number}")
-    public CamperPlace findCamperPlaceByCamperPlaceNumber(@PathVariable int number) {
-        return camperPlaceService.findCamperPlaceByNumber(number);
+    @GetMapping("/find/{index}")
+    public CamperPlace findCamperPlaceByCamperPlaceNumber(@PathVariable String index) {
+        return camperPlaceService.findCamperPlaceByIndex(index);
     }
 }

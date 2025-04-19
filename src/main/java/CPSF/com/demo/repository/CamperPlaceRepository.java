@@ -7,7 +7,5 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface CamperPlaceRepository extends JpaRepository<CamperPlace, Integer> {
-    @Query("Select coalesce(max(c.number),0) From CamperPlace  c")
-    int findMaxNumber();
-    CamperPlace findCamperPlaceByNumber(int number);
+    CamperPlace findCamperPlaceByIndex(String index);
 }

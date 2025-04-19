@@ -46,3 +46,8 @@ ALTER TABLE reservations
     ADD CONSTRAINT fk_reservation_camper_place
         FOREIGN KEY (camper_place_id) REFERENCES camper_places (id)
             ON DELETE CASCADE;
+
+-- changeset kacper:4
+
+ALTER TABLE camper_places
+    MODIFY COLUMN number VARCHAR(2) NOT NULL;

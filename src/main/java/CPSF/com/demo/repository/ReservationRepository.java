@@ -22,7 +22,7 @@ public interface ReservationRepository extends JpaRepository<Reservation,Integer
      List<Reservation> orderByCheckoutDesc();
     @Query("select reservation  from Reservation  reservation order by reservation.user.lastName desc ")
      List<Reservation> orderByLastNameDesc();
-    @Query("select reservation  from Reservation  reservation order by reservation.camperPlace.number desc ")
+    @Query("select reservation  from Reservation  reservation order by reservation.camperPlace.index desc ")
      List<Reservation> orderByCamperPlaceNumberDesc();
 
     @Query("select reservation  from Reservation  reservation order by reservation.checkin asc ")
@@ -32,7 +32,7 @@ public interface ReservationRepository extends JpaRepository<Reservation,Integer
      List<Reservation> orderByCheckoutAsc();
     @Query("select reservation  from Reservation  reservation order by reservation.user.lastName asc ")
      List<Reservation> orderByLastNameAsc();
-    @Query("select reservation  from Reservation  reservation order by reservation.camperPlace.number asc ")
+    @Query("select reservation  from Reservation  reservation order by reservation.camperPlace.index asc ")
      List<Reservation> orderByCamperPlaceNumberAsc();
     @Query(value = "select  reservation from Reservation reservation where reservation.camperPlace.id = ?1 and  month(reservation.checkin) = ?2 and  year(reservation.checkin) = ?3")
      List<Reservation> findReservationByCamperPlace_IdAndCheckin_MonthAndAndCheckin_Year(int id, int month, int year);

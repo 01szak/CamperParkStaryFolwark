@@ -1,15 +1,10 @@
 package CPSF.com.demo.entity;
 
 import CPSF.com.demo.enums.Type;
-import com.fasterxml.jackson.annotation.JsonCreator;
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
-import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.*;
 import lombok.*;
-import org.jetbrains.annotations.NotNull;
 
-import java.util.ArrayList;
 import java.util.List;
 
 
@@ -18,7 +13,8 @@ import java.util.List;
 @Getter
 @Setter
 @NoArgsConstructor
-@RequiredArgsConstructor
+@AllArgsConstructor
+@Builder
 public class CamperPlace {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -26,7 +22,7 @@ public class CamperPlace {
 
     @Column(name = "number")
     @NonNull
-    private int number;
+    private String index;
 
     @Column(name = "is_Occupied")
     @NonNull

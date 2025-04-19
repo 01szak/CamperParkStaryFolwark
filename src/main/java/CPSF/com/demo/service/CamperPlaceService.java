@@ -1,18 +1,15 @@
 package CPSF.com.demo.service;
 
 import CPSF.com.demo.entity.CamperPlace;
-import CPSF.com.demo.entity.Reservation;
 import CPSF.com.demo.enums.ReservationStatus;
 import CPSF.com.demo.enums.Type;
 import CPSF.com.demo.repository.CamperPlaceRepository;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Stream;
 
 @Service
@@ -28,15 +25,11 @@ public class CamperPlaceService {
     }
 
     @Transactional
-    public void deleteCamperPlace(int camperPlaceNumber) {
+    public void deleteCamperPlace(String index) {
 
-        camperPlaceRepository.delete(camperPlaceRepository.findCamperPlaceByNumber(camperPlaceNumber));
+        camperPlaceRepository.delete(camperPlaceRepository.findCamperPlaceByIndex(index));
 
-        camperPlaceRepository.findAll().forEach(camperPlace -> {
-            if (camperPlace.getNumber() > camperPlaceNumber) {
-                camperPlace.setNumber(camperPlace.getNumber() - 1);
-            }
-        });
+
     }
 
     @Transactional
@@ -47,8 +40,11 @@ public class CamperPlaceService {
         if (price <= 0) {
             throw new IllegalArgumentException("Price must be positive");
         }
-        int id = camperPlaceRepository.findMaxNumber() + 1;
-        camperPlaceRepository.save(new CamperPlace(id, false, type, price));
+        camperPlaceRepository.save(CamperPlace.builder()
+                        .type(type)
+                        .price(price)
+                        .build()
+        );
     }
 
 
@@ -56,12 +52,12 @@ public class CamperPlaceService {
         return camperPlaceRepository.findAll();
     }
 
-    public CamperPlace findCamperPlaceByNumber(int number) {
-        return camperPlaceRepository.findCamperPlaceByNumber(number);
+    public CamperPlace findCamperPlaceByIndex(String index) {
+        return camperPlaceRepository.findCamperPlaceByIndex(index);
     }
 
-    public Boolean isCamperPlaceOccupied(int number) {
-        CamperPlace camperPlace = findCamperPlaceByNumber(number);
+    public Boolean isCamperPlaceOccupied(String index) {
+        CamperPlace camperPlace = findCamperPlaceByIndex(index);
 
         return camperPlace.getIsOccupied();
     }

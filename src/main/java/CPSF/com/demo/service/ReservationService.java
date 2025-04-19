@@ -121,7 +121,7 @@ public class ReservationService {
                     reservationDto.getUserFirstName().toLowerCase().contains(filterValue) ||
                     reservationDto.getUserLastName().toLowerCase().contains(filterValue) ||
                     reservationDto.getReservationStatus().toLowerCase().contains(filterValue) ||
-                    (isNumber(value) && reservationDto.getCamperPlaceNumber() == Integer.parseInt(value))
+                    (isNumber(value) && reservationDto.getCamperPlaceIndex().equals(value))
 
             ) {
                 filteredList.add(reservationDto);

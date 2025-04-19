@@ -35,7 +35,7 @@ public class Mapper {
                 .id(reservation.getId())
                 .checkin(reservation.getCheckin())
                 .checkout(reservation.getCheckout())
-                .camperPlaceNumber(reservation.getCamperPlace().getNumber())
+                .camperPlaceIndex(reservation.getCamperPlace().getIndex())
                 .userFirstName(reservation.getUser().getFirstName())
                 .userLastName(reservation.getUser().getLastName())
                 .userEmail(reservation.getUser().getEmail())
