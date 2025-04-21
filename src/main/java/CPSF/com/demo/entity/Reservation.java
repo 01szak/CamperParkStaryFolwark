@@ -61,7 +61,7 @@ public class Reservation {
     }
 
     public double calculateFinalPrice() {
-        if (daysDifference() > 0 && (daysDifference() - 3) >= 0 )  {
+        if (daysDifference() > 0 || (daysDifference() - 3) >= 0 )  {
             return camperPlace.getPrice() * daysDifference() - (daysDifference() - 3 )* 10;
         }else {
             return camperPlace.getPrice() * daysDifference();
