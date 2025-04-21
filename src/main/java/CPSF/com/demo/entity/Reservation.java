@@ -63,8 +63,9 @@ public class Reservation {
     public double calculateFinalPrice() {
         if (daysDifference() > 0 && (daysDifference() - 3) >= 0 )  {
             return camperPlace.getPrice() * daysDifference() - (daysDifference() - 3 )* 10;
+        }else {
+            return camperPlace.getPrice() * daysDifference();
         }
-        return camperPlace.getPrice() * daysDifference();
     }
 
     @AssertTrue(message = "Checkout date must be after checkin date")
