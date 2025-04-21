@@ -50,82 +50,61 @@ public class StatisticsService {
     }
 
 
-    public int[] getReservationCountForChart(int month, int year, int... camperPlaceId) {
-        int[] dataForChart = new int[camperPlaceId.length];
-        CamperPlace camperPlace = new CamperPlace();
+    public int[][] getReservationCountForCamperPlace(List<Integer> ids, int month, int year) {
+           int[][] chart = new int[ids.size()][2];
         try {
             if (month == 0) {
-                for (int i = 0; i <= camperPlaceId.length - 1; i++) {
-                    dataForChart[i] = statisticsRepository.findByCamperPlace_IdAndYear(camperPlaceId[i], year).stream().mapToInt(statistics -> statistics.getReservationCount()).sum();
-
+                for (int i = 0; i < ids.size() ; i++) {
+                    chart[i][0] = ids.get(i);
+                    chart[i][1] = statisticsRepository.findByCamperPlace_IdAndYear(ids.get(i), year).stream().mapToInt(Statistics::getReservationCount).sum();
                 }
+                return chart;
             } else {
-                for (int i = 0; i <= camperPlaceId.length - 1; i++) {
-                    dataForChart[i] = statisticsRepository.findByCamperPlace_IdAndMonthAndYear(camperPlaceId[i], month, year).getReservationCount();
+                for (int i = 0; i < ids.size() ; i++) {
+                    var s = statisticsRepository.findByCamperPlace_IdAndMonthAndYear(ids.get(i), month, year);
+                    if(s == null) {
+                        chart[i][0] = ids.get(i);
+                        chart[i][1] = 0;
+                    }else {
+                        chart[i][0] = ids.get(i);
+                        chart[i][1] = s.getReservationCount();
+                    }
                 }
+                return chart;
             }
         } catch (NullPointerException e) {
-            for (int i = 0; i <= camperPlaceId.length - 1; i++) {
-                dataForChart[i] = 0;
-            }
-
-        }
-        return dataForChart;
-    }
-
-    //TODO poprawic wyswietlanie dla wykresow z uzyciem tabeli statistics
-    public double[] getRevenueForChart(int month, int year, int... camperPlaceId) {
-        double[] dataForChart = new double[camperPlaceId.length];
-        try {
-            if (month == 0) {
-                double revenue = 0;
-
-                for (int i = 0; i <= camperPlaceId.length - 1; i++) {
-                    dataForChart[i] = statisticsRepository.findByCamperPlace_IdAndYear(camperPlaceId[i], year).stream().mapToDouble(statistics -> statistics.getRevenue()).sum();
-                }
-
-            } else {
-                for (int i = 0; i <= camperPlaceId.length - 1; i++) {
-                    dataForChart[i] = statisticsRepository.findByCamperPlace_IdAndMonthAndYear(camperPlaceId[i], month, year).getRevenue();
-                }
-            }
-        } catch (NullPointerException e) {
-            for (int i = 0; i <= camperPlaceId.length - 1; i++) {
-                dataForChart[i] = 0;
-            }
-        }
-        return dataForChart;
-    }
-
-    public int getReservationCountForCamperPlace(int id, int month, int year) {
-        try {
-            if (month == 0) {
-                return statisticsRepository.findByCamperPlace_IdAndYear(id, year).stream().mapToInt(Statistics::getReservationCount).sum();
-
-            } else {
-                return statisticsRepository.findByCamperPlace_IdAndMonthAndYear(id, month, year).getReservationCount();
-
-            }
-        } catch (NullPointerException e) {
-            return 0;
+            return chart;
         }
 
     }
 
 
-public double getRevenueForCamperPlace(int id, int month, int year) {
-    try{
+public double[][] getRevenueForCamperPlace(List<Integer> ids, int month, int year) {
+    double[][] chart = new double[ids.size()][2];
+    try {
         if (month == 0) {
-
-            return statisticsRepository.findByCamperPlace_IdAndYear(id, year).stream().mapToDouble(Statistics::getRevenue).sum();
-
+            for (int i = 0; i < ids.size() ; i++) {
+                chart[i][0] = ids.get(i);
+                chart[i][1] = statisticsRepository.findByCamperPlace_IdAndYear(ids.get(i), year).stream().mapToDouble(Statistics::getRevenue).sum();
+            }
+            return chart;
         } else {
-            return statisticsRepository.findByCamperPlace_IdAndMonthAndYear(id, month, year).getRevenue();
-
+            for (int i = 0; i < ids.size() ; i++) {
+                var s = statisticsRepository.findByCamperPlace_IdAndMonthAndYear(ids.get(i), month, year);
+                if(s == null) {
+                    chart[i][0] = ids.get(i);
+                    chart[i][1] = 0;
+                } else {
+                    chart[i][0] = ids.get(i);
+                    chart[i][1] = s.getRevenue();
+                }
+            }
+            return chart;
         }
-    }catch (NullPointerException e){
-        return 0;
+    } catch (NullPointerException e) {
+        return chart;
     }
+
 }
 
 @Transactional
@@ -152,12 +131,11 @@ protected void newStatisticsInstance(CamperPlace camperPlace, int month, int yea
                     .year(year)
                     .build()
     );
-}
+ }
 
 
 @Transactional
 public void update(Reservation reservation) {
-    try {
         int camperPlaceId = reservation.getCamperPlace().getId();
         int month = reservation.getCheckin().getMonthValue();
         int year = reservation.getCheckin().getYear();
@@ -168,31 +146,8 @@ public void update(Reservation reservation) {
             statisticsInstance.setRevenue(revenueCount(camperPlaceId, month, year));
             statisticsInstance.setReservationCount(reservationCount(camperPlaceId, month, year));
         }
-    } catch (NonUniqueResultException e) {
-        System.out.println("tu sie wyjebalo");
-    }
 
 }
 
-@Transactional
-@Scheduled(cron = "0 0 0 1 1 *")
-public void generateAnnuallyCamperPlaceData() {
-    generateStatisticsRecord();
-}
 
-@Transactional
-protected void generateStatisticsRecord() {
-    try {
-        for (int i = 1; i <= 12; i++) {
-            int month = i;
-            int year = LocalDate.now().getYear();
-            camperPlaceService.findAllCamperPlaces().forEach(camperPlace -> {
-                newStatisticsInstance(camperPlace, month, year);
-            });
-        }
-    } catch (Exception e) {
-
-    }
-
-}
 }

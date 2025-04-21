@@ -6,6 +6,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Arrays;
+import java.util.List;
+
 @RestController
 @RequestMapping("/statistics")
 @RequiredArgsConstructor
@@ -14,23 +17,15 @@ public class StatisticsController {
     @Autowired
     StatisticsService statisticsService;
 
-    @GetMapping("/getMonthlyReservationCount/{camperPlaceId}/{month}/{year}")
-    public int getMonthlyReservationCount(@PathVariable int camperPlaceId, @PathVariable int month, @PathVariable int year) {
-        return statisticsService.getReservationCountForCamperPlace(camperPlaceId, month, year);
+    @GetMapping("getReservationCountMonthly/{camperPlaceIds}/{month}/{year}")
+    public int[][] getMonthlyReservationCount(@PathVariable List<Integer> camperPlaceIds, @PathVariable int month, @PathVariable int year) {
+        return statisticsService.getReservationCountForCamperPlace(camperPlaceIds, month, year);
+
     }
 
-    @GetMapping("/getCamperPlaceMonthlyRevenue/{camperPlaceId}/{month}/{year}")
-    public double getCamperPlaceMonthlyRevenue(@PathVariable int camperPlaceId, @PathVariable int month, @PathVariable int year) {
-        return statisticsService.getRevenueForCamperPlace(camperPlaceId, month, year);
-    }
-
-    @GetMapping("/getReservationCountForChart/{month}/{year}/{camperPlaceId}")
-    public int[] getReservationCountForChart(@PathVariable int month, @PathVariable int year, @PathVariable int...camperPlaceId) {
-        return statisticsService.getReservationCountForChart(month,year,camperPlaceId);
-    }
-    @GetMapping("/getRevenueForChart/{month}/{year}/{camperPlaceId}")
-    public double[] getRevenueForChart(@PathVariable int month, @PathVariable int year, @PathVariable int...camperPlaceId) {
-        return statisticsService.getRevenueForChart(month,year,camperPlaceId);
+    @GetMapping("/geRevenueMonthly/{camperPlaceIds}/{month}/{year}")
+    public double[][] getCamperPlaceMonthlyRevenue(@PathVariable List<Integer> camperPlaceIds, @PathVariable int month, @PathVariable int year) {
+        return statisticsService.getRevenueForCamperPlace(camperPlaceIds, month, year);
     }
 
 
