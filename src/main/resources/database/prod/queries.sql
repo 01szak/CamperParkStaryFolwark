@@ -51,3 +51,6 @@ ALTER TABLE reservations
 
 ALTER TABLE camper_places
     MODIFY COLUMN number VARCHAR(2) NOT NULL;
+-- changeset kacper:5
+ALTER TABLE users
+    DROP INDEX uk_user_email;

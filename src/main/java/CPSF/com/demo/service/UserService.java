@@ -1,5 +1,6 @@
 package CPSF.com.demo.service;
 
+import CPSF.com.demo.ClientInputException;
 import CPSF.com.demo.entity.DTO.UserRequest;
 import CPSF.com.demo.entity.Mapper;
 import CPSF.com.demo.entity.User;
@@ -43,15 +44,18 @@ public class UserService implements UserDetailsService {
     }
 
 
-    public User create(User user) {
+    public void create(User user) {
         if (user.getRole() == null) {
             user.setRole(Role.GUEST);
         }
         if (user.getReservations() == null) {
             user.setReservations(new ArrayList<>());
         }
-        userRepository.save(user);
-        return user;
+        if(userRepository.findByEmail(user.getEmail()).isPresent() && !user.getEmail().isEmpty() ) {
+           throw new ClientInputException("Guest with that email already exists");
+        } else {
+            userRepository.save(user);
+        }
     }
 
 
@@ -87,6 +91,10 @@ public class UserService implements UserDetailsService {
     public void updateUser(int id, UserRequest request) {
         User user = findUserById(id);
 
+        if(userRepository.findByEmail(user.getEmail()).isPresent() && !user.getEmail().isEmpty() ) {
+            throw new ClientInputException("Guest with that email already exists");
+        }
+
         Optional.ofNullable(request.firstName()).ifPresent(user::setFirstName);
         Optional.ofNullable(request.lastName()).ifPresent(user::setLastName);
         Optional.ofNullable(request.email()).ifPresent(user::setEmail);
@@ -107,7 +115,10 @@ public class UserService implements UserDetailsService {
     }
     @Transactional
     public User createUserIfDontExist(User user) {
-        return userRepository.findById(user.getId()).orElseGet(() -> create(user));
+        if (!userRepository.findById(user.getId()).isPresent()) {
+            create(user);
+        }
+        return user;
     }
     @Transactional
     public void deleteUser(int id) {
