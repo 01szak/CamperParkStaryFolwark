@@ -51,7 +51,7 @@ public class UserService implements UserDetailsService {
         if (user.getReservations() == null) {
             user.setReservations(new ArrayList<>());
         }
-        if(userRepository.findByEmail(user.getEmail()).isPresent() && !user.getEmail().isEmpty() ) {
+        if(!user.getEmail().isBlank() && userRepository.findByEmail(user.getEmail()).isPresent()) {
            throw new ClientInputException("Guest with that email already exists");
         } else {
             userRepository.save(user);
@@ -115,7 +115,7 @@ public class UserService implements UserDetailsService {
     }
     @Transactional
     public User createUserIfDontExist(User user) {
-        if (!userRepository.findById(user.getId()).isPresent()) {
+        if (userRepository.findById(user.getId()).isEmpty()) {
             create(user);
         }
         return user;
