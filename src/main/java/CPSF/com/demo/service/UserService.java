@@ -91,7 +91,7 @@ public class UserService implements UserDetailsService {
     public void updateUser(int id, UserRequest request) {
         User user = findUserById(id);
 
-        if(userRepository.findByEmail(user.getEmail()).isPresent() && !user.getEmail().isEmpty() ) {
+        if(userRepository.findByEmail(request.email()).isPresent()) {
             throw new ClientInputException("Guest with that email already exists");
         }
 
