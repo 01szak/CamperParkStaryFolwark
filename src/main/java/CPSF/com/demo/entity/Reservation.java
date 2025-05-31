@@ -61,10 +61,16 @@ public class Reservation {
     }
 
     public double calculateFinalPrice() {
-        if (daysDifference() > 0 || (daysDifference() - 3) >= 0 )  {
-            return camperPlace.getPrice() * daysDifference() - (daysDifference() - 3 )* 10;
+        double firstDay = 1;
+        double lastDay = 1;
+        double daysUntilDiscount = 3;
+        double finalNumberOfDays = daysDifference() - firstDay * 0.5 - lastDay * 0.5;
+        double discount = (daysDifference() - daysUntilDiscount) * 10;
+
+        if (daysDifference() > 0 || (daysDifference() - daysUntilDiscount) >= 0 )  {
+            return camperPlace.getPrice() * finalNumberOfDays - discount;
         }else {
-            return camperPlace.getPrice() * daysDifference();
+            return camperPlace.getPrice() * finalNumberOfDays;
         }
     }
 
