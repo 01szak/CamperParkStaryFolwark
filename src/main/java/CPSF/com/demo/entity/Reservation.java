@@ -37,7 +37,7 @@ public class Reservation {
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "camper_place_id")
     @Lazy
-    @JsonBackReference("camperPlace-reservations")
+    @JsonBackReference("camperPlaceIndex-reservations")
     private CamperPlace camperPlace;
 
     @ManyToOne
@@ -78,4 +78,5 @@ public class Reservation {
     public boolean isCheckoutAfterCheckin() {
         return checkout.isAfter(checkin);
     }
+
 }

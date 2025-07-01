@@ -54,8 +54,8 @@ public class SecurityConfig {
                 .csrf(AbstractHttpConfigurer::disable)
                 .cors(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/error/**", "/auth/login", "/auth/register", "/swagger-ui/**", "/swagger-ui.html/**", "/v3/api-docs/**").permitAll()
-                        .anyRequest().authenticated()
+//                        .requestMatchers("/error/**", "/auth/login", "/auth/register", "/swagger-ui/**", "/swagger-ui.html/**", "/v3/api-docs/**").permitAll()
+                        .anyRequest().permitAll()
                 )
                 .sessionManagement(s -> s.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .oauth2ResourceServer((oauth2) -> oauth2.jwt((jwt) -> jwt.decoder(decoder())))

@@ -2,6 +2,7 @@ package CPSF.com.demo.aspect;
 
 import CPSF.com.demo.entity.Reservation;
 import CPSF.com.demo.service.ReservationService;
+import lombok.AllArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Before;
@@ -14,17 +15,15 @@ import java.util.List;
 @Aspect
 @Component
 @EnableAspectJAutoProxy
-@RequiredArgsConstructor
+@AllArgsConstructor
 public class ReservationUpdateAspect {
 
-@Autowired
-ReservationService reservationService;
-
+    ReservationService reservationService;
 
     @Before("execution(* CPSF.com.demo.controller.CamperPlaceController.finAllCamperPlaces(..)) || " +
             "execution(* CPSF.com.demo.controller.ReservationController.getFilteredReservations(..))")
     public void setReservationStatusAndIsCamperPlaceOccupied() {
-        List<Reservation> reservations = reservationService.findAllReservations();
+        List<Reservation> reservations = reservationService.getAll();
         reservations.forEach(reservationService::updateReservationStatus);
     }
 

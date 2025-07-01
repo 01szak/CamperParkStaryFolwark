@@ -1,6 +1,9 @@
 package CPSF.com.demo.service;
 
 import CPSF.com.demo.entity.CamperPlace;
+import CPSF.com.demo.entity.DTO.CamperPlaceDTO;
+import CPSF.com.demo.entity.Mapper;
+import CPSF.com.demo.entity.Reservation;
 import CPSF.com.demo.enums.ReservationStatus;
 import CPSF.com.demo.enums.Type;
 import CPSF.com.demo.repository.CamperPlaceRepository;
@@ -9,15 +12,13 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Stream;
 
 @Service
 public class CamperPlaceService {
 
-
     CamperPlaceRepository camperPlaceRepository;
-
 
     @Autowired
     public CamperPlaceService(CamperPlaceRepository camperPlaceRepository) {
@@ -26,10 +27,7 @@ public class CamperPlaceService {
 
     @Transactional
     public void deleteCamperPlace(String index) {
-
         camperPlaceRepository.delete(camperPlaceRepository.findCamperPlaceByIndex(index));
-
-
     }
 
     @Transactional
@@ -48,7 +46,11 @@ public class CamperPlaceService {
     }
 
 
-    public List<CamperPlace> findAllCamperPlaces() {
+    public List<CamperPlaceDTO> findAllCamperPlacesDTO() {
+        return camperPlaceRepository.findAll().stream().map(cp -> Mapper.toCamperPlaceDTO(cp)).toList();
+    }
+
+    public List<CamperPlace> getAll() {
         return camperPlaceRepository.findAll();
     }
 
@@ -78,13 +80,14 @@ public class CamperPlaceService {
     }
 
     public boolean checkIsCamperPlaceOccupied(CamperPlace camperPlace, LocalDate checkin, LocalDate checkout, int reservationId) {
-        return camperPlace.getReservations().stream().filter(reservation -> reservation.getId() != reservationId)
-                .anyMatch(reservation -> ((
-                        (!checkin.isBefore(reservation.getCheckin()) && !checkin.isAfter(reservation.getCheckout()) && !checkin.equals(reservation.getCheckout()))
-                                || (checkin.isBefore(reservation.getCheckin()) && checkout.isAfter(reservation.getCheckout())) &&
-                                (!checkout.isBefore(reservation.getCheckin()) && !checkout.isEqual(reservation.getCheckin()))
-                                || checkout.isEqual(reservation.getCheckout())))
-                );
+        for (Reservation res : camperPlace.getReservations()) {
+            if (res.getId() == reservationId) continue;
+
+            if (!res.getCheckout().isBefore(checkin) && !res.getCheckin().isAfter(checkout)) {
+                return true;
+            }
+        }
+        return false;
     }
 }
 

@@ -1,21 +1,18 @@
 package CPSF.com.demo.entity;
 
-import CPSF.com.demo.entity.DTO.ReservationDto;
-import CPSF.com.demo.entity.DTO.UserDto;
-import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Component;
+import CPSF.com.demo.entity.DTO.CamperPlaceDTO;
+import CPSF.com.demo.entity.DTO.ReservationDTO;
+import CPSF.com.demo.entity.DTO.ReservationMetadataDTO;
+import CPSF.com.demo.entity.DTO.UserDTO;
 
-@Component
-@RequiredArgsConstructor
 public class Mapper {
 
-//    @Autowired
-//    private final PasswordEncoder passwordEncoder;
-//
-//
+    private Mapper() {
 
-    public UserDto toUserDto(User user) {
-        return UserDto.builder()
+    }
+
+    public static UserDTO toUserDTO(User user) {
+        return UserDTO.builder()
                 .id(user.getId())
                 .firstName(user.getFirstName())
                 .lastName(user.getLastName())
@@ -25,41 +22,39 @@ public class Mapper {
                 .country(user.getCountry())
                 .city(user.getCity())
                 .streetAddress(user.getStreetAddress())
-                .reservations(user.getReservations() )
                 .build();
 
     }
 
-    public ReservationDto toReservationDto(Reservation reservation) {
-        return ReservationDto.builder()
+    public static ReservationDTO toReservationDTO(Reservation reservation) {
+        return ReservationDTO.builder()
                 .id(reservation.getId())
                 .checkin(reservation.getCheckin())
                 .checkout(reservation.getCheckout())
                 .camperPlaceIndex(reservation.getCamperPlace().getIndex())
-                .userFirstName(reservation.getUser().getFirstName())
-                .userLastName(reservation.getUser().getLastName())
-                .userEmail(reservation.getUser().getEmail())
+                .user(toUserDTO(reservation.getUser()))
                 .reservationStatus(String.valueOf(reservation.getReservationStatus()))
                 .paid(reservation.getPaid())
                 .build();
     }
-//
-//
-//    public User toUser(AuthDTO.RegisterRequest request) {
-//        return User.builder()
-//                .firstName(request.firstName())
-//                .lastName(request.lastName())
-//                .email(request.email())
-//                .phoneNumber(request.phoneNumber())
-//                .carRegistration(request.carRegistration())
-//                .country(request.country())
-//                .city(request.city())
-//                .streetAddress(request.streetAddress())
-//                .password(passwordEncoder.encode(request.streetAddress()))
-//                .role(Role.GUEST)
-//                .reservations(new ArrayList<Reservation>())
-//                .build();
-//
-//    }
-}
 
+    public static CamperPlaceDTO toCamperPlaceDTO(CamperPlace camperPlace) {
+        return CamperPlaceDTO.builder()
+                .id(camperPlace.getId())
+                .index(camperPlace.getIndex())
+                .price(camperPlace.getPrice())
+                .isOccupied(camperPlace.getIsOccupied())
+                .type(camperPlace.getType())
+                .reservations(camperPlace.getReservations().stream().map(r -> toReservationDTO(r)).toList())
+                .build();
+    }
+
+    public static ReservationMetadataDTO toReservationMetadataDTO(ReservationMetadata reservationMetadata) {
+        return ReservationMetadataDTO.builder()
+                .reserved(reservationMetadata.getReserved())
+                .checkin(reservationMetadata.getCheckin())
+                .checkout(reservationMetadata.getCheckout())
+                .build();
+    }
+
+}

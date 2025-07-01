@@ -43,7 +43,7 @@ public class CamperPlace {
             CascadeType.PERSIST,
             CascadeType.REFRESH,
     })
-    @JsonManagedReference("camperPlace-reservations")
+    @JsonManagedReference("camperPlaceIndex-reservations")
     private List<Reservation> reservations;
 
 

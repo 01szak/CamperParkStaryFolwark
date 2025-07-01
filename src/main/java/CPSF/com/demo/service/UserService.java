@@ -4,9 +4,11 @@ import CPSF.com.demo.ClientInputException;
 import CPSF.com.demo.entity.DTO.UserRequest;
 import CPSF.com.demo.entity.Mapper;
 import CPSF.com.demo.entity.User;
-import CPSF.com.demo.entity.DTO.UserDto;
+import CPSF.com.demo.entity.DTO.UserDTO;
 import CPSF.com.demo.enums.Role;
 import CPSF.com.demo.repository.UserRepository;
+import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -19,20 +21,15 @@ import java.util.List;
 import java.util.Optional;
 
 @Service
+@AllArgsConstructor
 public class UserService implements UserDetailsService {
-    private final UserRepository userRepository;
-    private final Mapper mapper;
 
-    @Autowired
-    public UserService(UserRepository userRepository, Mapper mapper) {
-        this.userRepository = userRepository;
-        this.mapper = mapper;
-    }
+    UserRepository userRepository;
 
-    public List<UserDto> findAllUsersDto() {
+    public List<UserDTO> findAllUsersDto() {
         return userRepository.findAll()
                 .stream()
-                .map(mapper::toUserDto)
+                .map(Mapper::toUserDTO)
                 .toList();
     }
 
@@ -59,14 +56,14 @@ public class UserService implements UserDetailsService {
     }
 
 
-    public List<UserDto> getFilteredUsers(String value) {
+    public List<UserDTO> getFilteredUsers(String value) {
 
         if (value == null) {
             return findAllUsersDto();
         }
 
-        List<UserDto> allUsersDto = findAllUsersDto();
-        List<UserDto> filteredList = new ArrayList<>();
+        List<UserDTO> allUsersDto = findAllUsersDto();
+        List<UserDTO> filteredList = new ArrayList<>();
         String filterValue = value.toLowerCase();
         allUsersDto.forEach(userDto -> {
             if (
@@ -106,8 +103,8 @@ public class UserService implements UserDetailsService {
         userRepository.save(user);
     }
 
-    public UserDto findUserDtoById(int id) {
-        return userRepository.findById(id).map(mapper::toUserDto).orElseThrow();
+    public UserDTO findUserDtoById(int id) {
+        return userRepository.findById(id).map(Mapper::toUserDTO).orElseThrow();
     }
 
     private User findUserById(int id) {

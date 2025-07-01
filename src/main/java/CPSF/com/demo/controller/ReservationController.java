@@ -1,11 +1,12 @@
 package CPSF.com.demo.controller;
 
-import CPSF.com.demo.entity.DTO.ReservationDto;
+import CPSF.com.demo.entity.DTO.ReservationDTO;
+import CPSF.com.demo.entity.DTO.ReservationMetadataDTO;
 import CPSF.com.demo.entity.DTO.ReservationRequest;
 import CPSF.com.demo.entity.Reservation;
+import CPSF.com.demo.entity.ReservationMetadata;
 import CPSF.com.demo.service.ReservationService;
 import CPSF.com.demo.service.UserService;
-import jakarta.validation.ConstraintViolationException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.http.ResponseEntity;
@@ -13,6 +14,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 
 @Transactional
 @RestController
@@ -31,7 +33,7 @@ public class ReservationController {
     @PostMapping("/createReservation")
     public ResponseEntity<String> createReservation(@RequestBody ReservationRequest request) {
 
-        reservationService.createReservation(request.checkin(), request.checkout(), request.camperPlace(), request.user());
+        reservationService.createReservation(request.checkin(), request.checkout(), request.camperPlaceIndex(), request.user());
 
         return ResponseEntity.ok().build();
     }
@@ -45,15 +47,25 @@ public class ReservationController {
 
 
     @GetMapping({"/getFilteredReservations/{value}", "/getFilteredReservations"})
-    public List<ReservationDto> getFilteredReservations(@PathVariable(required = false) String value) {
+    public List<ReservationDTO> getFilteredReservations(@PathVariable(required = false) String value) {
         if (value != null && value.trim().isEmpty()) {
             value = null;
         }
         return reservationService.getFilteredData(value);
     }
 
+    @GetMapping({"/getReservationMetadata"})
+    public Map<String, ReservationMetadataDTO> getReservationMetadata() {
+        return reservationService.getReservationMetadataDTO();
+    }
+
+    @GetMapping("/getAll")
+    public List<ReservationDTO> getAll() {
+        return reservationService.getFilteredData("");
+    }
+
     @GetMapping("sortTable/{header}/{isAsc}")
-    public List<ReservationDto> getSortedReservations(@PathVariable String header, @PathVariable int isAsc) {
+    public List<ReservationDTO> getSortedReservations(@PathVariable String header, @PathVariable int isAsc) {
         return reservationService.getSortedReservations(header, isAsc);
     }
 
