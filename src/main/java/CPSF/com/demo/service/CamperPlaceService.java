@@ -83,7 +83,7 @@ public class CamperPlaceService {
         for (Reservation res : camperPlace.getReservations()) {
             if (res.getId() == reservationId) continue;
 
-            if (!res.getCheckout().isBefore(checkin) && !res.getCheckin().isAfter(checkout)) {
+            if (!res.getCheckout().isBefore(checkin.plusDays(1)) && !res.getCheckin().isAfter(checkout.minusDays(1))) {
                 return true;
             }
         }

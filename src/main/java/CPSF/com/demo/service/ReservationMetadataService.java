@@ -42,17 +42,12 @@ public class ReservationMetadataService {
 			Set<LocalDate>dates = r.getCheckin().datesUntil(r.getCheckout().plusDays(1))
 					.collect(Collectors.toSet());
 			allDates.addAll(dates);
+			checkin.add(r.getCheckin().toString());
+			checkout.add(r.getCheckout().toString());
 		}
-
-		for (LocalDate d : allDates) {
-			reserved.add(d.toString());
-			if (!allDates.contains(d.minusDays(1))) {
-				checkin.add(d.toString());
-			}
-			if (!allDates.contains(d.plusDays(1))) {
-				checkout.add(d.toString());
-			}
-		}
+		reserved.addAll(allDates.stream()
+				.map(d -> d.toString())
+				.collect(Collectors.toSet()));
 
 		ReservationMetadata reservationMetadata = new ReservationMetadata();
 		reservationMetadata.addReserved(reserved);
