@@ -22,7 +22,6 @@ public class ReservationService {
      ReservationRepository reservationRepository;
      UserService userService;
      CamperPlaceService camperPlaceService;
-     StatisticsService statisticsService;
      ReservationMetadataService reservationMetadataService;
 
     @Transactional
@@ -74,10 +73,8 @@ public class ReservationService {
         Optional.ofNullable(checkin).ifPresent(reservation::setCheckin);
         Optional.ofNullable(checkout).ifPresent(reservation::setCheckout);
         Optional.ofNullable(camperPlace).ifPresent(reservation::setCamperPlace);
-        Optional.ofNullable(request.paid()).ifPresent(paid -> {
-            reservation.setPaid(paid);
-            statisticsService.update(reservation);
-        });
+		//            statisticsService.update(reservation);
+		Optional.ofNullable(request.paid()).ifPresent(reservation::setPaid);
         if (!reservation.isCheckoutAfterCheckin()) {
             throw new ClientInputException("Can't Checkout Before Checkin!!");
         }
