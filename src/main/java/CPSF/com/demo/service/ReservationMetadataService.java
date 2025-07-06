@@ -3,13 +3,11 @@ package CPSF.com.demo.service;
 import CPSF.com.demo.entity.*;
 import CPSF.com.demo.entity.DTO.ReservationMetadataDTO;
 import lombok.AllArgsConstructor;
-import org.jetbrains.annotations.NotNull;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.util.*;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 @Service
 @AllArgsConstructor
@@ -33,13 +31,23 @@ public class ReservationMetadataService {
 		List<CamperPlace> camperPlaces = camperPlaceService.getAll();
 
 		for(CamperPlace cp : camperPlaces) {
-			metadataMap.put(cp.getIndex(), assignReservationIfPaid(cp));
+			metadataMap.put(cp.getIndex(), assignReservationIfPaidOrNotPaid(true, cp));
+		}
+
+		return metadataMap;
+	}
+	public Map<String, PaidReservations> getUnPaidReservations() {
+		Map<String, PaidReservations> metadataMap = new HashMap<>();
+		List<CamperPlace> camperPlaces = camperPlaceService.getAll();
+
+		for(CamperPlace cp : camperPlaces) {
+			metadataMap.put(cp.getIndex(), assignReservationIfPaidOrNotPaid(false, cp));
 		}
 
 		return metadataMap;
 	}
 
-	private PaidReservations assignReservationIfPaid(CamperPlace cp) {
+	private PaidReservations assignReservationIfPaidOrNotPaid(boolean paid, CamperPlace cp) {
 		List<Reservation> reservations = cp.getReservations();
 		PaidReservations paidReservations = new PaidReservations();
 
@@ -48,9 +56,16 @@ public class ReservationMetadataService {
 		}
 
 		for(Reservation r : reservations) {
-			if (r != null && r.getPaid()) {
-				paidReservations.addDates(mapReservationDatesToString(r));
+			if (paid) {
+				if (r != null && r.getPaid()) {
+					paidReservations.addDates(mapReservationDatesToString(r));
+				}
+			} else {
+				if (r != null && !r.getPaid()) {
+					paidReservations.addDates(mapReservationDatesToString(r));
+				}
 			}
+
 		}
 
 		return paidReservations;

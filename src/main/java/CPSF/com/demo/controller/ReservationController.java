@@ -89,6 +89,10 @@ public class ReservationController {
     public Map<String, PaidReservations> getPaidReservations() {
         return reservationMetadataService.getPaidReservations();
     }
+    @GetMapping("/getUnPaidReservations")
+    public Map<String, PaidReservations> getUnPaidReservations() {
+        return reservationMetadataService.getUnPaidReservations();
+    }
 
 }
 
