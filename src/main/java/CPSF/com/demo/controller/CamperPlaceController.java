@@ -1,6 +1,7 @@
 package CPSF.com.demo.controller;
 
 import CPSF.com.demo.entity.CamperPlace;
+import CPSF.com.demo.entity.DTO.CamperPlaceDTO;
 import CPSF.com.demo.entity.DTO.CamperPlaceRequest;
 import CPSF.com.demo.enums.Type;
 import CPSF.com.demo.service.CamperPlaceService;
@@ -28,9 +29,9 @@ public class CamperPlaceController {
 
     }
 
-    @GetMapping("/findAll")
-    public List<CamperPlace> finAllCamperPlaces() {
-        return camperPlaceService.findAllCamperPlaces();
+    @GetMapping("/getAll")
+    public List<CamperPlaceDTO> finAllCamperPlaces() {
+        return camperPlaceService.findAllCamperPlacesDTO();
 
     }
 
@@ -43,6 +44,7 @@ public class CamperPlaceController {
     public void deleteCamperPlace(@PathVariable String index) {
         camperPlaceService.deleteCamperPlace(index);
     }
+
     @GetMapping("/find/{index}")
     public CamperPlace findCamperPlaceByCamperPlaceNumber(@PathVariable String index) {
         return camperPlaceService.findCamperPlaceByIndex(index);

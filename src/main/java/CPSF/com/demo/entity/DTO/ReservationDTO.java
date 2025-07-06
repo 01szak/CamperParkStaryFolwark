@@ -8,14 +8,12 @@ import java.time.LocalDate;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class ReservationDto {
+public class ReservationDTO {
     private int id;
     private LocalDate checkin;
     private LocalDate checkout;
     private String reservationStatus;
     private String camperPlaceIndex;
-    private String userFirstName;
-    private String userLastName;
-    private String userEmail;
+    private UserDTO user;
     private boolean paid;
 }

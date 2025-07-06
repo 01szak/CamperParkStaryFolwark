@@ -19,6 +19,6 @@ public class CamperPlaceUpdateAspect {
 
     @Before("execution(* CPSF.com.demo.controller.*.*(..))")
     public void updateIsOccupied() {
-        camperPlaceService.findAllCamperPlaces().forEach(camperPlaceService::setIsCamperPlaceOccupied);
+        camperPlaceService.getAll().forEach(camperPlaceService::setIsCamperPlaceOccupied);
     }
 }
