@@ -1,16 +1,15 @@
 package CPSF.com.demo.service;
 
-import CPSF.com.demo.entity.CamperPlace;
+import CPSF.com.demo.entity.*;
 import CPSF.com.demo.entity.DTO.ReservationMetadataDTO;
-import CPSF.com.demo.entity.Mapper;
-import CPSF.com.demo.entity.Reservation;
-import CPSF.com.demo.entity.ReservationMetadata;
 import lombok.AllArgsConstructor;
+import org.jetbrains.annotations.NotNull;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.util.*;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @Service
 @AllArgsConstructor
@@ -25,7 +24,36 @@ public class ReservationMetadataService {
 		for (CamperPlace cp : camperPlaces) {
 			metadataMap.put(cp.getIndex(), assignReservationMetadata(cp));
 		}
+
 		return metadataMap;
+	}
+
+	public Map<String, PaidReservations> getPaidReservations() {
+		Map<String, PaidReservations> metadataMap = new HashMap<>();
+		List<CamperPlace> camperPlaces = camperPlaceService.getAll();
+
+		for(CamperPlace cp : camperPlaces) {
+			metadataMap.put(cp.getIndex(), assignReservationIfPaid(cp));
+		}
+
+		return metadataMap;
+	}
+
+	private PaidReservations assignReservationIfPaid(CamperPlace cp) {
+		List<Reservation> reservations = cp.getReservations();
+		PaidReservations paidReservations = new PaidReservations();
+
+		if (reservations == null) {
+			return new PaidReservations();
+		}
+
+		for(Reservation r : reservations) {
+			if (r != null && r.getPaid()) {
+				paidReservations.addDates(mapReservationDatesToString(r));
+			}
+		}
+
+		return paidReservations;
 	}
 
 	private ReservationMetadataDTO assignReservationMetadata(CamperPlace cp) {
@@ -45,9 +73,7 @@ public class ReservationMetadataService {
 			checkin.add(r.getCheckin().toString());
 			checkout.add(r.getCheckout().toString());
 		}
-		reserved.addAll(allDates.stream()
-				.map(d -> d.toString())
-				.collect(Collectors.toSet()));
+		reserved.addAll(mapReservationDatesToString(allDates));
 
 		ReservationMetadata reservationMetadata = new ReservationMetadata();
 		reservationMetadata.addReserved(reserved);
@@ -57,4 +83,15 @@ public class ReservationMetadataService {
 		return Mapper.toReservationMetadataDTO(reservationMetadata);
 	}
 
+	private Set<String> mapReservationDatesToString(Reservation r) {
+		return r.getCheckin().datesUntil(r.getCheckout().plusDays(1))
+				.map(d -> d.toString())
+				.collect(Collectors.toSet());
+	}
+
+	private Set<String> mapReservationDatesToString(Set<LocalDate> dates) {
+		return dates.stream()
+				.map(d -> d.toString())
+				.collect(Collectors.toSet());
+	}
 }

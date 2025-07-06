@@ -3,8 +3,10 @@ package CPSF.com.demo.controller;
 import CPSF.com.demo.entity.DTO.ReservationDTO;
 import CPSF.com.demo.entity.DTO.ReservationMetadataDTO;
 import CPSF.com.demo.entity.DTO.ReservationRequest;
+import CPSF.com.demo.entity.PaidReservations;
 import CPSF.com.demo.entity.Reservation;
 import CPSF.com.demo.entity.ReservationMetadata;
+import CPSF.com.demo.service.ReservationMetadataService;
 import CPSF.com.demo.service.ReservationService;
 import CPSF.com.demo.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,19 +17,22 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 @Transactional
 @RestController
 @RequestMapping("/reservations")
 public class ReservationController {
 
+    private final ReservationMetadataService reservationMetadataService;
     ReservationService reservationService;
     UserService userService;
 
     @Autowired
-    public ReservationController(ReservationService theReservationService, @Lazy UserService userService) {
+    public ReservationController(ReservationService theReservationService, @Lazy UserService userService, ReservationMetadataService reservationMetadataService) {
         this.reservationService = theReservationService;
         this.userService = userService;
+        this.reservationMetadataService = reservationMetadataService;
     }
 
     @PostMapping("/createReservation")
@@ -79,6 +84,12 @@ public class ReservationController {
     public void deleteReservation(@PathVariable int id) {
         reservationService.deleteReservation(id);
     }
+
+    @GetMapping("/getPaidReservations")
+    public Map<String, PaidReservations> getPaidReservations() {
+        return reservationMetadataService.getPaidReservations();
+    }
+
 }
 
 
