@@ -54,5 +54,3 @@ ALTER TABLE camper_places
 -- changeset kacper:5
 ALTER TABLE users
     DROP INDEX uk_user_email;
--- changeset kacper:6
-ALTER TABLE users DROP CONSTRAINT uk_user_email;
