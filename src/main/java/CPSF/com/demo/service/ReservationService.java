@@ -1,57 +1,96 @@
 package CPSF.com.demo.service;
 
-import CPSF.com.demo.ClientInputException;
+import exception.ClientInputException;
 import CPSF.com.demo.entity.*;
 import CPSF.com.demo.entity.DTO.ReservationDTO;
 import CPSF.com.demo.entity.DTO.ReservationMetadataDTO;
 import CPSF.com.demo.entity.DTO.ReservationRequest;
 import CPSF.com.demo.enums.ReservationStatus;
 import CPSF.com.demo.repository.ReservationRepository;
-import jakarta.validation.ConstraintViolationException;
-import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.util.*;
 
+import static exception.ClientInputExceptionUtil.ensure;
+
 @Service
-@AllArgsConstructor
 public class ReservationService {
+    
+    private final ReservationRepository reservationRepository;
+    private final UserService userService;
+    private final CamperPlaceService camperPlaceService;
+    private final ReservationMetadataService reservationMetadataService;
 
-     ReservationRepository reservationRepository;
-     UserService userService;
-     CamperPlaceService camperPlaceService;
-     ReservationMetadataService reservationMetadataService;
+	public ReservationService(
+            ReservationRepository reservationRepository,
+            UserService userService,
+            CamperPlaceService camperPlaceService,
+            ReservationMetadataService reservationMetadataService
+            ) {
+		this.reservationRepository = reservationRepository;
+		this.userService = userService;
+		this.camperPlaceService = camperPlaceService;
+		this.reservationMetadataService = reservationMetadataService;
+	}
 
-    @Transactional
+	@Transactional
     public void createReservation(String checkin, String checkout, String camperPlaceIndex, User user) {
+
+        ensureDataIsCorrect(checkin, checkout, camperPlaceIndex, user);
+
+        LocalDate checkinDate = LocalDate.parse(checkin);
+        LocalDate checkoutDate = LocalDate.parse(checkout);
         CamperPlace camperPlace = camperPlaceService.findCamperPlaceByIndex(camperPlaceIndex);
 
-        if ((user.getLastName().isEmpty() && user.getFirstName().isEmpty()) || (user.getEmail().isEmpty() && user.getPhoneNumber().isEmpty())) {
-            throw new ClientInputException("Empty Guest Form");
-        }
         User u = userService.createUserIfDontExist(user);
-        if (camperPlace == null) {
-            throw new ClientInputException("Camper Place Form Is Empty");
-        }
-        try {
-            if (camperPlaceService.checkIsCamperPlaceOccupied(camperPlace, LocalDate.parse(checkin), LocalDate.parse(checkout), 0)) {
-                throw new ClientInputException("Camper Place Is Already Occupied");
-            } else {
-                reservationRepository.save(Reservation.builder()
-                        .checkin(LocalDate.parse(checkin))
-                        .checkout(LocalDate.parse(checkout))
-                        .camperPlace(camperPlace)
-                        .user(u)
-                        .paid(false)
-                        .build()
-                );
-            }
-        } catch (ConstraintViolationException e) {
-            throw new ClientInputException("Can't Checkout Before Checkin");
-        }
+
+        reservationRepository.save(
+            Reservation.builder()
+                .checkin(checkinDate)
+                .checkout(checkoutDate)
+                .camperPlace(camperPlace)
+                .user(u)
+                .paid(false)
+                .build()
+        );
     }
+
+
+    private void ensureDataIsCorrect(String checkin, String checkout, String camperPlaceIndex, User user) {
+
+        ensure(checkin.isEmpty(), "Podaj datę wjazdu");
+        ensure(checkout.isEmpty(), "Podaj datę wyjazdu");
+        ensure(
+                LocalDate.parse(checkin).isAfter(LocalDate.parse(checkout))
+                        || LocalDate.parse(checkin).isEqual(LocalDate.parse(checkout)),
+                "Wprowadzone daty są nieprawidłowe"
+        );
+        ensure(user == null, "Pole gościa nie może być puste");
+        ensure(
+                setToStringIfNull(user.getLastName()).isEmpty()
+                        && setToStringIfNull(user.getFirstName()).isEmpty()
+                        && setToStringIfNull(user.getPhoneNumber()).isEmpty(),
+                "Podaj dane gościa"
+        );
+        ensure(
+                camperPlaceIndex == null
+                 || camperPlaceService.findCamperPlaceByIndex(camperPlaceIndex) == null,
+                "Wybierz nr. parceli"
+        );
+        ensure(
+                camperPlaceService.checkIsCamperPlaceOccupied(
+                        camperPlaceService.findCamperPlaceByIndex(camperPlaceIndex),
+                        LocalDate.parse(checkin),
+                        LocalDate.parse(checkout),
+                        0
+                ),
+                        "Parcela jest już zajęta!"
+        );
+    }
+
+
     @Transactional
     public void deleteReservation(int id) {
         Reservation reservation = findReservationById(id);
@@ -61,12 +100,13 @@ public class ReservationService {
     }
     @Transactional
     public void updateReservation(int id, ReservationRequest request) {
+
         CamperPlace camperPlace = request.camperPlaceIndex() == null ? null : camperPlaceService.findCamperPlaceByIndex(request.camperPlaceIndex());
         LocalDate checkin = request.checkin() == null ? null : LocalDate.parse(request.checkin());
         LocalDate checkout = request.checkout() == null ? null : LocalDate.parse(request.checkout());
 
         if (camperPlace != null && camperPlaceService.checkIsCamperPlaceOccupied(camperPlace, checkin, checkout, id)) {
-            throw new ClientInputException("Camper Place Is Already Occupied");
+            throw new ClientInputException("Parcela jest już zajęta!");
         }
 
         Reservation reservation = findReservationById(id);
@@ -76,12 +116,13 @@ public class ReservationService {
 		//            statisticsService.update(reservation);
 		Optional.ofNullable(request.paid()).ifPresent(reservation::setPaid);
         if (!reservation.isCheckoutAfterCheckin()) {
-            throw new ClientInputException("Can't Checkout Before Checkin!!");
+            throw new ClientInputException("Data wyjazdu nie może być przed datą wjazdu");
         }
         reservationRepository.save(reservation);
     }
     @Transactional
     public void updateReservationStatus(Reservation reservation) {
+
         if (isLocalDateInBetweenCheckinAndCheckout(reservation.getCheckin(), reservation.getCheckout())) {
             reservation.setReservationStatus(ReservationStatus.ACTIVE);
         } else if (!isLocalDateInBetweenCheckinAndCheckout(reservation.getCheckin(), reservation.getCheckout()) && LocalDate.now().isBefore(reservation.getCheckin())) {
@@ -195,6 +236,9 @@ public class ReservationService {
             }
         }
     }
+    private String setToStringIfNull(String s) {
+		return s == null ? "" : s;
+	}
 
 }
 
