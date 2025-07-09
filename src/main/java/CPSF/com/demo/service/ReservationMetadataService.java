@@ -36,6 +36,7 @@ public class ReservationMetadataService {
 
 		return metadataMap;
 	}
+
 	public Map<String, PaidReservations> getUnPaidReservations() {
 		Map<String, PaidReservations> metadataMap = new HashMap<>();
 		List<CamperPlace> camperPlaces = camperPlaceService.getAll();
@@ -45,6 +46,30 @@ public class ReservationMetadataService {
 		}
 
 		return metadataMap;
+	}
+
+	public Map<String, Map<String,Set<String>>> getUserPerReservation() {
+		UserPerReservation metadataMap = new UserPerReservation();
+		List<CamperPlace> camperPlaces = camperPlaceService.getAll();
+
+		for (CamperPlace cp: camperPlaces) {
+				metadataMap.setUserPerReservation(assignUserPerReservation(cp));
+				metadataMap.addCamperPlaceToUserPerReservation(cp.getIndex());
+		}
+
+		return metadataMap.getCamperPlacePerUserPerReservation();
+	}
+
+	private Map<String, Set<String>> assignUserPerReservation(CamperPlace cp) {
+		Map<String, Set<String>> userPerReservation = new HashMap<>();
+
+		for (Reservation r : cp.getReservations()) {
+			userPerReservation.put(
+					r.getUser().toString(), mapReservationDatesToString(r)
+			);
+		}
+
+		return userPerReservation;
 	}
 
 	private PaidReservations assignReservationIfPaidOrNotPaid(boolean paid, CamperPlace cp) {
@@ -65,7 +90,6 @@ public class ReservationMetadataService {
 					paidReservations.addDates(mapReservationDatesToString(r));
 				}
 			}
-
 		}
 
 		return paidReservations;
@@ -100,13 +124,13 @@ public class ReservationMetadataService {
 
 	private Set<String> mapReservationDatesToString(Reservation r) {
 		return r.getCheckin().datesUntil(r.getCheckout().plusDays(1))
-				.map(d -> d.toString())
+				.map(LocalDate::toString)
 				.collect(Collectors.toSet());
 	}
 
 	private Set<String> mapReservationDatesToString(Set<LocalDate> dates) {
 		return dates.stream()
-				.map(d -> d.toString())
+				.map(LocalDate::toString)
 				.collect(Collectors.toSet());
 	}
 }

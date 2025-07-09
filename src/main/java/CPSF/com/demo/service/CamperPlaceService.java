@@ -47,7 +47,7 @@ public class CamperPlaceService {
 
 
     public List<CamperPlaceDTO> findAllCamperPlacesDTO() {
-        return camperPlaceRepository.findAll().stream().map(cp -> Mapper.toCamperPlaceDTO(cp)).toList();
+        return camperPlaceRepository.findAll().stream().map(Mapper::toCamperPlaceDTO).toList();
     }
 
     public List<CamperPlace> getAll() {

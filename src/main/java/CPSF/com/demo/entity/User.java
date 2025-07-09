@@ -96,4 +96,11 @@ public class User implements UserDetails {
     public boolean isEnabled() {
         return UserDetails.super.isEnabled();
     }
+
+    @Override
+    public String toString() {
+        String n = getFirstName() == null || getFirstName().isEmpty()  ? "" :  getFirstName();
+        String l = getLastName() == null || getLastName().isEmpty()  ? "" :  getLastName();
+        return   n + " " + l;
+    }
 }

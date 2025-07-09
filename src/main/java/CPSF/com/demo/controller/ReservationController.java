@@ -5,7 +5,6 @@ import CPSF.com.demo.entity.DTO.ReservationMetadataDTO;
 import CPSF.com.demo.entity.DTO.ReservationRequest;
 import CPSF.com.demo.entity.PaidReservations;
 import CPSF.com.demo.entity.Reservation;
-import CPSF.com.demo.entity.ReservationMetadata;
 import CPSF.com.demo.service.ReservationMetadataService;
 import CPSF.com.demo.service.ReservationService;
 import CPSF.com.demo.service.UserService;
@@ -89,9 +88,15 @@ public class ReservationController {
     public Map<String, PaidReservations> getPaidReservations() {
         return reservationMetadataService.getPaidReservations();
     }
+
     @GetMapping("/getUnPaidReservations")
     public Map<String, PaidReservations> getUnPaidReservations() {
         return reservationMetadataService.getUnPaidReservations();
+    }
+
+    @GetMapping("/getUserPerReservation")
+    public Map<String, Map<String,Set<String>>> getUserPerReservation() {
+        return reservationMetadataService.getUserPerReservation();
     }
 
 }
