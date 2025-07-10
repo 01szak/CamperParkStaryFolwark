@@ -20,7 +20,7 @@ public class Statistics {
     @Column(name = "revenue")
     private double revenue;
     @Column(name = "reservation_count")
-    private int reservationCount;
+    private long reservationCount;
     @Column(name = "month")
     private int month;
     @Column(name = "year")

@@ -24,8 +24,10 @@ import java.util.Set;
 public class ReservationController {
 
     private final ReservationMetadataService reservationMetadataService;
-    ReservationService reservationService;
-    UserService userService;
+    private final ReservationService reservationService;
+    private final UserService userService;
+
+    Reservation reservation;
 
     @Autowired
     public ReservationController(ReservationService theReservationService, @Lazy UserService userService, ReservationMetadataService reservationMetadataService) {
@@ -35,18 +37,29 @@ public class ReservationController {
     }
 
     @PostMapping("/createReservation")
-    public ResponseEntity<String> createReservation(@RequestBody ReservationRequest request) {
+    public ResponseEntity<Reservation> createReservation(@RequestBody ReservationRequest request) {
+        reservation =
+                reservationService.createReservation(request.checkin(), request.checkout(), request.camperPlaceIndex(), request.user());
 
-        reservationService.createReservation(request.checkin(), request.checkout(), request.camperPlaceIndex(), request.user());
-
-        return ResponseEntity.ok().build();
+        return ResponseEntity.ok(reservation);
     }
 
+    @PatchMapping("updateReservation/{id}")
+    public ResponseEntity<Reservation> updateReservation(@PathVariable int id, @RequestBody ReservationRequest request) {
+        reservation = reservationService.updateReservation(id, request);
+        return ResponseEntity.ok(reservation);
+    }
+
+    @DeleteMapping("deleteReservation/{id}")
+    public ResponseEntity<Reservation> deleteReservation(@PathVariable int id) {
+        reservation = reservationService.deleteReservation(id);
+        return ResponseEntity.ok(reservation);
+
+    }
 
     @GetMapping("/find/{reservationId}")
     public Reservation findReservationById(@PathVariable int reservationId) {
-        Reservation reservation = reservationService.findReservationById(reservationId);
-        return reservation;
+        return reservationService.findReservationById(reservationId);
     }
 
 
@@ -71,17 +84,6 @@ public class ReservationController {
     @GetMapping("sortTable/{header}/{isAsc}")
     public List<ReservationDTO> getSortedReservations(@PathVariable String header, @PathVariable int isAsc) {
         return reservationService.getSortedReservations(header, isAsc);
-    }
-
-    @PatchMapping("updateReservation/{id}")
-    public void updateReservation(@PathVariable int id, @RequestBody ReservationRequest request) {
-        reservationService.updateReservation(id, request);
-
-    }
-
-    @DeleteMapping("deleteReservation/{id}")
-    public void deleteReservation(@PathVariable int id) {
-        reservationService.deleteReservation(id);
     }
 
     @GetMapping("/getPaidReservations")

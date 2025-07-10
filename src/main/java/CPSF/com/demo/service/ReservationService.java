@@ -7,6 +7,7 @@ import CPSF.com.demo.entity.DTO.ReservationMetadataDTO;
 import CPSF.com.demo.entity.DTO.ReservationRequest;
 import CPSF.com.demo.enums.ReservationStatus;
 import CPSF.com.demo.repository.ReservationRepository;
+import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -16,6 +17,7 @@ import java.util.*;
 import static exception.ClientInputExceptionUtil.ensure;
 
 @Service
+@AllArgsConstructor
 public class ReservationService {
     
     private final ReservationRepository reservationRepository;
@@ -23,20 +25,8 @@ public class ReservationService {
     private final CamperPlaceService camperPlaceService;
     private final ReservationMetadataService reservationMetadataService;
 
-	public ReservationService(
-            ReservationRepository reservationRepository,
-            UserService userService,
-            CamperPlaceService camperPlaceService,
-            ReservationMetadataService reservationMetadataService
-            ) {
-		this.reservationRepository = reservationRepository;
-		this.userService = userService;
-		this.camperPlaceService = camperPlaceService;
-		this.reservationMetadataService = reservationMetadataService;
-	}
-
 	@Transactional
-    public void createReservation(String checkin, String checkout, String camperPlaceIndex, User user) {
+    public Reservation createReservation(String checkin, String checkout, String camperPlaceIndex, User user) {
 
         ensureDataIsCorrect(checkin, checkout, camperPlaceIndex, user);
 
@@ -46,7 +36,7 @@ public class ReservationService {
 
         User u = userService.createUserIfDontExist(user);
 
-        reservationRepository.save(
+        return reservationRepository.save(
             Reservation.builder()
                 .checkin(checkinDate)
                 .checkout(checkoutDate)
@@ -56,7 +46,6 @@ public class ReservationService {
                 .build()
         );
     }
-
 
     private void ensureDataIsCorrect(String checkin, String checkout, String camperPlaceIndex, User user) {
 
@@ -92,14 +81,15 @@ public class ReservationService {
 
 
     @Transactional
-    public void deleteReservation(int id) {
+    public Reservation deleteReservation(int id) {
         Reservation reservation = findReservationById(id);
         reservation.getCamperPlace().setReservations(null);
         reservationRepository.delete(reservation);
-        reservationRepository.flush();
+		reservationRepository.flush();
+	    return reservation;
     }
     @Transactional
-    public void updateReservation(int id, ReservationRequest request) {
+    public Reservation updateReservation(int id, ReservationRequest request) {
 
         CamperPlace camperPlace = request.camperPlaceIndex() == null ? null : camperPlaceService.findCamperPlaceByIndex(request.camperPlaceIndex());
         LocalDate checkin = request.checkin() == null ? null : LocalDate.parse(request.checkin());
@@ -118,7 +108,7 @@ public class ReservationService {
         if (!reservation.isCheckoutAfterCheckin()) {
             throw new ClientInputException("Data wyjazdu nie może być przed datą wjazdu");
         }
-        reservationRepository.save(reservation);
+        return reservationRepository.save(reservation);
     }
     @Transactional
     public void updateReservationStatus(Reservation reservation) {
@@ -131,6 +121,10 @@ public class ReservationService {
             reservation.setReservationStatus(ReservationStatus.EXPIRED);
         }
         reservationRepository.save(reservation);
+    }
+
+    public  List<Reservation> findByMonthYearAndCamperPlaceId(int month, int year, CamperPlace camperPlace) {
+        return reservationRepository.findByMonthYearAndCamperPlace(month, year, camperPlace.getId());
     }
 
     public Map<String, ReservationMetadataDTO> getReservationMetadataDTO() {
@@ -172,9 +166,6 @@ public class ReservationService {
         });
         return filteredList;
     }
-
-
-
 
     private boolean isNumber(String value) {
         try {

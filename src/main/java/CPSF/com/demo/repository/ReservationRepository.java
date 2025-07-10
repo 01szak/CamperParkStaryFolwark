@@ -3,6 +3,7 @@ package CPSF.com.demo.repository;
 import CPSF.com.demo.entity.Reservation;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -10,9 +11,12 @@ import java.util.List;
 @Repository
 public interface ReservationRepository extends JpaRepository<Reservation,Integer> {
 
-
-    List<Reservation> findByUserId(int userId);
-    List<Reservation> findAllByCamperPlaceId (int camperPlaceId);
+    @Query(
+            "SELECT r FROM Reservation r WHERE FUNCTION('MONTH', r.checkin) = :month AND FUNCTION('YEAR', r.checkin) = :year AND r.camperPlace.id = :camperPlaceId"
+    )
+    List<Reservation> findByMonthYearAndCamperPlace(
+            @Param("month") int month, @Param("year") int year, @Param("camperPlaceId") int camperPlaceId
+    );
 
     @Query("select reservation  from Reservation  reservation order by reservation.checkin desc ")
      List<Reservation> orderByCheckinDesc();
