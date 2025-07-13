@@ -9,6 +9,7 @@ import lombok.*;
 @Getter
 @Setter
 @Builder
+@ToString
 @AllArgsConstructor
 public class Statistics {
     @Id
@@ -25,6 +26,5 @@ public class Statistics {
     private int month;
     @Column(name = "year")
     private int year;
-
 
 }
