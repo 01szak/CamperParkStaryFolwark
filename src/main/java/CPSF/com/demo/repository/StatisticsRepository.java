@@ -11,5 +11,6 @@ import java.util.Set;
 public interface StatisticsRepository extends JpaRepository<Statistics,Integer> {
 
 	List<Statistics> findByCamperPlace_IdAndMonthAndYear(int camperPlaceId, int month, int year);
+	List<Statistics> findByCamperPlace_IdInAndMonthAndYear(List<Integer> camperPlaceId, int month, int year);
 
 }

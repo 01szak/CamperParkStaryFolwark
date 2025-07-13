@@ -42,9 +42,7 @@ public class StatisticsService {
            );
         } else if (statistics.size() == 1)  {
             Statistics  s = statistics.get(0);
-            s.setRevenue(
-                    reservation.getPaid() ? countRevenue(month, year, camperPlace) : 0
-            );
+            s.setRevenue(countRevenue(month, year, camperPlace));
             s.setReservationCount(countReservationCount(month, year, camperPlace));
             statisticsRepository.save(s);
         } else {
@@ -66,23 +64,34 @@ public class StatisticsService {
         .collect(Collectors.toList());
     }
 
-    private List<Statistics> getStatistics(int month, int year, int ...camperPlaceIds) {
+    private List<Statistics> getStatistics(int month, int year, int... camperPlaceIds) {
+        List<Integer> camperPlaceIdList = Arrays.stream(camperPlaceIds).boxed().toList();
+
+        List<Statistics> existingStats =
+                statisticsRepository.findByCamperPlace_IdInAndMonthAndYear(camperPlaceIdList, month, year);
+
+        Map<Integer, Statistics> statsByPlaceId = existingStats.stream()
+                .collect(Collectors.toMap(s -> s.getCamperPlace().getId(), s -> s));
+
         List<Statistics> statistics = new ArrayList<>();
-        for (int i : camperPlaceIds) {
-            List<Statistics> s = statisticsRepository.findByCamperPlace_IdAndMonthAndYear(i, month, year);
-            statistics.add(
-                   s.isEmpty() ? Statistics.builder()
+
+        for (int id : camperPlaceIds) {
+            Statistics stat = statsByPlaceId.getOrDefault(
+                    id,
+                    Statistics.builder()
                             .year(year)
                             .month(month)
-                            .camperPlace(camperPlaceService.findCamperPlaceById(i))
+                            .camperPlace(camperPlaceService.findCamperPlaceById(id))
                             .revenue(0)
                             .reservationCount(0)
                             .build()
-                    : s.get(0)
             );
+            statistics.add(stat);
         }
+
         return statistics;
     }
+
 
     private long countReservationCount(int month, int year, CamperPlace camperPlace) {
         return reservationService.findByMonthYearAndCamperPlaceId(month, year, camperPlace).size();
@@ -90,7 +99,10 @@ public class StatisticsService {
 
     private double countRevenue(int month, int year, CamperPlace camperPlace) {
         List<Reservation> reservations =
-                reservationService.findByMonthYearAndCamperPlaceId(month, year, camperPlace);
+                reservationService.findByMonthYearAndCamperPlaceId(month, year, camperPlace)
+                        .stream()
+                        .filter(Reservation::getPaid)
+                        .toList();
 
         if (reservations.isEmpty()) {
             return 0;
