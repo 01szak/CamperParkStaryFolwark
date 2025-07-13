@@ -103,9 +103,8 @@ public class ReservationService {
         Optional.ofNullable(checkin).ifPresent(reservation::setCheckin);
         Optional.ofNullable(checkout).ifPresent(reservation::setCheckout);
         Optional.ofNullable(camperPlace).ifPresent(reservation::setCamperPlace);
-		//            statisticsService.update(reservation);
 		Optional.ofNullable(request.paid()).ifPresent(reservation::setPaid);
-        if (!reservation.isCheckoutAfterCheckin()) {
+        if (checkin != null && checkout != null && checkout.isBefore(checkin)) {
             throw new ClientInputException("Data wyjazdu nie może być przed datą wjazdu");
         }
         return reservationRepository.save(reservation);

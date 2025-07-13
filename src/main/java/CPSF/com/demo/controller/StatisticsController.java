@@ -1,32 +1,28 @@
 package CPSF.com.demo.controller;
 
+import CPSF.com.demo.entity.DTO.StatisticsDTO;
 import CPSF.com.demo.service.StatisticsService;
-import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.AllArgsConstructor;
 
 import org.springframework.web.bind.annotation.*;
 
-import java.util.Arrays;
 import java.util.List;
 
 @RestController
 @RequestMapping("/statistics")
-@RequiredArgsConstructor
+@AllArgsConstructor
 public class StatisticsController {
 
-    @Autowired
-    StatisticsService statisticsService;
+    private final StatisticsService statisticsService;
 
-    @GetMapping("getReservationCountMonthly/{camperPlaceIds}/{month}/{year}")
-    public int[][] getMonthlyReservationCount(@PathVariable List<Integer> camperPlaceIds, @PathVariable int month, @PathVariable int year) {
-        return statisticsService.getReservationCountForCamperPlace(camperPlaceIds, month, year);
-
+    @GetMapping("/getRevenue/{month}/{year}/{camperPlaceIds}")
+    public List<StatisticsDTO> getRevenue(@PathVariable int month, @PathVariable int year, @PathVariable int ...camperPlaceIds) {
+        return statisticsService.getStatisticsDTOWithRevenue(month, year, camperPlaceIds);
     }
 
-    @GetMapping("/geRevenueMonthly/{camperPlaceIds}/{month}/{year}")
-    public double[][] getCamperPlaceMonthlyRevenue(@PathVariable List<Integer> camperPlaceIds, @PathVariable int month, @PathVariable int year) {
-        return statisticsService.getRevenueForCamperPlace(camperPlaceIds, month, year);
+    @GetMapping("/getReservationCount/{month}/{year}/{camperPlaceIds}")
+    public List<StatisticsDTO> getReservationCount(@PathVariable int month, @PathVariable int year, @PathVariable int ...camperPlaceIds) {
+        return statisticsService.getStatisticsDTOWithReservationCount(month, year, camperPlaceIds);
     }
-
 
 }

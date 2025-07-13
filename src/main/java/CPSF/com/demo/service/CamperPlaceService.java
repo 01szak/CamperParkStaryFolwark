@@ -89,5 +89,9 @@ public class CamperPlaceService {
         }
         return false;
     }
+
+    public CamperPlace findCamperPlaceById(int id) {
+        return camperPlaceRepository.findById(id).orElseThrow();
+    }
 }
 

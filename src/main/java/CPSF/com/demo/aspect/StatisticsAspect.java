@@ -1,6 +1,5 @@
 package CPSF.com.demo.aspect;
 
-import CPSF.com.demo.entity.CamperPlace;
 import CPSF.com.demo.entity.Reservation;
 import CPSF.com.demo.service.StatisticsService;
 import lombok.AllArgsConstructor;
