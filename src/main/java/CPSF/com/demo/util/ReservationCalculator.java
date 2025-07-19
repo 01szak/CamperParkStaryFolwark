@@ -1,4 +1,4 @@
-package CPSF.com.demo.entity;
+package CPSF.com.demo.util;
 
 import org.springframework.stereotype.Component;
 

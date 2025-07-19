@@ -1,4 +1,5 @@
-package CPSF.com.demo.entity;
+package CPSF.com.demo.DTO;
+
 
 import lombok.Getter;
 
@@ -7,7 +8,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 @Getter
-public class PaidReservations {
+public class PaidReservationsDTO {
 
 	private Set<String> paidDates = new HashSet<>();;
 

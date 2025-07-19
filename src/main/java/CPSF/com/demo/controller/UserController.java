@@ -1,8 +1,8 @@
 package CPSF.com.demo.controller;
 
-import CPSF.com.demo.entity.DTO.UserDTO;
-import CPSF.com.demo.entity.DTO.UserRequest;
-import CPSF.com.demo.service.UserService;
+import CPSF.com.demo.DTO.UserDTO;
+import CPSF.com.demo.request.UserRequest;
+import CPSF.com.demo.service.implementation.UserServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -12,10 +12,10 @@ import java.util.List;
 @RequestMapping("/users")
 public class UserController {
 
-    private final UserService userService;
+    private final UserServiceImpl userService;
 
     @Autowired
-    public UserController(UserService theUserService) {
+    public UserController(UserServiceImpl theUserService) {
         userService = theUserService;
     }
 

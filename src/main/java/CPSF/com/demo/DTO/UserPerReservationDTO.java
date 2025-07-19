@@ -1,4 +1,4 @@
-package CPSF.com.demo.entity;
+package CPSF.com.demo.DTO;
 
 
 import lombok.Getter;
@@ -10,7 +10,7 @@ import java.util.Set;
 
 @Getter
 @Setter
-public class UserPerReservation {
+public class UserPerReservationDTO {
 	private Map<String, Set<String>> userPerReservation = new HashMap<>();
 	private Map<String, Map<String,Set<String>>> camperPlacePerUserPerReservation = new HashMap<>();
 

@@ -1,6 +1,6 @@
-package CPSF.com.demo.StatisticServiceTest;
+package CPSF.com.demo.ReservationCalculatorTest;
 
-import CPSF.com.demo.entity.ReservationCalculator;
+import CPSF.com.demo.util.ReservationCalculator;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;

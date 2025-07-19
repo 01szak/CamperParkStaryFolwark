@@ -1,15 +1,14 @@
 package CPSF.com.demo.StatisticServiceTest;
 
+import CPSF.com.demo.DTO.StatisticsDTO;
 import CPSF.com.demo.entity.CamperPlace;
-import CPSF.com.demo.entity.DTO.StatisticsDTO;
 import CPSF.com.demo.entity.Reservation;
-import CPSF.com.demo.entity.ReservationCalculator;
 import CPSF.com.demo.entity.Statistics;
 import CPSF.com.demo.enums.Type;
-import CPSF.com.demo.repository.StatisticsRepository;
 import CPSF.com.demo.service.CamperPlaceService;
-import CPSF.com.demo.service.ReservationService;
-import CPSF.com.demo.service.StatisticsService;
+import CPSF.com.demo.service.implementation.ReservationServiceImpl;
+import CPSF.com.demo.service.implementation.StatisticsServiceImpl;
+import CPSF.com.demo.util.ReservationCalculator;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -38,7 +37,7 @@ public class StatisticsServiceTest {
 
 	private final LocalDate mockCheckout = LocalDate.of(year, month, endDay);
 
-	private final ReservationService reservationService = mock(ReservationService.class);
+	private final ReservationServiceImpl reservationService = mock(ReservationServiceImpl.class);
 
 	private final CamperPlaceService camperPlaceService = mock(CamperPlaceService.class);
 
@@ -52,7 +51,7 @@ public class StatisticsServiceTest {
 	private  Reservation mockReservation
 			=  Reservation.builder().id(1).checkin(mockCheckin).checkout(mockCheckout).paid(false).camperPlace(mockCamperPlace).build();
 
-	private final StatisticsService statisticsService = new StatisticsService(
+	private final StatisticsServiceImpl statisticsService = new StatisticsServiceImpl(
 			reservationService,
 			camperPlaceService,
 			reservationCalculator

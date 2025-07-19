@@ -1,4 +1,4 @@
-package CPSF.com.demo.entity.DTO;
+package CPSF.com.demo.DTO;
 
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;

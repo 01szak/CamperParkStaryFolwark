@@ -1,4 +1,4 @@
-package CPSF.com.demo.entity;
+package CPSF.com.demo.DTO;
 
 import lombok.Getter;
 
@@ -7,7 +7,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 @Getter
-public class ReservationMetadata {
+public class ReservationReservedCheckinCheckoutDTO {
 	private Set<String> reserved = new HashSet<>();
 	private Set<String> checkin = new HashSet<>();
 	private Set<String> checkout = new HashSet<>();

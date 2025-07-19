@@ -1,29 +1,26 @@
 package CPSF.com.demo.controller;
 
+import CPSF.com.demo.DTO.CamperPlaceDTO;
 import CPSF.com.demo.entity.CamperPlace;
-import CPSF.com.demo.entity.DTO.CamperPlaceDTO;
-import CPSF.com.demo.entity.DTO.CamperPlaceRequest;
 import CPSF.com.demo.enums.Type;
-import CPSF.com.demo.service.CamperPlaceService;
-import lombok.AllArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
+import CPSF.com.demo.request.CamperPlaceRequest;
+import CPSF.com.demo.service.implementation.CamperPlaceServiceImpl;
+import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Arrays;
 import java.util.List;
 
 @RestController
-@AllArgsConstructor
+@RequiredArgsConstructor
 @RequestMapping("/camperPlace")
 public class CamperPlaceController {
 
-    private final CamperPlaceService camperPlaceService;
+    private final CamperPlaceServiceImpl camperPlaceService;
 
     @PostMapping("/create")
     public void createCamperPlace(@RequestBody CamperPlaceRequest request) {
-
         camperPlaceService.createCamperPlace(request.type(), request.price());
-
     }
 
     @GetMapping("/getAll")

@@ -1,4 +1,4 @@
-package CPSF.com.demo.entity.DTO;
+package CPSF.com.demo.DTO;
 
 import CPSF.com.demo.entity.Reservation;
 import lombok.AllArgsConstructor;

@@ -1,9 +1,10 @@
-package CPSF.com.demo.entity;
+package CPSF.com.demo.util;
 
-import CPSF.com.demo.entity.DTO.CamperPlaceDTO;
-import CPSF.com.demo.entity.DTO.ReservationDTO;
-import CPSF.com.demo.entity.DTO.ReservationMetadataDTO;
-import CPSF.com.demo.entity.DTO.UserDTO;
+import CPSF.com.demo.DTO.*;
+import CPSF.com.demo.entity.CamperPlace;
+
+import CPSF.com.demo.entity.Reservation;
+import CPSF.com.demo.entity.User;
 
 public class Mapper {
 
@@ -49,7 +50,7 @@ public class Mapper {
                 .build();
     }
 
-    public static ReservationMetadataDTO toReservationMetadataDTO(ReservationMetadata reservationMetadata) {
+    public static ReservationMetadataDTO toReservationMetadataDTO(ReservationReservedCheckinCheckoutDTO reservationMetadata) {
         return ReservationMetadataDTO.builder()
                 .reserved(reservationMetadata.getReserved())
                 .checkin(reservationMetadata.getCheckin())

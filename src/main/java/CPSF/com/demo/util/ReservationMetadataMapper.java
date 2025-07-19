@@ -1,7 +1,11 @@
-package CPSF.com.demo.service;
+package CPSF.com.demo.util;
 
+import CPSF.com.demo.DTO.PaidReservationsDTO;
+import CPSF.com.demo.DTO.ReservationMetadataDTO;
+import CPSF.com.demo.DTO.ReservationReservedCheckinCheckoutDTO;
+import CPSF.com.demo.DTO.UserPerReservationDTO;
 import CPSF.com.demo.entity.*;
-import CPSF.com.demo.entity.DTO.ReservationMetadataDTO;
+import CPSF.com.demo.service.CamperPlaceService;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -11,7 +15,7 @@ import java.util.stream.Collectors;
 
 @Service
 @AllArgsConstructor
-public class ReservationMetadataService {
+public class ReservationMetadataMapper {
 
 	private final CamperPlaceService camperPlaceService;
 
@@ -26,8 +30,8 @@ public class ReservationMetadataService {
 		return metadataMap;
 	}
 
-	public Map<String, PaidReservations> getPaidReservations() {
-		Map<String, PaidReservations> metadataMap = new HashMap<>();
+	public Map<String, PaidReservationsDTO> getPaidReservations() {
+		Map<String, PaidReservationsDTO> metadataMap = new HashMap<>();
 		List<CamperPlace> camperPlaces = camperPlaceService.getAll();
 
 		for(CamperPlace cp : camperPlaces) {
@@ -37,8 +41,8 @@ public class ReservationMetadataService {
 		return metadataMap;
 	}
 
-	public Map<String, PaidReservations> getUnPaidReservations() {
-		Map<String, PaidReservations> metadataMap = new HashMap<>();
+	public Map<String, PaidReservationsDTO> getUnPaidReservations() {
+		Map<String, PaidReservationsDTO> metadataMap = new HashMap<>();
 		List<CamperPlace> camperPlaces = camperPlaceService.getAll();
 
 		for(CamperPlace cp : camperPlaces) {
@@ -49,7 +53,7 @@ public class ReservationMetadataService {
 	}
 
 	public Map<String, Map<String,Set<String>>> getUserPerReservation() {
-		UserPerReservation metadataMap = new UserPerReservation();
+		UserPerReservationDTO metadataMap = new UserPerReservationDTO();
 		List<CamperPlace> camperPlaces = camperPlaceService.getAll();
 
 		for (CamperPlace cp: camperPlaces) {
@@ -72,12 +76,12 @@ public class ReservationMetadataService {
 		return userPerReservation;
 	}
 
-	private PaidReservations assignReservationIfPaidOrNotPaid(boolean paid, CamperPlace cp) {
+	private PaidReservationsDTO assignReservationIfPaidOrNotPaid(boolean paid, CamperPlace cp) {
 		List<Reservation> reservations = cp.getReservations();
-		PaidReservations paidReservations = new PaidReservations();
+		PaidReservationsDTO paidReservations = new PaidReservationsDTO();
 
 		if (reservations == null) {
-			return new PaidReservations();
+			return new PaidReservationsDTO();
 		}
 
 		for(Reservation r : reservations) {
@@ -114,7 +118,7 @@ public class ReservationMetadataService {
 		}
 		reserved.addAll(mapReservationDatesToString(allDates));
 
-		ReservationMetadata reservationMetadata = new ReservationMetadata();
+		ReservationReservedCheckinCheckoutDTO reservationMetadata = new ReservationReservedCheckinCheckoutDTO();
 		reservationMetadata.addReserved(reserved);
 		reservationMetadata.addCheckin(checkin);
 		reservationMetadata.addCheckout(checkout);

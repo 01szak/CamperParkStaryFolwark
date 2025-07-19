@@ -1,13 +1,13 @@
 package CPSF.com.demo.controller;
 
-import CPSF.com.demo.entity.DTO.ReservationDTO;
-import CPSF.com.demo.entity.DTO.ReservationMetadataDTO;
-import CPSF.com.demo.entity.DTO.ReservationRequest;
-import CPSF.com.demo.entity.PaidReservations;
+import CPSF.com.demo.DTO.PaidReservationsDTO;
+import CPSF.com.demo.DTO.ReservationDTO;
+import CPSF.com.demo.DTO.ReservationMetadataDTO;
 import CPSF.com.demo.entity.Reservation;
-import CPSF.com.demo.service.ReservationMetadataService;
-import CPSF.com.demo.service.ReservationService;
-import CPSF.com.demo.service.UserService;
+import CPSF.com.demo.request.ReservationRequest;
+import CPSF.com.demo.util.ReservationMetadataMapper;
+import CPSF.com.demo.service.implementation.ReservationServiceImpl;
+import CPSF.com.demo.service.implementation.UserServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.http.ResponseEntity;
@@ -23,17 +23,17 @@ import java.util.Set;
 @RequestMapping("/reservations")
 public class ReservationController {
 
-    private final ReservationMetadataService reservationMetadataService;
-    private final ReservationService reservationService;
-    private final UserService userService;
+    private final ReservationMetadataMapper reservationMetadataMapper;
+    private final ReservationServiceImpl reservationService;
+    private final UserServiceImpl userService;
 
     Reservation reservation;
 
     @Autowired
-    public ReservationController(ReservationService theReservationService, @Lazy UserService userService, ReservationMetadataService reservationMetadataService) {
+    public ReservationController(ReservationServiceImpl theReservationService, @Lazy UserServiceImpl userService, ReservationMetadataMapper reservationMetadataMapper) {
         this.reservationService = theReservationService;
         this.userService = userService;
-        this.reservationMetadataService = reservationMetadataService;
+        this.reservationMetadataMapper = reservationMetadataMapper;
     }
 
     @PostMapping("/createReservation")
@@ -87,18 +87,18 @@ public class ReservationController {
     }
 
     @GetMapping("/getPaidReservations")
-    public Map<String, PaidReservations> getPaidReservations() {
-        return reservationMetadataService.getPaidReservations();
+    public Map<String, PaidReservationsDTO> getPaidReservations() {
+        return reservationMetadataMapper.getPaidReservations();
     }
 
     @GetMapping("/getUnPaidReservations")
-    public Map<String, PaidReservations> getUnPaidReservations() {
-        return reservationMetadataService.getUnPaidReservations();
+    public Map<String, PaidReservationsDTO> getUnPaidReservations() {
+        return reservationMetadataMapper.getUnPaidReservations();
     }
 
     @GetMapping("/getUserPerReservation")
     public Map<String, Map<String,Set<String>>> getUserPerReservation() {
-        return reservationMetadataService.getUserPerReservation();
+        return reservationMetadataMapper.getUserPerReservation();
     }
 
 }

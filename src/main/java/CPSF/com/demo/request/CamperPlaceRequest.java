@@ -1,4 +1,4 @@
-package CPSF.com.demo.entity.DTO;
+package CPSF.com.demo.request;
 
 import CPSF.com.demo.enums.Type;
 
