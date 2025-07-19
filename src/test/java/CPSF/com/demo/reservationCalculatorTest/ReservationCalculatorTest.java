@@ -1,4 +1,4 @@
-package CPSF.com.demo.ReservationCalculatorTest;
+package CPSF.com.demo.reservationCalculatorTest;
 
 import CPSF.com.demo.util.ReservationCalculator;
 import org.junit.jupiter.api.Test;

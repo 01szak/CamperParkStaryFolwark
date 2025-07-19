@@ -1,4 +1,4 @@
-package CPSF.com.demo;
+package CPSF.com.demo.testUtil;
 
 import CPSF.com.demo.entity.CamperPlace;
 import CPSF.com.demo.entity.Reservation;

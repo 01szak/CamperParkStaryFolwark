@@ -1,4 +1,4 @@
-package CPSF.com.demo.StatisticServiceTest;
+package CPSF.com.demo.statisticServiceTest;
 
 import CPSF.com.demo.DTO.StatisticsDTO;
 import CPSF.com.demo.entity.CamperPlace;
@@ -18,7 +18,7 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
-import static CPSF.com.demo.TestUtil.reservationGenerator;
+import static CPSF.com.demo.testUtil.TestUtil.reservationGenerator;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
