@@ -122,8 +122,8 @@ public class ReservationService {
         reservationRepository.save(reservation);
     }
 
-    public  List<Reservation> findByMonthYearAndCamperPlaceId(int month, int year, CamperPlace camperPlace) {
-        return reservationRepository.findByMonthYearAndCamperPlace(month, year, camperPlace.getId());
+    public  List<Reservation> findByMonthYearAndCamperPlaceId(int month, int year, int camperPlaceId) {
+        return reservationRepository.findByMonthYearAndCamperPlaceId(month, year, camperPlaceId);
     }
 
     public Map<String, ReservationMetadataDTO> getReservationMetadataDTO() {
@@ -142,6 +142,13 @@ public class ReservationService {
         return reservationRepository.findById(id).orElseThrow();
     }
 
+    public List<Reservation> findByCamperPlaceId(int camperPlaceId) {
+        return reservationRepository.findByCamperPlace_Id(camperPlaceId);
+    }
+
+    public List<Reservation> findByYearAndCamperPlaceId(int year, int camperPlaceId) {
+        return reservationRepository.findByYearAndCamperPlaceId(year, camperPlaceId);
+    }
     public List<ReservationDTO> getFilteredData(String value) {
         if (value == null) {
             return findAllReservationsDto();

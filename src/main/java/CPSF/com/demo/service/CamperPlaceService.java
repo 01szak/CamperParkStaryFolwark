@@ -93,5 +93,8 @@ public class CamperPlaceService {
     public CamperPlace findCamperPlaceById(int id) {
         return camperPlaceRepository.findById(id).orElseThrow();
     }
+    public List<CamperPlace> findCamperPlacesByIds(List<Integer> ids) {
+        return camperPlaceRepository.findCamperPlaceByIdIn(ids);
+    }
 }
 

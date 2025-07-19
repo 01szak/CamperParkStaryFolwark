@@ -19,6 +19,7 @@ import static CPSF.com.demo.enums.ReservationStatus.*;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
+@EqualsAndHashCode
 public class Reservation {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

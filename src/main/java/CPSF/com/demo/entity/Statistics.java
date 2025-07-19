@@ -11,6 +11,7 @@ import lombok.*;
 @Builder
 @ToString
 @AllArgsConstructor
+@EqualsAndHashCode
 public class Statistics {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

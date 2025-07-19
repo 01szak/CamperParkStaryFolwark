@@ -14,10 +14,17 @@ public interface ReservationRepository extends JpaRepository<Reservation,Integer
     @Query(
             "SELECT r FROM Reservation r WHERE FUNCTION('MONTH', r.checkin) = :month AND FUNCTION('YEAR', r.checkin) = :year AND r.camperPlace.id = :camperPlaceId"
     )
-    List<Reservation> findByMonthYearAndCamperPlace(
+    List<Reservation> findByMonthYearAndCamperPlaceId(
             @Param("month") int month, @Param("year") int year, @Param("camperPlaceId") int camperPlaceId
     );
 
+    @Query(
+            "SELECT r FROM Reservation r WHERE FUNCTION('YEAR', r.checkin) = :year AND r.camperPlace.id = :camperPlaceId"
+    )
+    List<Reservation> findByYearAndCamperPlaceId(@Param("year") int year, @Param("camperPlaceId") int camperPlaceId);
+
+    List<Reservation> findByCamperPlace_Id(int camperPlaceId);
+    
     @Query("select reservation  from Reservation  reservation order by reservation.checkin desc ")
      List<Reservation> orderByCheckinDesc();
 

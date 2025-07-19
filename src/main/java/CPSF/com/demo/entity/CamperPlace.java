@@ -15,6 +15,7 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
+@EqualsAndHashCode
 public class CamperPlace {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -46,5 +47,9 @@ public class CamperPlace {
     @JsonManagedReference("camperPlaceIndex-reservations")
     private List<Reservation> reservations;
 
+    @Override
+    public String toString() {
+        return String.format("CamperPlace(id: %s; index: %s; type: %s; price: %s)", id, index, type, price);
+    }
 
 }
