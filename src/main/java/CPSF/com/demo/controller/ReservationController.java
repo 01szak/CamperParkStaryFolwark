@@ -41,7 +41,7 @@ public class ReservationController {
     @DeleteMapping("deleteReservation/{id}")
     public ResponseEntity<?> deleteReservation(@PathVariable int id) {
         reservationService.delete(id);
-        return ResponseEntity.status(HttpStatus.CREATED).body(Map.of("Sukces","Rezeracja została usunięta"));
+        return ResponseEntity.status(HttpStatus.OK).body(Map.of("Sukces","Rezeracja została usunięta"));
     }
 
     @GetMapping("/find/{reservationId}")
