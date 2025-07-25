@@ -4,7 +4,6 @@ import CPSF.com.demo.enums.ReservationStatus;
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.persistence.*;
-import jakarta.validation.constraints.AssertTrue;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
 import org.springframework.context.annotation.Lazy;
@@ -19,11 +18,8 @@ import static CPSF.com.demo.enums.ReservationStatus.*;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-@EqualsAndHashCode
-public class Reservation {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int id;
+@EqualsAndHashCode(callSuper = true)
+public class Reservation extends DbObject {
 
     @Column(name = "checkin")
     @JsonFormat(pattern = "yyyy-MM-dd")

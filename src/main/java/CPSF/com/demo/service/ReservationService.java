@@ -6,13 +6,11 @@ import CPSF.com.demo.request.ReservationRequest;
 
 import java.util.List;
 
-public interface ReservationService {
+public interface ReservationService extends CRUDService<Reservation>{
 
-    Reservation createReservation(String checkin, String checkout, String camperPlaceIndex, User user);
+    void create(String checkin, String checkout, String camperPlaceIndex, User user);
 
-    Reservation deleteReservation(int id);
-
-    Reservation updateReservation(int id, ReservationRequest request);
+    void update(int id, ReservationRequest request);
 
     void updateReservationStatus(Reservation reservation);
 

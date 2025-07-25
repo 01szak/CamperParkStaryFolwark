@@ -5,6 +5,7 @@ import CPSF.com.demo.entity.CamperPlace;
 import CPSF.com.demo.enums.Type;
 import CPSF.com.demo.request.CamperPlaceRequest;
 import CPSF.com.demo.service.implementation.CamperPlaceServiceImpl;
+import CPSF.com.demo.util.Mapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
@@ -20,13 +21,12 @@ public class CamperPlaceController {
 
     @PostMapping("/create")
     public void createCamperPlace(@RequestBody CamperPlaceRequest request) {
-        camperPlaceService.createCamperPlace(request.type(), request.price());
+        camperPlaceService.create(request.type(), request.price());
     }
 
     @GetMapping("/getAll")
     public List<CamperPlaceDTO> finAllCamperPlaces() {
-        return camperPlaceService.findAllCamperPlacesDTO();
-
+        return camperPlaceService.findAll().map(Mapper::toCamperPlaceDTO).toList();
     }
 
     @GetMapping("/getCamperPlaceTypes")
@@ -35,12 +35,12 @@ public class CamperPlaceController {
     }
 
     @DeleteMapping("/deleteCamperPlace/{index}")
-    public void deleteCamperPlace(@PathVariable String index) {
-        camperPlaceService.deleteCamperPlace(index);
+    public void deleteCamperPlace(@PathVariable int index) {
+        camperPlaceService.delete(index);
     }
 
-    @GetMapping("/find/{index}")
-    public CamperPlace findCamperPlaceByCamperPlaceNumber(@PathVariable String index) {
-        return camperPlaceService.findCamperPlaceByIndex(index);
+    @GetMapping("/find/{id}")
+    public CamperPlace findCamperPlaceByCamperPlaceNumber(@PathVariable int id) {
+        return camperPlaceService.findById(id);
     }
 }

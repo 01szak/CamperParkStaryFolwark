@@ -7,9 +7,8 @@ import CPSF.com.demo.entity.Reservation;
 import CPSF.com.demo.request.ReservationRequest;
 import CPSF.com.demo.util.ReservationMetadataMapper;
 import CPSF.com.demo.service.implementation.ReservationServiceImpl;
-import CPSF.com.demo.service.implementation.UserServiceImpl;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Lazy;
+import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
@@ -21,45 +20,33 @@ import java.util.Set;
 @Transactional
 @RestController
 @RequestMapping("/reservations")
+@RequiredArgsConstructor
 public class ReservationController {
 
     private final ReservationMetadataMapper reservationMetadataMapper;
     private final ReservationServiceImpl reservationService;
-    private final UserServiceImpl userService;
-
-    Reservation reservation;
-
-    @Autowired
-    public ReservationController(ReservationServiceImpl theReservationService, @Lazy UserServiceImpl userService, ReservationMetadataMapper reservationMetadataMapper) {
-        this.reservationService = theReservationService;
-        this.userService = userService;
-        this.reservationMetadataMapper = reservationMetadataMapper;
-    }
 
     @PostMapping("/createReservation")
-    public ResponseEntity<Reservation> createReservation(@RequestBody ReservationRequest request) {
-        reservation =
-                reservationService.createReservation(request.checkin(), request.checkout(), request.camperPlaceIndex(), request.user());
-
-        return ResponseEntity.ok(reservation);
+    public ResponseEntity<?> createReservation(@RequestBody ReservationRequest request) {
+        reservationService.create(request.checkin(), request.checkout(), request.camperPlaceIndex(), request.user());
+        return ResponseEntity.status(HttpStatus.CREATED).body(Map.of("Sukces","Rezeracja została dodana"));
     }
 
     @PatchMapping("updateReservation/{id}")
-    public ResponseEntity<Reservation> updateReservation(@PathVariable int id, @RequestBody ReservationRequest request) {
-        reservation = reservationService.updateReservation(id, request);
-        return ResponseEntity.ok(reservation);
+    public ResponseEntity<?> updateReservation(@PathVariable int id, @RequestBody ReservationRequest request) {
+        reservationService.update(id, request);
+        return ResponseEntity.status(HttpStatus.CREATED).body(Map.of("Sukces","Rezeracja została zmieniona"));
     }
 
     @DeleteMapping("deleteReservation/{id}")
-    public ResponseEntity<Reservation> deleteReservation(@PathVariable int id) {
-        reservation = reservationService.deleteReservation(id);
-        return ResponseEntity.ok(reservation);
-
+    public ResponseEntity<?> deleteReservation(@PathVariable int id) {
+        reservationService.delete(id);
+        return ResponseEntity.status(HttpStatus.CREATED).body(Map.of("Sukces","Rezeracja została usunięta"));
     }
 
     @GetMapping("/find/{reservationId}")
     public Reservation findReservationById(@PathVariable int reservationId) {
-        return reservationService.findReservationById(reservationId);
+        return reservationService.findById(reservationId);
     }
 
 

@@ -23,31 +23,28 @@ public class StatisticsServiceImpl implements StatisticsService {
     private final CamperPlaceService camperPlaceService;
     private final ReservationCalculator reservationCalculator;
 
-    public List<StatisticsDTO> getStatisticsDTOWithRevenue(int month, int year, int ...camperPlaceIds) {
-        return getStatistics(month, year, camperPlaceIds).stream().map(s ->
+    public List<StatisticsDTO> getStatisticsDTOWithRevenue(int month, int year) {
+        return getStatistics(month, year).stream().map(s ->
                 new StatisticsDTO(s.getCamperPlace().getIndex(), s.getRevenue())
         )
         .collect(Collectors.toList());
     }
 
-    public List<StatisticsDTO> getStatisticsDTOWithReservationCount(int month, int year, int ...camperPlaceIds) {
-        return getStatistics(month, year, camperPlaceIds).stream().map(s ->
+    public List<StatisticsDTO> getStatisticsDTOWithReservationCount(int month, int year) {
+        return getStatistics(month, year).stream().map(s ->
                 new StatisticsDTO(s.getCamperPlace().getIndex(), (double) s.getReservationCount())
         )
         .collect(Collectors.toList());
     }
 
-    private List<Statistics> getStatistics(int month, int year, int... camperPlaceIds) {
-        List<Integer> camperPlaceIdList = Arrays.stream(camperPlaceIds).boxed().toList();
-        return generateStatistics(camperPlaceIdList, month, year);
+    private List<Statistics> getStatistics(int month, int year) {
+        return generateStatistics(month, year);
     }
 
     @VisibleForTesting
-    public List<Statistics> generateStatistics(List<Integer> camperPlaceIdList, int month, int year) {
-
+    public List<Statistics> generateStatistics(int month, int year) {
         List<Statistics> statistics = new ArrayList<>();
-
-        List<CamperPlace> camperPlaces = camperPlaceService.findCamperPlacesByIds(camperPlaceIdList);
+        List<CamperPlace> camperPlaces = camperPlaceService.findAll().toList();
 
         if(camperPlaces.isEmpty()) {
             throw new RuntimeException("Found zero camperPlaces !!");

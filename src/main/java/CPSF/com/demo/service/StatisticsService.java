@@ -6,7 +6,8 @@ import java.util.List;
 
 public interface StatisticsService {
 
-    List<StatisticsDTO> getStatisticsDTOWithRevenue(int month, int year, int ...camperPlaceIds);
+    List<StatisticsDTO> getStatisticsDTOWithRevenue(int month, int year);
 
-    List<StatisticsDTO> getStatisticsDTOWithReservationCount(int month, int year, int ...camperPlaceIds);
+    List<StatisticsDTO> getStatisticsDTOWithReservationCount(int month, int year);
+
 }

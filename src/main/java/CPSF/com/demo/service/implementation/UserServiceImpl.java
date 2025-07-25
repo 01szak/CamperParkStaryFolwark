@@ -8,7 +8,6 @@ import exception.ClientInputException;
 import CPSF.com.demo.entity.User;
 import CPSF.com.demo.enums.Role;
 import CPSF.com.demo.repository.UserRepository;
-import lombok.AllArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -46,7 +45,7 @@ public class UserServiceImpl implements UserService {
             user.setReservations(new ArrayList<>());
         }
         if(!user.getEmail().isBlank() && userRepository.findByEmail(user.getEmail()).isPresent()) {
-           throw new ClientInputException("Guest with that email already exists");
+           throw new ClientInputException("Ten email jest już używany");
         } else {
             userRepository.save(user);
         }
@@ -81,7 +80,7 @@ public class UserServiceImpl implements UserService {
 
     @Transactional
     public void updateUser(int id, UserRequest request) {
-        User user = findUserById(id);
+        User user = findById(id);
 
         if(userRepository.findByEmail(request.email()).isPresent()) {
             throw new ClientInputException("Guest with that email already exists");
@@ -102,20 +101,18 @@ public class UserServiceImpl implements UserService {
         return userRepository.findById(id).map(Mapper::toUserDTO).orElseThrow();
     }
 
-    @Transactional
-    public User createUserIfDontExist(User user) {
-        if (userRepository.findById(user.getId()).isEmpty()) {
-            create(user);
-        }
-        return user;
-    }
+//    public void createUserIfDontExist(User user) {
+//
+//        User u = user.getId() <= 0 || findUserById(user.getId()) == null ? create(user) : user;
+//        return u;
+//    }
 
     @Transactional
     public void deleteUser(int id) {
         userRepository.deleteById(id);
     }
 
-    public User findUserById(int id) {
+    public User findById(int id) {
         return userRepository.findById(id).orElseThrow();
     }
 

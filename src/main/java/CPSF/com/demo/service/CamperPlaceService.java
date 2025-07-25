@@ -1,20 +1,21 @@
 package CPSF.com.demo.service;
 
 import CPSF.com.demo.entity.CamperPlace;
-import CPSF.com.demo.enums.Type;
+import org.springframework.data.domain.Page;
 
+import java.time.LocalDate;
 import java.util.List;
 
-public interface CamperPlaceService {
+public interface CamperPlaceService extends CRUDService<CamperPlace> {
 
-    void deleteCamperPlace(String index);
-
-    void createCamperPlace(Type type, double price);
 
     List<CamperPlace> findCamperPlacesByIds(List<Integer> ids);
 
-    List<CamperPlace> getAll();
+    Page<CamperPlace> findAll();
 
     void setIsCamperPlaceOccupied(CamperPlace camperPlace);
+
+
+    boolean checkIsCamperPlaceOccupied(CamperPlace camperPlace, LocalDate checkin, LocalDate checkout, int reservationId);
 }
 

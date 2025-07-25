@@ -6,11 +6,12 @@ import CPSF.com.demo.request.ReservationRequest;
 import CPSF.com.demo.util.ReservationMetadataMapper;
 import CPSF.com.demo.service.ReservationService;
 import CPSF.com.demo.util.Mapper;
-import exception.ClientInputException;
 import CPSF.com.demo.entity.*;
 import CPSF.com.demo.enums.ReservationStatus;
 import CPSF.com.demo.repository.ReservationRepository;
-import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -20,7 +21,7 @@ import java.util.*;
 import static exception.ClientInputExceptionUtil.ensure;
 
 @Service
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class ReservationServiceImpl implements ReservationService {
     
     private final ReservationRepository reservationRepository;
@@ -28,57 +29,105 @@ public class ReservationServiceImpl implements ReservationService {
     private final CamperPlaceServiceImpl camperPlaceService;
     private final ReservationMetadataMapper reservationMetadataMapper;
 
-	@Transactional
-    public Reservation createReservation(String checkin, String checkout, String camperPlaceIndex, User user) {
+    @Override
+    public void create(Reservation reservation) {
+        reservationRepository.save(reservation);
+    }
 
-        ensureDataIsCorrect(checkin, checkout, camperPlaceIndex, user);
+    @Override
+    @Transactional
+    public void create(String checkin, String checkout, String camperPlaceIndex, User user) {
+
+        CamperPlace camperPlace = camperPlaceService.findByIndex(camperPlaceIndex);
+
+        ensureDataIsCorrect(checkin, checkout, camperPlace, user);
 
         LocalDate checkinDate = LocalDate.parse(checkin);
         LocalDate checkoutDate = LocalDate.parse(checkout);
-        CamperPlace camperPlace = camperPlaceService.findCamperPlaceByIndex(camperPlaceIndex);
 
-        User u = userService.createUserIfDontExist(user);
+        if (user.getId() <= 0) {
+            userService.create(user);
+        }
 
-        return reservationRepository.save(
-            Reservation.builder()
-                .checkin(checkinDate)
-                .checkout(checkoutDate)
-                .camperPlace(camperPlace)
-                .user(u)
-                .paid(false)
-                .build()
+        create(
+            reservationRepository.save(
+                    Reservation.builder()
+                            .checkin(checkinDate)
+                            .checkout(checkoutDate)
+                            .camperPlace(camperPlace)
+                            .user(user)
+                            .paid(false)
+                            .build()
+            )
         );
     }
 
-    @Transactional
-    public Reservation deleteReservation(int id) {
-        Reservation reservation = findReservationById(id);
-        reservation.getCamperPlace().setReservations(null);
-        reservationRepository.delete(reservation);
-		reservationRepository.flush();
-	    return reservation;
+
+    @Override
+    public Page<Reservation> findAll(Pageable pageable) {
+        return null;
     }
 
-    @Transactional
-    public Reservation updateReservation(int id, ReservationRequest request) {
+    @Override
+    public Reservation findById(int id) {
+        return reservationRepository.findById(id).orElseThrow();
+    }
 
-        CamperPlace camperPlace = request.camperPlaceIndex() == null ? null : camperPlaceService.findCamperPlaceByIndex(request.camperPlaceIndex());
+    @Override
+    @Transactional
+    public void delete(int id) {
+        Reservation reservation = findById(id);
+        CamperPlace cp = reservation.getCamperPlace();
+
+        List<Reservation> reservations =
+                cp.getReservations().stream().filter(r -> r.equals(reservation)).toList();
+        cp.setReservations(reservations);
+
+        camperPlaceService.update(id, cp);
+        reservationRepository.delete(reservation);
+    }
+
+    @Override
+    @Transactional
+    public void update(int id, ReservationRequest request) {
+
+        CamperPlace camperPlace = camperPlaceService.findByIndex(request.camperPlaceIndex());
         LocalDate checkin = request.checkin() == null ? null : LocalDate.parse(request.checkin());
         LocalDate checkout = request.checkout() == null ? null : LocalDate.parse(request.checkout());
 
-        if (camperPlace != null && camperPlaceService.checkIsCamperPlaceOccupied(camperPlace, checkin, checkout, id)) {
-            throw new ClientInputException("Parcela jest już zajęta!");
+        if (camperPlace == null) {
+           throw new RuntimeException("Coś poszło nie tak");
         }
 
-        Reservation reservation = findReservationById(id);
-        Optional.ofNullable(checkin).ifPresent(reservation::setCheckin);
-        Optional.ofNullable(checkout).ifPresent(reservation::setCheckout);
-        Optional.ofNullable(camperPlace).ifPresent(reservation::setCamperPlace);
-		Optional.ofNullable(request.paid()).ifPresent(reservation::setPaid);
-        if (checkin != null && checkout != null && checkout.isBefore(checkin)) {
-            throw new ClientInputException("Data wyjazdu nie może być przed datą wjazdu");
-        }
-        return reservationRepository.save(reservation);
+        ensure (
+                camperPlaceService.checkIsCamperPlaceOccupied(
+                    camperPlace,
+                    checkin,
+                    checkout,
+                    id
+                ),
+                "Parcela jest już zajęta!"
+        );
+
+        ensure (
+                checkin != null
+                        && checkout != null
+                        && checkout.isBefore(checkin),
+                "Data wyjazdu nie może być przed datą wjazdu"
+        );
+
+        Reservation reservationToUpdate = findById(id);
+        Optional.ofNullable(checkin).ifPresent(reservationToUpdate::setCheckin);
+        Optional.ofNullable(checkout).ifPresent(reservationToUpdate::setCheckout);
+        Optional.ofNullable(camperPlace).ifPresent(reservationToUpdate::setCamperPlace);
+        Optional.ofNullable(request.paid()).ifPresent(reservationToUpdate::setPaid);
+
+        update(id, reservationToUpdate);
+    }
+
+    @Override
+    public void update(int id, Reservation reservation) {
+        reservationRepository.save(reservation);
     }
 
     @Transactional
@@ -108,10 +157,6 @@ public class ReservationServiceImpl implements ReservationService {
 
     public List<Reservation> getAll() {
         return reservationRepository.findAll();
-    }
-
-    public Reservation findReservationById(int id) {
-        return reservationRepository.findById(id).orElseThrow();
     }
 
     public List<Reservation> findByCamperPlaceId(int camperPlaceId) {
@@ -207,7 +252,7 @@ public class ReservationServiceImpl implements ReservationService {
         }
     }
 
-    private void ensureDataIsCorrect(String checkin, String checkout, String camperPlaceIndex, User user) {
+    private void ensureDataIsCorrect(String checkin, String checkout, CamperPlace camperPlace, User user) {
 
         ensure(checkin.isEmpty(), "Podaj datę wjazdu");
         ensure(checkout.isEmpty(), "Podaj datę wyjazdu");
@@ -224,13 +269,12 @@ public class ReservationServiceImpl implements ReservationService {
                 "Podaj dane gościa"
         );
         ensure(
-                camperPlaceIndex == null
-                        || camperPlaceService.findCamperPlaceByIndex(camperPlaceIndex) == null,
+                camperPlace == null,
                 "Wybierz nr. parceli"
         );
         ensure(
                 camperPlaceService.checkIsCamperPlaceOccupied(
-                        camperPlaceService.findCamperPlaceByIndex(camperPlaceIndex),
+                        camperPlace,
                         LocalDate.parse(checkin),
                         LocalDate.parse(checkout),
                         0

@@ -1,7 +1,6 @@
 package CPSF.com.demo.entity;
 
 import CPSF.com.demo.enums.Role;
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.*;
@@ -9,7 +8,6 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
@@ -20,11 +18,8 @@ import java.util.List;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-@EqualsAndHashCode
-public class User implements UserDetails {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int Id;
+@EqualsAndHashCode(callSuper = true)
+public class User extends DbObject implements UserDetails {
 
     @Column(name = "first_name")
     private String firstName;
@@ -104,4 +99,6 @@ public class User implements UserDetails {
         String l = getLastName() == null || getLastName().isEmpty()  ? "" :  getLastName();
         return   n + " " + l;
     }
+
+
 }

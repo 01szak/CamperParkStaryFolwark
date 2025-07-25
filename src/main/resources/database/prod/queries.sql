@@ -54,3 +54,14 @@ ALTER TABLE camper_places
 -- changeset kacper:5
 ALTER TABLE users
     DROP INDEX uk_user_email;
+
+-- changeset kacper:6
+
+ALTER TABLE users ADD COLUMN created_at DATE;
+ALTER TABLE users ADD COLUMN updated_at DATE;
+
+ALTER TABLE camper_places ADD COLUMN created_at DATE;
+ALTER TABLE camper_places ADD COLUMN updated_at DATE;
+
+ALTER TABLE reservations ADD COLUMN created_at DATE;
+ALTER TABLE reservations ADD COLUMN updated_at DATE;
