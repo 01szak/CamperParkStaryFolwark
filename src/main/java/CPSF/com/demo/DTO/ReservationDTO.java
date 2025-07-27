@@ -8,7 +8,7 @@ import java.time.LocalDate;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class ReservationDTO {
+public class ReservationDTO extends DTO {
     private int id;
     private LocalDate checkin;
     private LocalDate checkout;

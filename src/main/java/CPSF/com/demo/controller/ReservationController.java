@@ -8,6 +8,8 @@ import CPSF.com.demo.request.ReservationRequest;
 import CPSF.com.demo.util.ReservationMetadataMapper;
 import CPSF.com.demo.service.implementation.ReservationServiceImpl;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.transaction.annotation.Transactional;
@@ -44,9 +46,9 @@ public class ReservationController {
         return ResponseEntity.status(HttpStatus.OK).body(Map.of("Sukces","Rezeracja została usunięta"));
     }
 
-    @GetMapping("/find/{reservationId}")
-    public Reservation findReservationById(@PathVariable int reservationId) {
-        return reservationService.findById(reservationId);
+    @GetMapping("/findAll")
+    public Page<ReservationDTO> findAll(Pageable pageable) {
+            return reservationService.findAllDTO(pageable);
     }
 
 
