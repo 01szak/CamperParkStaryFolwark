@@ -8,7 +8,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 @Getter
-public class PaidReservationsDTO {
+public class PaidReservationsDTO extends DTO {
 
 	private Set<String> paidDates = new HashSet<>();;
 

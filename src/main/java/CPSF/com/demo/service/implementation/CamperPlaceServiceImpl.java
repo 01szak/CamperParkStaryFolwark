@@ -1,10 +1,12 @@
 package CPSF.com.demo.service.implementation;
 
+import CPSF.com.demo.DTO.CamperPlaceDTO;
 import CPSF.com.demo.entity.CamperPlace;
 import CPSF.com.demo.entity.Reservation;
 import CPSF.com.demo.enums.Type;
 import CPSF.com.demo.repository.CamperPlaceRepository;
 import CPSF.com.demo.service.CamperPlaceService;
+import CPSF.com.demo.util.Mapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -49,6 +51,11 @@ public class CamperPlaceServiceImpl implements CamperPlaceService {
         return camperPlaceRepository.findAll(
                 pageable == null ? Pageable.unpaged() : pageable
         );
+    }
+
+    @Override
+    public Page<CamperPlaceDTO> findAllDTO(Pageable pageable) {
+        return findAll(pageable).map(Mapper::toCamperPlaceDTO);
     }
 
     public Page<CamperPlace> findAll() {

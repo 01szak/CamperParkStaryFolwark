@@ -3,6 +3,7 @@ package CPSF.com.demo.service.implementation;
 import CPSF.com.demo.DTO.ReservationDTO;
 import CPSF.com.demo.DTO.ReservationMetadataDTO;
 import CPSF.com.demo.request.ReservationRequest;
+import CPSF.com.demo.service.CamperPlaceService;
 import CPSF.com.demo.util.ReservationMetadataMapper;
 import CPSF.com.demo.service.ReservationService;
 import CPSF.com.demo.util.Mapper;
@@ -65,7 +66,11 @@ public class ReservationServiceImpl implements ReservationService {
 
     @Override
     public Page<Reservation> findAll(Pageable pageable) {
-        return null;
+        return reservationRepository.findAll(pageable);
+    }
+
+    public Page<ReservationDTO> findAllDTO(Pageable pageable) {
+        return reservationRepository.findAll(pageable).map(Mapper::toReservationDTO);
     }
 
     @Override

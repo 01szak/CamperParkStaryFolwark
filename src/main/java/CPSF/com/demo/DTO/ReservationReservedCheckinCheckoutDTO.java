@@ -7,7 +7,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 @Getter
-public class ReservationReservedCheckinCheckoutDTO {
+public class ReservationReservedCheckinCheckoutDTO extends DTO {
 	private Set<String> reserved = new HashSet<>();
 	private Set<String> checkin = new HashSet<>();
 	private Set<String> checkout = new HashSet<>();

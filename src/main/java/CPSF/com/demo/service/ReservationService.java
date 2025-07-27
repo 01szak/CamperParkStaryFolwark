@@ -1,12 +1,13 @@
 package CPSF.com.demo.service;
 
+import CPSF.com.demo.DTO.ReservationDTO;
 import CPSF.com.demo.entity.Reservation;
 import CPSF.com.demo.entity.User;
 import CPSF.com.demo.request.ReservationRequest;
 
 import java.util.List;
 
-public interface ReservationService extends CRUDService<Reservation>{
+public interface ReservationService extends CRUDService<Reservation, ReservationDTO>{
 
     void create(String checkin, String checkout, String camperPlaceIndex, User user);
 

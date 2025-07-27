@@ -8,7 +8,7 @@ import java.util.List;
 @Setter
 @Builder
 @AllArgsConstructor
-public class CamperPlaceDTO {
+public class CamperPlaceDTO extends DTO{
 	private int id;
 	private String index;
 	private Boolean isOccupied;
