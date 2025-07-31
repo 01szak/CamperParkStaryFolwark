@@ -8,7 +8,7 @@ import java.time.LocalDate;
 public class ReservationCalculator {
 
 	private static final long discount = 10;
-	private static final long daysToDiscount = 4;
+	private static final long daysToDiscount = 3;
 
 
 	public double calculateFinalReservationCost(long daysInrReservation, double camperPlacePrice) {
