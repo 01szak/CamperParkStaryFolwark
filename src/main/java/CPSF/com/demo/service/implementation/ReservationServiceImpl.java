@@ -82,13 +82,13 @@ public class ReservationServiceImpl implements ReservationService {
     @Transactional
     public void delete(int id) {
         Reservation reservation = findById(id);
-//        CamperPlace cp = reservation.getCamperPlace();
+        CamperPlace cp = reservation.getCamperPlace();
 
-//        List<Reservation> reservations =
-//                cp.getReservations().stream().filter(r -> !r.equals(reservation)).toList();
-//        cp.setReservations(reservations);
+        List<Reservation> reservations =
+                cp.getReservations().stream().filter(r -> r.equals(reservation)).toList();
+        cp.setReservations(reservations);
 
-//        camperPlaceService.update(id, cp);
+        camperPlaceService.update(id, cp);
         reservationRepository.delete(reservation);
     }
 

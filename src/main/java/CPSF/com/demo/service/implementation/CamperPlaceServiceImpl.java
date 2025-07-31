@@ -73,7 +73,6 @@ public class CamperPlaceServiceImpl implements CamperPlaceService {
     @Override
     @Transactional
     public void update(int id, CamperPlace camperPlace) {
-//        camperPlaceRepository.save(camperPlace);
     }
 
     @Override
