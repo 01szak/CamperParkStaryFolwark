@@ -14,7 +14,7 @@ public class ReservationCalculator {
 	public double calculateFinalReservationCost(long daysInrReservation, double camperPlacePrice) {
 		long finalCost = 0;
 		for (int i = 1; i <= daysInrReservation; i++ ) {
-			if (i == daysToDiscount) {
+			if (i >= daysToDiscount) {
 				camperPlacePrice -= discount;
 			}
 			finalCost += (long) camperPlacePrice;
