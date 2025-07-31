@@ -10,8 +10,8 @@ import java.time.LocalDate;
 @AllArgsConstructor
 public class ReservationDTO extends DTO {
     private int id;
-    private LocalDate checkin;
-    private LocalDate checkout;
+    private String checkin;
+    private String checkout;
     private String reservationStatus;
     private String camperPlaceIndex;
     private UserDTO user;

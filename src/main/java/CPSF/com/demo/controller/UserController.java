@@ -1,9 +1,12 @@
 package CPSF.com.demo.controller;
 
+import CPSF.com.demo.DTO.ReservationDTO;
 import CPSF.com.demo.DTO.UserDTO;
 import CPSF.com.demo.request.UserRequest;
 import CPSF.com.demo.service.implementation.UserServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -26,14 +29,20 @@ public class UserController {
         }
         return userService.getFilteredUsers(value);
     }
-    @GetMapping("/getAll")
-    public List<UserDTO> getAll() {
-        return userService.findAllUsersDto();
+    @GetMapping("/findAll")
+    public Page<UserDTO> findAll(Pageable pageable) {
+        return userService.findAllDTO(pageable);
     }
+
     @PatchMapping("/updateUser/{id}")
     public void updateUser(@PathVariable int id,@RequestBody UserRequest request){
         userService.updateUser(id,request);
     }
+    @PostMapping("/create")
+    public void create(@RequestBody UserRequest request) {
+        userService.create(request);
+    }
+
     @GetMapping("/getUser/{id}")
     public UserDTO getUserById(@PathVariable int id){
         return userService.findUserDtoById(id);

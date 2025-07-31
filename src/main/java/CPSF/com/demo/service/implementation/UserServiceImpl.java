@@ -9,6 +9,8 @@ import CPSF.com.demo.entity.User;
 import CPSF.com.demo.enums.Role;
 import CPSF.com.demo.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
@@ -20,7 +22,7 @@ import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
-public class UserServiceImpl implements UserService {
+public class UserServiceImpl implements UserService{
 
     private final UserRepository userRepository;
 
@@ -36,19 +38,48 @@ public class UserServiceImpl implements UserService {
         return userRepository.findByEmail(email).orElseThrow();
     }
 
+    @Transactional
+    public void create(UserRequest user) {
 
-    public void create(User user) {
-        if (user.getRole() == null) {
-            user.setRole(Role.GUEST);
+        if(
+                user.email().isBlank()
+                && user.firstName().isBlank()
+                && user.lastName().isBlank()
+                && user.carRegistration().isBlank()
+                && user.phoneNumber().isBlank()
+        ) {
+            throw new ClientInputException("Formularz jest pusty!");
         }
-        if (user.getReservations() == null) {
-            user.setReservations(new ArrayList<>());
-        }
-        if(!user.getEmail().isBlank() && userRepository.findByEmail(user.getEmail()).isPresent()) {
+        if(!user.email().isBlank() && userRepository.findByEmail(user.email()).isPresent()) {
            throw new ClientInputException("Ten email jest już używany");
-        } else {
-            userRepository.save(user);
         }
+
+
+            create(
+                    User.builder()
+                            .firstName(user.firstName())
+                            .lastName(user.lastName())
+                            .email(user.email())
+                            .carRegistration(user.carRegistration())
+                            .phoneNumber(user.phoneNumber())
+                            .build()
+            );
+    }
+
+
+    @Override
+    public void create(User user) {
+        userRepository.save(user);
+    }
+
+    @Override
+    public Page<User> findAll(Pageable pageable) {
+        return userRepository.findAll(pageable);
+    }
+
+    @Override
+    public Page<UserDTO> findAllDTO(Pageable pageable) {
+        return findAll(pageable).map(Mapper::toUserDTO);
     }
 
     public List<UserDTO> getFilteredUsers(String value) {
@@ -114,6 +145,16 @@ public class UserServiceImpl implements UserService {
 
     public User findById(int id) {
         return userRepository.findById(id).orElseThrow();
+    }
+
+    @Override
+    public void update(int id, User user) {
+
+    }
+
+    @Override
+    public void delete(int id) {
+
     }
 
 }

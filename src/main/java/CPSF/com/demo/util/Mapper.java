@@ -6,7 +6,11 @@ import CPSF.com.demo.entity.CamperPlace;
 import CPSF.com.demo.entity.Reservation;
 import CPSF.com.demo.entity.User;
 
+import java.time.format.DateTimeFormatter;
+
 public class Mapper {
+
+    private static final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd.MM.yyyy");
 
     private Mapper() {
 
@@ -30,8 +34,8 @@ public class Mapper {
     public static ReservationDTO toReservationDTO(Reservation reservation) {
         return ReservationDTO.builder()
                 .id(reservation.getId())
-                .checkin(reservation.getCheckin())
-                .checkout(reservation.getCheckout())
+                .checkin(reservation.getCheckin().format(formatter))
+                .checkout(reservation.getCheckout().format(formatter))
                 .camperPlaceIndex(reservation.getCamperPlace().getIndex())
                 .user(toUserDTO(reservation.getUser()))
                 .reservationStatus(String.valueOf(reservation.getReservationStatus()))
