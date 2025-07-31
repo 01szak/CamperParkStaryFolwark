@@ -10,7 +10,7 @@ import java.util.Set;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class ReservationMetadataDTO extends DTO {
+public class ReservationMetadataDTO {
 	private Set<String> reserved;
 	private Set<String> checkin;
 	private Set<String> checkout;

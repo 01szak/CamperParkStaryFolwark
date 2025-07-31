@@ -10,7 +10,7 @@ import java.util.Set;
 
 @Getter
 @Setter
-public class UserPerReservationDTO extends DTO {
+public class UserPerReservationDTO {
 	private Map<String, Set<String>> userPerReservation = new HashMap<>();
 	private Map<String, Map<String,Set<String>>> camperPlacePerUserPerReservation = new HashMap<>();
 

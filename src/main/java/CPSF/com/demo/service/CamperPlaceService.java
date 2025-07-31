@@ -1,13 +1,12 @@
 package CPSF.com.demo.service;
 
-import CPSF.com.demo.DTO.CamperPlaceDTO;
 import CPSF.com.demo.entity.CamperPlace;
 import org.springframework.data.domain.Page;
 
 import java.time.LocalDate;
 import java.util.List;
 
-public interface CamperPlaceService extends CRUDService<CamperPlace, CamperPlaceDTO> {
+public interface CamperPlaceService extends CRUDService<CamperPlace> {
 
 
     List<CamperPlace> findCamperPlacesByIds(List<Integer> ids);

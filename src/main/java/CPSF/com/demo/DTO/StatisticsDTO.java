@@ -10,7 +10,7 @@ import lombok.ToString;
 @ToString
 @AllArgsConstructor
 @EqualsAndHashCode
-public class StatisticsDTO extends DTO {
+public class StatisticsDTO {
 	private String name;
 	private Double value;
 }
