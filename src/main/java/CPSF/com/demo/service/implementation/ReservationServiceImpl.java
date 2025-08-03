@@ -3,7 +3,6 @@ package CPSF.com.demo.service.implementation;
 import CPSF.com.demo.DTO.ReservationDTO;
 import CPSF.com.demo.DTO.ReservationMetadataDTO;
 import CPSF.com.demo.request.ReservationRequest;
-import CPSF.com.demo.service.CamperPlaceService;
 import CPSF.com.demo.util.ReservationMetadataMapper;
 import CPSF.com.demo.service.ReservationService;
 import CPSF.com.demo.util.Mapper;
@@ -38,7 +37,6 @@ public class ReservationServiceImpl implements ReservationService {
     @Override
     @Transactional
     public void create(String checkin, String checkout, String camperPlaceIndex, User user) {
-
         CamperPlace camperPlace = camperPlaceService.findByIndex(camperPlaceIndex);
 
         ensureDataIsCorrect(checkin, checkout, camperPlace, user);
@@ -58,6 +56,7 @@ public class ReservationServiceImpl implements ReservationService {
                             .camperPlace(camperPlace)
                             .user(user)
                             .paid(false)
+                            .createdAt(new Date())
                             .build()
             )
         );
@@ -82,13 +81,6 @@ public class ReservationServiceImpl implements ReservationService {
     @Transactional
     public void delete(int id) {
         Reservation reservation = findById(id);
-//        CamperPlace cp = reservation.getCamperPlace();
-
-//        List<Reservation> reservations =
-//                cp.getReservations().stream().filter(r -> !r.equals(reservation)).toList();
-//        cp.setReservations(reservations);
-
-//        camperPlaceService.update(id, cp);
         reservationRepository.delete(reservation);
     }
 
@@ -122,6 +114,7 @@ public class ReservationServiceImpl implements ReservationService {
         );
 
         Reservation reservationToUpdate = findById(id);
+        reservationToUpdate.setUpdatedAt(new Date());
         Optional.ofNullable(checkin).ifPresent(reservationToUpdate::setCheckin);
         Optional.ofNullable(checkout).ifPresent(reservationToUpdate::setCheckout);
         Optional.ofNullable(camperPlace).ifPresent(reservationToUpdate::setCamperPlace);

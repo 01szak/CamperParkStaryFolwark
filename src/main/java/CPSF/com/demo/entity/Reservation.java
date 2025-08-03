@@ -6,6 +6,7 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
+import lombok.experimental.SuperBuilder;
 import org.springframework.context.annotation.Lazy;
 
 import java.time.LocalDate;
@@ -13,11 +14,10 @@ import java.time.LocalDate;
 import static CPSF.com.demo.enums.ReservationStatus.*;
 
 @Entity
-@Builder
 @Table(name = "reservations")
 @Data
+@SuperBuilder
 @NoArgsConstructor
-@AllArgsConstructor
 @EqualsAndHashCode(callSuper = true)
 public class Reservation extends DbObject {
 

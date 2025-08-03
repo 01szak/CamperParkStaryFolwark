@@ -40,6 +40,7 @@ public class CamperPlaceServiceImpl implements CamperPlaceService {
                 CamperPlace.builder()
                     .type(type)
                     .price(price)
+                    .createdAt(new Date())
                     .build()
         );
     }

@@ -4,6 +4,7 @@ import CPSF.com.demo.enums.Type;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.*;
+import lombok.experimental.SuperBuilder;
 
 import java.util.List;
 
@@ -12,9 +13,9 @@ import java.util.List;
 @Table(name = "camper_places")
 @Getter
 @Setter
-@Builder
+@Data
+@SuperBuilder
 @EqualsAndHashCode(callSuper = true)
-@AllArgsConstructor
 @NoArgsConstructor
 public class CamperPlace extends DbObject {
 

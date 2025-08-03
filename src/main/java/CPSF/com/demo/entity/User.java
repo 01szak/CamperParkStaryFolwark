@@ -4,6 +4,7 @@ import CPSF.com.demo.enums.Role;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.*;
+import lombok.experimental.SuperBuilder;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -13,11 +14,11 @@ import java.util.List;
 
 @Entity
 @Table(name = "users")
-@Builder
 @Getter
 @Setter
+@Data
+@SuperBuilder
 @NoArgsConstructor
-@AllArgsConstructor
 @EqualsAndHashCode(callSuper = true)
 public class User extends DbObject implements UserDetails {
 

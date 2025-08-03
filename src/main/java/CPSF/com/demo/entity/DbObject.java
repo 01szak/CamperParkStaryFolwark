@@ -2,11 +2,16 @@ package CPSF.com.demo.entity;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.persistence.*;
-import lombok.Getter;
+import lombok.*;
+import lombok.experimental.SuperBuilder;
 
 import java.util.Date;
 
+
 @Getter
+@Setter
+@SuperBuilder
+@NoArgsConstructor
 @MappedSuperclass
 public abstract class DbObject {
     @Id

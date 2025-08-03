@@ -1,6 +1,5 @@
 package CPSF.com.demo.controller;
 
-import CPSF.com.demo.DTO.ReservationDTO;
 import CPSF.com.demo.DTO.UserDTO;
 import CPSF.com.demo.request.UserRequest;
 import CPSF.com.demo.service.implementation.UserServiceImpl;
@@ -34,14 +33,15 @@ public class UserController {
         return userService.findAllDTO(pageable);
     }
 
-    @PatchMapping("/updateUser/{id}")
-    public void updateUser(@PathVariable int id,@RequestBody UserRequest request){
-        userService.updateUser(id,request);
+    @PatchMapping("/update/{id}")
+    public void update(@PathVariable int id, @RequestBody UserRequest request){
+        userService.update(id,request);
     }
     @PostMapping("/create")
     public void create(@RequestBody UserRequest request) {
         userService.create(request);
     }
+
 
     @GetMapping("/getUser/{id}")
     public UserDTO getUserById(@PathVariable int id){

@@ -6,8 +6,9 @@ import CPSF.com.demo.service.UserService;
 import CPSF.com.demo.util.Mapper;
 import exception.ClientInputException;
 import CPSF.com.demo.entity.User;
-import CPSF.com.demo.enums.Role;
 import CPSF.com.demo.repository.UserRepository;
+import exception.ClientInputExceptionUtil;
+import liquibase.util.ExceptionUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -17,8 +18,11 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
+
+import static exception.ClientInputExceptionUtil.ensure;
 
 @Service
 @RequiredArgsConstructor
@@ -40,35 +44,38 @@ public class UserServiceImpl implements UserService{
 
     @Transactional
     public void create(UserRequest user) {
-
-        if(
-                user.email().isBlank()
-                && user.firstName().isBlank()
-                && user.lastName().isBlank()
-                && user.carRegistration().isBlank()
-                && user.phoneNumber().isBlank()
-        ) {
-            throw new ClientInputException("Formularz jest pusty!");
-        }
-        if(!user.email().isBlank() && userRepository.findByEmail(user.email()).isPresent()) {
-           throw new ClientInputException("Ten email jest już używany");
-        }
-
-
-            create(
-                    User.builder()
-                            .firstName(user.firstName())
-                            .lastName(user.lastName())
-                            .email(user.email())
-                            .carRegistration(user.carRegistration())
-                            .phoneNumber(user.phoneNumber())
-                            .build()
-            );
+        checkIsDataCorrect(user);
+        create(User.builder()
+                    .firstName(user.firstName())
+                    .lastName(user.lastName())
+                    .email(user.email())
+                    .carRegistration(user.carRegistration())
+                    .phoneNumber(user.phoneNumber())
+                    .createdAt(new Date())
+                    .build()
+        );
     }
-
 
     @Override
     public void create(User user) {
+        userRepository.save(user);
+    }
+    @Transactional
+    public void update(int id, UserRequest request) {
+        User user = findById(id);
+        User u = userRepository.findByEmail(request.email()).orElse(null);
+
+        ensure(u != null && !u.equals(user), "Ten email jest już używany");
+
+        user.setUpdatedAt(new Date());
+        Optional.ofNullable(request.firstName()).ifPresent(user::setFirstName);
+        Optional.ofNullable(request.lastName()).ifPresent(user::setLastName);
+        Optional.ofNullable(request.email()).ifPresent(user::setEmail);
+        Optional.ofNullable(request.phoneNumber()).ifPresent(user::setPhoneNumber);
+        Optional.ofNullable(request.carRegistration()).ifPresent(user::setCarRegistration);
+        Optional.ofNullable(request.country()).ifPresent(user::setCountry);
+        Optional.ofNullable(request.city()).ifPresent(user::setCity);
+        Optional.ofNullable(request.streetAddress()).ifPresent(user::setStreetAddress);
         userRepository.save(user);
     }
 
@@ -109,24 +116,7 @@ public class UserServiceImpl implements UserService{
         return filteredList;
     }
 
-    @Transactional
-    public void updateUser(int id, UserRequest request) {
-        User user = findById(id);
 
-        if(userRepository.findByEmail(request.email()).isPresent()) {
-            throw new ClientInputException("Guest with that email already exists");
-        }
-
-        Optional.ofNullable(request.firstName()).ifPresent(user::setFirstName);
-        Optional.ofNullable(request.lastName()).ifPresent(user::setLastName);
-        Optional.ofNullable(request.email()).ifPresent(user::setEmail);
-        Optional.ofNullable(request.phoneNumber()).ifPresent(user::setPhoneNumber);
-        Optional.ofNullable(request.carRegistration()).ifPresent(user::setCarRegistration);
-        Optional.ofNullable(request.country()).ifPresent(user::setCountry);
-        Optional.ofNullable(request.city()).ifPresent(user::setCity);
-        Optional.ofNullable(request.streetAddress()).ifPresent(user::setStreetAddress);
-        userRepository.save(user);
-    }
 
     public UserDTO findUserDtoById(int id) {
         return userRepository.findById(id).map(Mapper::toUserDTO).orElseThrow();
@@ -157,5 +147,16 @@ public class UserServiceImpl implements UserService{
 
     }
 
+    private void checkIsDataCorrect(UserRequest user) {
+        ensure(
+                user.email().isBlank()
+                        && user.firstName().isBlank()
+                        && user.lastName().isBlank()
+                        && user.carRegistration().isBlank()
+                        && user.phoneNumber().isBlank(),
+                "Formularz jest pusty!"
+        );
+        ensure(!user.email().isBlank() && userRepository.findByEmail(user.email()).isPresent(), "Ten email jest już używany");
+    }
 }
 
