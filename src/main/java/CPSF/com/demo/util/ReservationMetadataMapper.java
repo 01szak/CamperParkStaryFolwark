@@ -52,7 +52,7 @@ public class ReservationMetadataMapper {
 		return metadataMap;
 	}
 
-	public Map<String, Map<String,Set<String>>> getUserPerReservation() {
+	public Map<String, Map<String,List<String>>> getUserPerReservation() {
 		UserPerReservationDTO metadataMap = new UserPerReservationDTO();
 		List<CamperPlace> camperPlaces = camperPlaceService.findAll(null).toList();
 
@@ -64,12 +64,14 @@ public class ReservationMetadataMapper {
 		return metadataMap.getCamperPlacePerUserPerReservation();
 	}
 
-	private Map<String, Set<String>> assignUserPerReservation(CamperPlace cp) {
-		Map<String, Set<String>> userPerReservation = new HashMap<>();
-
+	private Map<String, List<String>> assignUserPerReservation(CamperPlace cp) {
+		Map<String, List<String>> userPerReservation = new HashMap<>();
 		for (Reservation r : cp.getReservations()) {
-			userPerReservation.put(
-					r.getUser().toString(), mapReservationDatesToString(r)
+			List<String> dates = mapReservationDatesToString(r);
+			dates.set(0, dates.get(0) + " in");
+			dates.set(dates.size() - 1, dates.get(dates.size() - 1) + " out");
+					userPerReservation.put(
+					r.getUser().toString(), dates
 			);
 		}
 
@@ -126,15 +128,15 @@ public class ReservationMetadataMapper {
 		return Mapper.toReservationMetadataDTO(reservationMetadata);
 	}
 
-	private Set<String> mapReservationDatesToString(Reservation r) {
+	private List<String> mapReservationDatesToString(Reservation r) {
 		return r.getCheckin().datesUntil(r.getCheckout().plusDays(1))
 				.map(LocalDate::toString)
-				.collect(Collectors.toSet());
+				.collect(Collectors.toList());
 	}
 
-	private Set<String> mapReservationDatesToString(Set<LocalDate> dates) {
+	private List<String> mapReservationDatesToString(Set<LocalDate> dates) {
 		return dates.stream()
 				.map(LocalDate::toString)
-				.collect(Collectors.toSet());
+				.collect(Collectors.toList());
 	}
 }

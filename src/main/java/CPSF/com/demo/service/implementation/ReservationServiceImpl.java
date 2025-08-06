@@ -3,6 +3,7 @@ package CPSF.com.demo.service.implementation;
 import CPSF.com.demo.DTO.ReservationDTO;
 import CPSF.com.demo.DTO.ReservationMetadataDTO;
 import CPSF.com.demo.request.ReservationRequest;
+import CPSF.com.demo.service.UserService;
 import CPSF.com.demo.util.ReservationMetadataMapper;
 import CPSF.com.demo.service.ReservationService;
 import CPSF.com.demo.util.Mapper;
@@ -25,7 +26,7 @@ import static exception.ClientInputExceptionUtil.ensure;
 public class ReservationServiceImpl implements ReservationService {
     
     private final ReservationRepository reservationRepository;
-    private final UserServiceImpl userService;
+    private final UserService userService;
     private final CamperPlaceServiceImpl camperPlaceService;
     private final ReservationMetadataMapper reservationMetadataMapper;
 

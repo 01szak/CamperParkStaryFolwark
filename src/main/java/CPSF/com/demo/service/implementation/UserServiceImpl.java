@@ -4,11 +4,8 @@ import CPSF.com.demo.DTO.UserDTO;
 import CPSF.com.demo.request.UserRequest;
 import CPSF.com.demo.service.UserService;
 import CPSF.com.demo.util.Mapper;
-import exception.ClientInputException;
 import CPSF.com.demo.entity.User;
 import CPSF.com.demo.repository.UserRepository;
-import exception.ClientInputExceptionUtil;
-import liquibase.util.ExceptionUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -130,7 +127,8 @@ public class UserServiceImpl implements UserService{
 
     @Transactional
     public void deleteUser(int id) {
-        userRepository.deleteById(id);
+        User userToDelete = findById(id);
+        userRepository.delete(userToDelete);
     }
 
     public User findById(int id) {

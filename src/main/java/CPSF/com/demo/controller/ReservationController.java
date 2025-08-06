@@ -3,7 +3,6 @@ package CPSF.com.demo.controller;
 import CPSF.com.demo.DTO.PaidReservationsDTO;
 import CPSF.com.demo.DTO.ReservationDTO;
 import CPSF.com.demo.DTO.ReservationMetadataDTO;
-import CPSF.com.demo.entity.Reservation;
 import CPSF.com.demo.request.ReservationRequest;
 import CPSF.com.demo.util.ReservationMetadataMapper;
 import CPSF.com.demo.service.implementation.ReservationServiceImpl;
@@ -17,7 +16,6 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 @Transactional
 @RestController
@@ -86,7 +84,7 @@ public class ReservationController {
     }
 
     @GetMapping("/getUserPerReservation")
-    public Map<String, Map<String,Set<String>>> getUserPerReservation() {
+    public Map<String, Map<String,List<String>>> getUserPerReservation() {
         return reservationMetadataMapper.getUserPerReservation();
     }
 
