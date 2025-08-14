@@ -1,25 +1,62 @@
 package CPSF.com.demo.service;
 
 import CPSF.com.demo.DTO.DTO;
-import CPSF.com.demo.DTO.ReservationDTO;
 import CPSF.com.demo.entity.DbObject;
-import org.springframework.data.domain.Page;
+import CPSF.com.demo.repository.CRUDRepository;
+import CPSF.com.demo.util.Mapper;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.repository.EntityGraph;
+import org.springframework.stereotype.Service;
 
-public interface CRUDService <T extends DbObject, D extends DTO> {
+@Service
+public abstract class CRUDService <T extends DbObject, D extends DTO> {
 
-    void create(T t);
+    private final CRUDRepository<T> repository;
+
+    @Autowired
+    protected CRUDService(CRUDRepository<T> repository) {
+        this.repository = repository;
+    }
+
+    protected void create(T t){
+        repository.save(t);
+    };
+
+    protected Page<T> findAll(Pageable pageable){
+        return repository.findAll(pageable);
+    }
 
     @EntityGraph()
-    Page<T> findAll(Pageable pageable);
+    protected Page<T> findAll(){
+        Sort sort = Sort.by(
+                Sort.Order.desc("updatedAt").nullsLast(),
+                Sort.Order.desc("createdAt")
+        );
+        return findAll(Pageable.unpaged(sort));
+    };
 
     @EntityGraph()
-    Page<D> findAllDTO(Pageable pageable);
+    protected Page<D> findAllDTO(Pageable pageable){
+        return (Page<D>) findAll(pageable).map(Mapper::toDTO);
+    }
+    @EntityGraph()
+    protected Page<D> findAllDTO( ){
+        return (Page<D>) findAll().map(Mapper::toDTO);
+    };
 
-    T findById(int id);
+    protected T findById(int id){
+        return repository.findById(id).orElseThrow();
+    };
 
-    void update(int id, T t);
+    protected void update(int id, T t){
+        T object = findById(id);
+        repository.save(object);
+    };
 
-    void delete(int id);
+    protected void delete(T t){
+        repository.delete(t);
+    };
 }

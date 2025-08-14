@@ -3,8 +3,10 @@ package CPSF.com.demo.util;
 import CPSF.com.demo.DTO.*;
 import CPSF.com.demo.entity.CamperPlace;
 
+import CPSF.com.demo.entity.DbObject;
 import CPSF.com.demo.entity.Reservation;
 import CPSF.com.demo.entity.User;
+import org.hibernate.WrongClassException;
 
 import java.time.format.DateTimeFormatter;
 
@@ -13,7 +15,18 @@ public class Mapper {
     private static final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd.MM.yyyy");
 
     private Mapper() {
+    }
 
+    public static DTO toDTO(DbObject dbObject) {
+        if (dbObject instanceof User) {
+            return toUserDTO((User) dbObject);
+        } else if (dbObject instanceof Reservation) {
+            return toReservationDTO((Reservation) dbObject);
+        } else if (dbObject instanceof CamperPlace) {
+            return toCamperPlaceDTO((CamperPlace) dbObject);
+        } else  {
+            throw new WrongClassException("No mapper for this class!", dbObject.getClass(), dbObject.toString());
+        }
     }
 
     public static UserDTO toUserDTO(User user) {

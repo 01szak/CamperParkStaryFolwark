@@ -21,13 +21,14 @@ public class UserController {
         userService = theUserService;
     }
 
-    @GetMapping({"/getFilteredUsers/{value}", "/getFilteredUsers"})
-    public List<UserDTO> getFilteredUsers(@PathVariable(required = false) String value) {
-        if(value != null && value.trim().isEmpty()) {
-            value = null;
-        }
-        return userService.getFilteredUsers(value);
-    }
+//    @GetMapping({"/getFilteredUsers/{value}", "/getFilteredUsers"})
+//    public List<UserDTO> getFilteredUsers(@PathVariable(required = false) String value) {
+//        if(value != null && value.trim().isEmpty()) {
+//            value = null;
+//        }
+//        return userService.getFilteredUsers(value);
+//    }
+
     @GetMapping("/findAll")
     public Page<UserDTO> findAll(Pageable pageable) {
         return userService.findAllDTO(pageable);
@@ -45,11 +46,11 @@ public class UserController {
 
     @GetMapping("/getUser/{id}")
     public UserDTO getUserById(@PathVariable int id){
-        return userService.findUserDtoById(id);
+        return userService.findDTOById(id);
     }
     @DeleteMapping("/delete/{id}")
     public void deleteUser(@PathVariable int id){
-         userService.deleteUser(id);
+         userService.delete(id);
     }
 }
 

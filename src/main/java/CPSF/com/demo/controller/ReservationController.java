@@ -49,29 +49,29 @@ public class ReservationController {
             return reservationService.findAllDTO(pageable);
     }
 
+//    @GetMapping({"/getFilteredReservations/{value}", "/getFilteredReservations"})
+//    public List<ReservationDTO> getFilteredReservations(@PathVariable(required = false) String value) {
+//        if (value != null && value.trim().isEmpty()) {
+//            value = null;
+//        }
+//        return reservationService.getFilteredData(value);
+//    }
 
-    @GetMapping({"/getFilteredReservations/{value}", "/getFilteredReservations"})
-    public List<ReservationDTO> getFilteredReservations(@PathVariable(required = false) String value) {
-        if (value != null && value.trim().isEmpty()) {
-            value = null;
-        }
-        return reservationService.getFilteredData(value);
-    }
 
     @GetMapping({"/getReservationMetadata"})
     public Map<String, ReservationMetadataDTO> getReservationMetadata() {
         return reservationService.getReservationMetadataDTO();
     }
 
-    @GetMapping("/getAll")
-    public List<ReservationDTO> getAll() {
-        return reservationService.getFilteredData("");
-    }
+//    @GetMapping("/getAll")
+//    public List<ReservationDTO> getAll() {
+//        return reservationService.getFilteredData("");
+//    }
 
-    @GetMapping("sortTable/{header}/{isAsc}")
-    public List<ReservationDTO> getSortedReservations(@PathVariable String header, @PathVariable int isAsc) {
-        return reservationService.getSortedReservations(header, isAsc);
-    }
+//    @GetMapping("sortTable/{header}/{isAsc}")
+//    public List<ReservationDTO> getSortedReservations(@PathVariable String header, @PathVariable int isAsc) {
+//        return reservationService.getSortedReservations(header, isAsc);
+//    }
 
     @GetMapping("/getPaidReservations")
     public Map<String, PaidReservationsDTO> getPaidReservations() {

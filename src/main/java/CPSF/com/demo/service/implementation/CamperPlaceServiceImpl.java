@@ -4,12 +4,16 @@ import CPSF.com.demo.DTO.CamperPlaceDTO;
 import CPSF.com.demo.entity.CamperPlace;
 import CPSF.com.demo.entity.Reservation;
 import CPSF.com.demo.enums.Type;
+import CPSF.com.demo.repository.CRUDRepository;
 import CPSF.com.demo.repository.CamperPlaceRepository;
+import CPSF.com.demo.service.CRUDService;
 import CPSF.com.demo.service.CamperPlaceService;
 import CPSF.com.demo.util.Mapper;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -18,82 +22,84 @@ import java.util.*;
 import java.util.stream.Stream;
 
 @Service
-@RequiredArgsConstructor
-public class CamperPlaceServiceImpl implements CamperPlaceService {
+public class CamperPlaceServiceImpl extends CRUDService<CamperPlace, CamperPlaceDTO> implements CamperPlaceService {
 
-    private final CamperPlaceRepository camperPlaceRepository;
+    private final CamperPlaceRepository repository  ;
 
-    @Override
-    @Transactional
-    public void create(CamperPlace camperPlace) {
-        camperPlaceRepository.save(camperPlace);
+    @Autowired
+    public CamperPlaceServiceImpl(CamperPlaceRepository repository) {
+        super(repository);
+        this.repository = repository;
     }
 
+    @Override
     public void create(Type type, double price) {
         if (Stream.of(Type.values()).noneMatch(type::equals)) {
             throw new IllegalArgumentException("Invalid type");
         }
+
         if (price <= 0) {
             throw new IllegalArgumentException("Price must be positive");
         }
-        camperPlaceRepository.save(
-                CamperPlace.builder()
-                    .type(type)
-                    .price(price)
-                    .createdAt(new Date())
-                    .build()
+
+        create(CamperPlace.builder()
+                .type(type)
+                .price(price)
+                .createdAt(new Date())
+                .build()
         );
-    }
-
-
-
-    @Override
-    public Page<CamperPlace> findAll(Pageable pageable) {
-        return camperPlaceRepository.findAll(
-                pageable == null ? Pageable.unpaged() : pageable
-        );
-    }
-
-    @Override
-    public Page<CamperPlaceDTO> findAllDTO(Pageable pageable) {
-        return findAll(pageable).map(Mapper::toCamperPlaceDTO);
-    }
-
-    public Page<CamperPlace> findAll() {
-        return findAll(Pageable.unpaged());
-    }
-
-    @Override
-    public CamperPlace findById(int id) {
-        return null;
-    }
-    public CamperPlace findByIndex(String index) {
-        return camperPlaceRepository.findByIndex(index);
     }
 
     @Override
     @Transactional
     public void update(int id, CamperPlace camperPlace) {
-//        camperPlaceRepository.save(camperPlace);
+        //TODO
+//        super.update(id, camperPlace);
     }
 
     @Override
     @Transactional
-    public void delete(int id) {
-        camperPlaceRepository.delete(camperPlaceRepository.findById(id).orElseThrow());
+    public void delete(CamperPlace camperPlace) {
+        super.delete(camperPlace);
     }
 
     @Override
-    public List<CamperPlace> findCamperPlacesByIds(List<Integer> ids) {
-        return List.of();
+    @Transactional
+    public void delete(String idnex) {
+        CamperPlace cp = findByIndex(idnex);
+        delete(cp);
+    }
+
+    public Page<CamperPlaceDTO> findAllDTO(Pageable pageable) {
+        return super.findAllDTO(pageable);
+    }
+
+    public Page<CamperPlaceDTO> findAllDTO() {
+        return super.findAllDTO();
+    }
+//    @Override
+//    public void setIsCamperPlaceOccupied(CamperPlace camperPlace) {
+//        camperPlace.setIsOccupied(!camperPlace.getIsOccupied());
+//    }
+
+    @Override
+    public CamperPlace findByIndex(String index) {
+        return repository.findByIndex(index);
     }
 
     @Override
-    public void setIsCamperPlaceOccupied(CamperPlace camperPlace) {
-        camperPlace.setIsOccupied(!camperPlace.getIsOccupied());
+    public Page<CamperPlace> findAll() {
+        return super.findAll();
     }
 
-    public boolean checkIsCamperPlaceOccupied(CamperPlace camperPlace, LocalDate checkin, LocalDate checkout, int reservationId) {
+    @Override
+    public CamperPlace findById(int id) {
+        return super.findById(id);
+    }
+
+    @Override
+    public boolean checkIsCamperPlaceOccupied(
+            CamperPlace camperPlace, LocalDate checkin, LocalDate checkout, int reservationId) {
         for (Reservation res : camperPlace.getReservations()) {
             if (res.getId() == reservationId) continue;
 
@@ -114,37 +120,11 @@ public class CamperPlaceServiceImpl implements CamperPlaceService {
 //        camperPlaceRepository.save(camperPlace);
 //    }
 //
-//    public List<CamperPlaceDTO> findAllCamperPlacesDTO() {
-//        return camperPlaceRepository.findAll().stream().map(Mapper::toCamperPlaceDTO).toList();
-//    }
-
-//    public List<CamperPlace> getAll() {
-//        return camperPlaceRepository.findAll();
-//    }
-
-//
 //    public Boolean isCamperPlaceOccupied(String index) {
 //        CamperPlace camperPlace = findCamperPlaceByIndex(index);
 //
 //        return camperPlace.getIsOccupied();
 //    }
 //
-//
-//
-//    public CamperPlace findById(int id) {
-//        return camperPlaceRepository.findById(id).orElseThrow(() -> new RuntimeException("CamperPlace not found!"));
-//    }
-//
-//    public CamperPlace findCamperPlaceByIndex(String index) {
-//        return camperPlaceRepository.findCamperPlaceByIndex(index);
-//    }
-//
-//
-
-//
-//
-//    public List<CamperPlace> findCamperPlacesByIds(List<Integer> ids) {
-//        return camperPlaceRepository.findCamperPlaceByIdIn(ids);
-//    }
 }
 
