@@ -60,9 +60,20 @@ public class UserServiceImpl implements UserService{
     @Transactional
     public void update(int id, UserRequest request) {
         User user = findById(id);
-        User u = userRepository.findByEmail(request.email()).orElse(null);
 
-        ensure(u != null && !u.equals(user), "Ten email jest już używany");
+        if (!request.email().isBlank()) {
+            User u = userRepository.findByEmail(request.email()).orElse(null);
+            ensure(u != null && !u.equals(user), "Ten email jest już używany");
+        }
+
+        ensure(
+                user.getFirstName().equals(request.firstName())
+                        && user.getLastName().equals(request.lastName())
+                        && user.getEmail().equals(request.email())
+                        && user.getCarRegistration().equals(request.carRegistration())
+                        && user.getPhoneNumber().equals(request.phoneNumber()),
+                "Nie podano żadnych zmian"
+        );
 
         user.setUpdatedAt(new Date());
         Optional.ofNullable(request.firstName()).ifPresent(user::setFirstName);
@@ -73,6 +84,8 @@ public class UserServiceImpl implements UserService{
         Optional.ofNullable(request.country()).ifPresent(user::setCountry);
         Optional.ofNullable(request.city()).ifPresent(user::setCity);
         Optional.ofNullable(request.streetAddress()).ifPresent(user::setStreetAddress);
+
+
         userRepository.save(user);
     }
 
