@@ -97,24 +97,25 @@ public class ReservationServiceImpl implements ReservationService {
            throw new RuntimeException("Coś poszło nie tak");
         }
 
-        ensure (
-                camperPlaceService.checkIsCamperPlaceOccupied(
-                    camperPlace,
-                    checkin,
-                    checkout,
-                    id
-                ),
-                "Parcela jest już zajęta!"
-        );
+        ensure (camperPlaceService.checkIsCamperPlaceOccupied(
+                camperPlace,
+                checkin,
+                checkout,
+                id),
+        "Parcela jest już zajęta!");
 
-        ensure (
-                checkin != null
-                        && checkout != null
-                        && checkout.isBefore(checkin),
-                "Data wyjazdu nie może być przed datą wjazdu"
-        );
+        ensure (checkin != null
+                    && checkout != null
+                    && checkout.isBefore(checkin),
+            "Data wyjazdu nie może być przed datą wjazdu");
 
         Reservation reservationToUpdate = findById(id);
+        User user = reservationToUpdate.getUser();
+
+        if (!user.equals(request.user())) {
+            userService.update(user.getId(), request.user());
+        }
+
         reservationToUpdate.setUpdatedAt(new Date());
         Optional.ofNullable(checkin).ifPresent(reservationToUpdate::setCheckin);
         Optional.ofNullable(checkout).ifPresent(reservationToUpdate::setCheckout);

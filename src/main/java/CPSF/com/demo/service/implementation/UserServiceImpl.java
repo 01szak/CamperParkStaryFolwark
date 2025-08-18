@@ -86,7 +86,7 @@ public class UserServiceImpl implements UserService{
         Optional.ofNullable(request.streetAddress()).ifPresent(user::setStreetAddress);
 
 
-        userRepository.save(user);
+        update(user.getId(), user);
     }
 
     @Override
@@ -150,7 +150,7 @@ public class UserServiceImpl implements UserService{
 
     @Override
     public void update(int id, User user) {
-
+        userRepository.save(user);
     }
 
     @Override
