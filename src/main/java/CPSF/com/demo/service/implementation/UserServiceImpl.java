@@ -83,7 +83,12 @@ public class UserServiceImpl  extends CRUDService<User, UserDTO> implements User
         Optional.ofNullable(request.phoneNumber()).ifPresent(user::setPhoneNumber);
         Optional.ofNullable(request.carRegistration()).ifPresent(user::setCarRegistration);
 
-        super.update(id, user);
+        super.update(user);
+    }
+
+    @Override
+    public void update( User user) {
+        super.update(user);
     }
 
 

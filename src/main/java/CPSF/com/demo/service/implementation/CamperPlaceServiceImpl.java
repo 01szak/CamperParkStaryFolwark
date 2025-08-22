@@ -52,7 +52,7 @@ public class CamperPlaceServiceImpl extends CRUDService<CamperPlace, CamperPlace
 
     @Override
     @Transactional
-    public void update(int id, CamperPlace camperPlace) {
+    public void update(CamperPlace camperPlace) {
         //TODO
 //        super.update(id, camperPlace);
     }

@@ -2,7 +2,6 @@ package CPSF.com.demo.service.implementation;
 
 import CPSF.com.demo.DTO.ReservationDTO;
 import CPSF.com.demo.DTO.ReservationMetadataDTO;
-import CPSF.com.demo.repository.CRUDRepository;
 import CPSF.com.demo.request.ReservationRequest;
 import CPSF.com.demo.service.CRUDService;
 import CPSF.com.demo.service.CamperPlaceService;
@@ -64,7 +63,6 @@ public class ReservationServiceImpl extends CRUDService<Reservation, Reservation
                     .camperPlace(camperPlace)
                     .user(user)
                     .paid(false)
-                    .createdAt(new Date())
                     .build()
             );
     }
@@ -120,13 +118,16 @@ public class ReservationServiceImpl extends CRUDService<Reservation, Reservation
 
         Reservation reservationToUpdate = findById(id);
 
-        reservationToUpdate.setUpdatedAt(new Date());
+        User reservationOwner = reservationToUpdate.getUser();
+        reservationOwner.setUpdatedAt(new Date());
+        userService.update(reservationOwner);
+
         Optional.ofNullable(checkin).ifPresent(reservationToUpdate::setCheckin);
         Optional.ofNullable(checkout).ifPresent(reservationToUpdate::setCheckout);
         Optional.ofNullable(camperPlace).ifPresent(reservationToUpdate::setCamperPlace);
         Optional.ofNullable(request.paid()).ifPresent(reservationToUpdate::setPaid);
 
-        super.update(id, reservationToUpdate);
+        super.update(reservationToUpdate);
     }
 
     @Transactional
@@ -274,6 +275,13 @@ public class ReservationServiceImpl extends CRUDService<Reservation, Reservation
                         camperPlace, LocalDate.parse(checkin), LocalDate.parse(checkout), 0),
                 "Parcela jest już zajęta!");
     }
+//    @Override
+//    protected Reservation copy(Reservation from, Reservation to) {
+//            return Reservation.builder()
+//                    .id(from.getId())
+//                    .
+//                    .build();
+//    }
 
     private String setToStringIfNull(String s) {
 		return s == null ? "" : s;

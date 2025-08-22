@@ -15,6 +15,8 @@ public interface UserService extends UserDetailsService{
 
     void update(int id, UserRequest request);
 
+    void update(User user);
+
     Page<User> findAll(Pageable pageable);
 
     Page<User> findAll();
