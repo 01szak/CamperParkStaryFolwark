@@ -26,4 +26,18 @@ public abstract class DbObject {
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private Date updatedAt;
 
+    @PrePersist
+    protected void onCreate() {
+        setCreatedAt(new Date());
+
+        if (updatedAt == null) {
+            updatedAt = createdAt;
+        }
+    }
+
+    @PreUpdate
+    protected void onUpdate() {
+        setUpdatedAt(new Date());
+    }
+
 }

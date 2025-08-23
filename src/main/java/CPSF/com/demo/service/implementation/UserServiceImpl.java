@@ -75,7 +75,7 @@ public class UserServiceImpl  extends CRUDService<User, UserDTO> implements User
             ensure(u != null && !u.equals(user), "Ten email jest już używany");
         }
 
-        user.setUpdatedAt(new Date());
+//        user.setUpdatedAt(new Date());
 
         Optional.ofNullable(request.firstName()).ifPresent(user::setFirstName);
         Optional.ofNullable(request.lastName()).ifPresent(user::setLastName);

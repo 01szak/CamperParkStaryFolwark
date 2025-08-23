@@ -20,6 +20,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDate;
 import java.util.*;
 
+import static CPSF.com.demo.enums.ReservationStatus.ACTIVE;
 import static exception.ClientInputExceptionUtil.ensure;
 
 @Service
@@ -55,16 +56,28 @@ public class ReservationServiceImpl extends CRUDService<Reservation, Reservation
 
         if (user.getId() <= 0) {
             userService.create(user);
+        } else {
+          user.setUpdatedAt(new Date());
+          userService.update(user);
         }
 
-            super.create(Reservation.builder()
-                    .checkin(checkinDate)
-                    .checkout(checkoutDate)
-                    .camperPlace(camperPlace)
-                    .user(user)
-                    .paid(false)
-                    .build()
-            );
+        var toCreate = Reservation.builder()
+                .checkin(checkinDate)
+                .checkout(checkoutDate)
+                .camperPlace(camperPlace)
+                .user(user)
+                .paid(false);
+
+        if (isActive(checkinDate, checkoutDate)) {
+            toCreate.reservationStatus(ACTIVE);
+        }
+
+        super.create(toCreate.build());
+    }
+
+    private boolean isActive(LocalDate checkin, LocalDate checkout) {
+        LocalDate currentDate = LocalDate.now();
+        return checkin.isBefore(currentDate) && checkout.isAfter(currentDate);
     }
 
 
@@ -134,7 +147,7 @@ public class ReservationServiceImpl extends CRUDService<Reservation, Reservation
     public void updateReservationStatus(Reservation reservation) {
 
         if (isLocalDateInBetweenCheckinAndCheckout(reservation.getCheckin(), reservation.getCheckout())) {
-            reservation.setReservationStatus(ReservationStatus.ACTIVE);
+            reservation.setReservationStatus(ACTIVE);
         } else if (!isLocalDateInBetweenCheckinAndCheckout(reservation.getCheckin(), reservation.getCheckout()) && LocalDate.now().isBefore(reservation.getCheckin())) {
             reservation.setReservationStatus(ReservationStatus.COMING);
         } else {

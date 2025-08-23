@@ -21,8 +21,7 @@ public abstract class CRUDService <T extends DbObject, D extends DTO> {
     private final CRUDRepository<T> repository;
 
     private final Sort sort = Sort.by(
-            Sort.Order.desc("updatedAt").nullsLast(),
-            Sort.Order.desc("createdAt")
+            Sort.Direction.DESC,"updatedAt"
     );
 
     @Autowired
@@ -31,7 +30,7 @@ public abstract class CRUDService <T extends DbObject, D extends DTO> {
     }
 
     protected void create(T t){
-        t.setCreatedAt(new Date());
+//        t.setCreatedAt(new Date());
         repository.save(t);
     };
 
@@ -63,7 +62,7 @@ public abstract class CRUDService <T extends DbObject, D extends DTO> {
     };
 
     protected void update(T t){
-        t.setUpdatedAt(new Date());
+//        t.setUpdatedAt(new Date());
         repository.save(t);
     };
 
