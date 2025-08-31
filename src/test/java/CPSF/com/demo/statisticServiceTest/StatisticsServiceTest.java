@@ -6,7 +6,7 @@ import CPSF.com.demo.entity.Reservation;
 import CPSF.com.demo.entity.Statistics;
 import CPSF.com.demo.enums.Type;
 import CPSF.com.demo.service.CamperPlaceService;
-import CPSF.com.demo.service.implementation.ReservationServiceImpl;
+import CPSF.com.demo.service.implementation.ReservationServiceImplImpl;
 import CPSF.com.demo.service.implementation.StatisticsServiceImpl;
 import CPSF.com.demo.util.ReservationCalculator;
 import lombok.extern.slf4j.Slf4j;
@@ -15,7 +15,6 @@ import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
 
 import java.time.LocalDate;
-import java.util.ArrayList;
 import java.util.List;
 
 import static CPSF.com.demo.testUtil.TestUtil.reservationGenerator;
@@ -37,7 +36,7 @@ public class StatisticsServiceTest {
 
 	private final LocalDate mockCheckout = LocalDate.of(year, month, endDay);
 
-	private final ReservationServiceImpl reservationService = mock(ReservationServiceImpl.class);
+	private final ReservationServiceImplImpl reservationService = mock(ReservationServiceImplImpl.class);
 
 	private final CamperPlaceService camperPlaceService = mock(CamperPlaceService.class);
 

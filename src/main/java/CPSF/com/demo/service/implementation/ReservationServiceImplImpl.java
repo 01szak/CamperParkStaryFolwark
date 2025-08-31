@@ -3,7 +3,7 @@ package CPSF.com.demo.service.implementation;
 import CPSF.com.demo.DTO.ReservationDTO;
 import CPSF.com.demo.DTO.ReservationMetadataDTO;
 import CPSF.com.demo.request.ReservationRequest;
-import CPSF.com.demo.service.CRUDService;
+import CPSF.com.demo.service.CRUDServiceImpl;
 import CPSF.com.demo.service.CamperPlaceService;
 import CPSF.com.demo.service.UserService;
 import CPSF.com.demo.util.ReservationMetadataMapper;
@@ -24,14 +24,14 @@ import static CPSF.com.demo.enums.ReservationStatus.ACTIVE;
 import static exception.ClientInputExceptionUtil.ensure;
 
 @Service
-public class ReservationServiceImpl extends CRUDService<Reservation, ReservationDTO> implements ReservationService {
+public class ReservationServiceImplImpl extends CRUDServiceImpl<Reservation, ReservationDTO> implements ReservationService {
 
     private final ReservationRepository repository;
     private final UserService userService;
     private final CamperPlaceService camperPlaceService;
     private final ReservationMetadataMapper reservationMetadataMapper;
 
-    public ReservationServiceImpl(
+    public ReservationServiceImplImpl(
             ReservationRepository repository,
             CamperPlaceService camperPlaceService,
             UserService userService,

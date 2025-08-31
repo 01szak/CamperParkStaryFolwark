@@ -4,16 +4,12 @@ import CPSF.com.demo.DTO.CamperPlaceDTO;
 import CPSF.com.demo.entity.CamperPlace;
 import CPSF.com.demo.entity.Reservation;
 import CPSF.com.demo.enums.Type;
-import CPSF.com.demo.repository.CRUDRepository;
 import CPSF.com.demo.repository.CamperPlaceRepository;
-import CPSF.com.demo.service.CRUDService;
+import CPSF.com.demo.service.CRUDServiceImpl;
 import CPSF.com.demo.service.CamperPlaceService;
-import CPSF.com.demo.util.Mapper;
-import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -22,12 +18,12 @@ import java.util.*;
 import java.util.stream.Stream;
 
 @Service
-public class CamperPlaceServiceImpl extends CRUDService<CamperPlace, CamperPlaceDTO> implements CamperPlaceService {
+public class CamperPlaceServiceImplImpl extends CRUDServiceImpl<CamperPlace, CamperPlaceDTO> implements CamperPlaceService {
 
     private final CamperPlaceRepository repository  ;
 
     @Autowired
-    public CamperPlaceServiceImpl(CamperPlaceRepository repository) {
+    public CamperPlaceServiceImplImpl(CamperPlaceRepository repository) {
         super(repository);
         this.repository = repository;
     }

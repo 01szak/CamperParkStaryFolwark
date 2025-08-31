@@ -2,12 +2,11 @@ package CPSF.com.demo.service.implementation;
 
 import CPSF.com.demo.DTO.UserDTO;
 import CPSF.com.demo.request.UserRequest;
-import CPSF.com.demo.service.CRUDService;
+import CPSF.com.demo.service.CRUDServiceImpl;
 import CPSF.com.demo.service.UserService;
 import CPSF.com.demo.util.Mapper;
 import CPSF.com.demo.entity.User;
 import CPSF.com.demo.repository.UserRepository;
-import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -15,19 +14,17 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
 import java.util.Date;
-import java.util.List;
 import java.util.Optional;
 
 import static exception.ClientInputExceptionUtil.ensure;
 
 @Service
-public class UserServiceImpl  extends CRUDService<User, UserDTO> implements UserService{
+public class UserServiceImplImpl extends CRUDServiceImpl<User, UserDTO> implements UserService{
 
     private final UserRepository repository;
 
-    public UserServiceImpl (UserRepository repository) {
+    public UserServiceImplImpl(UserRepository repository) {
         super(repository);
         this.repository = repository;
     }

@@ -1,13 +1,12 @@
 package CPSF.com.demo.A_security.config;
 
-import CPSF.com.demo.service.implementation.UserServiceImpl;
+import CPSF.com.demo.service.implementation.UserServiceImplImpl;
 import com.nimbusds.jose.jwk.JWKSet;
 import com.nimbusds.jose.jwk.RSAKey;
 import com.nimbusds.jose.jwk.source.ImmutableJWKSet;
 import com.nimbusds.jose.jwk.source.JWKSource;
 import com.nimbusds.jose.proc.SecurityContext;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -34,7 +33,7 @@ import org.springframework.security.web.DefaultSecurityFilterChain;
 public class SecurityConfig {
 
     private final RsaConfig rsaConfig;
-    private final UserServiceImpl userService;
+    private final UserServiceImplImpl userService;
 
 
 

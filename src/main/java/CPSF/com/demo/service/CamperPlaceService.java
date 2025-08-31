@@ -8,7 +8,7 @@ import org.springframework.data.domain.Pageable;
 
 import java.time.LocalDate;
 
-public interface CamperPlaceService  {
+public interface CamperPlaceService   {
 
     CamperPlace findByIndex(String index);
 

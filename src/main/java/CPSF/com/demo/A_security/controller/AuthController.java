@@ -5,7 +5,7 @@ import CPSF.com.demo.A_security.service.JwtTokenService;
 import CPSF.com.demo.entity.Reservation;
 import CPSF.com.demo.entity.User;
 import CPSF.com.demo.enums.Role;
-import CPSF.com.demo.service.implementation.UserServiceImpl;
+import CPSF.com.demo.service.implementation.UserServiceImplImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -27,7 +27,7 @@ public class AuthController {
     @Autowired
     AuthenticationManager authenticationManager;
     @Autowired
-    UserServiceImpl userService;
+    UserServiceImplImpl userService;
     @Autowired
     JwtTokenService jwtTokenService;
 
