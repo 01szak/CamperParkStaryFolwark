@@ -7,11 +7,10 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.userdetails.UserDetailsService;
 
-public interface UserService extends UserDetailsService{
+public interface UserService extends UserDetailsService, CRUDService<User, UserDTO> {
 
     void create(UserRequest user);
 
-    void create(User user);
 
     void update(int id, UserRequest request);
 
@@ -24,8 +23,6 @@ public interface UserService extends UserDetailsService{
     void delete(User user);
 
     void delete(int id);
-
-    User findById(int id);
 
     UserDTO findDTOById(int id);
 }

@@ -11,7 +11,7 @@ import org.springframework.data.domain.Pageable;
 import java.util.List;
 import java.util.Map;
 
-public interface ReservationService {
+public interface ReservationService extends CRUDService<Reservation, ReservationDTO> {
 
     void create(String checkin, String checkout, String camperPlaceIndex, User user);
 
@@ -23,13 +23,7 @@ public interface ReservationService {
 
     void update(int id, ReservationRequest request);
 
-    Reservation findById(int id);
-
-    void delete(int id);
-
     Map<String, ReservationMetadataDTO> getReservationMetadataDTO();
-
-    void updateReservationStatus(Reservation reservation);
 
     List<Reservation> findByCamperPlaceId(int id);
 

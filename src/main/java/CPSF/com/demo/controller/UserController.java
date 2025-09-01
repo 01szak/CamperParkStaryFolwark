@@ -2,7 +2,7 @@ package CPSF.com.demo.controller;
 
 import CPSF.com.demo.DTO.UserDTO;
 import CPSF.com.demo.request.UserRequest;
-import CPSF.com.demo.service.implementation.UserServiceImplImpl;
+import CPSF.com.demo.service.implementation.UserServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -12,10 +12,10 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/users")
 public class UserController {
 
-    private final UserServiceImplImpl userService;
+    private final UserServiceImpl userService;
 
     @Autowired
-    public UserController(UserServiceImplImpl theUserService) {
+    public UserController(UserServiceImpl theUserService) {
         userService = theUserService;
     }
 

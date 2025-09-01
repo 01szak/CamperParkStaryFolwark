@@ -24,14 +24,14 @@ import static CPSF.com.demo.enums.ReservationStatus.ACTIVE;
 import static exception.ClientInputExceptionUtil.ensure;
 
 @Service
-public class ReservationServiceImplImpl extends CRUDServiceImpl<Reservation, ReservationDTO> implements ReservationService {
+public class ReservationServiceImpl extends CRUDServiceImpl<Reservation, ReservationDTO> implements ReservationService {
 
     private final ReservationRepository repository;
     private final UserService userService;
     private final CamperPlaceService camperPlaceService;
     private final ReservationMetadataMapper reservationMetadataMapper;
 
-    public ReservationServiceImplImpl(
+    public ReservationServiceImpl(
             ReservationRepository repository,
             CamperPlaceService camperPlaceService,
             UserService userService,
@@ -77,7 +77,7 @@ public class ReservationServiceImplImpl extends CRUDServiceImpl<Reservation, Res
 
     private boolean isActive(LocalDate checkin, LocalDate checkout) {
         LocalDate currentDate = LocalDate.now();
-        return checkin.isBefore(currentDate) && checkout.isAfter(currentDate);
+        return checkin.isBefore(currentDate.plusDays(1)) && checkout.isAfter(currentDate.minusDays(1));
     }
 
 

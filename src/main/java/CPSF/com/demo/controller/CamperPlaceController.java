@@ -5,7 +5,6 @@ import CPSF.com.demo.entity.CamperPlace;
 import CPSF.com.demo.enums.Type;
 import CPSF.com.demo.request.CamperPlaceRequest;
 import CPSF.com.demo.service.CamperPlaceService;
-import org.springframework.data.domain.Page;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Arrays;
@@ -38,7 +37,7 @@ public class CamperPlaceController {
 
     @DeleteMapping("/deleteCamperPlace/{index}")
     public void deleteCamperPlace(@PathVariable String index) {
-        camperPlaceService.delete(index);
+        camperPlaceService.deleteByIndex(index);
     }
 
     @GetMapping("/find/{id}")

@@ -8,21 +8,17 @@ import org.springframework.data.domain.Pageable;
 
 import java.time.LocalDate;
 
-public interface CamperPlaceService   {
+public interface CamperPlaceService extends CRUDService<CamperPlace, CamperPlaceDTO>  {
 
     CamperPlace findByIndex(String index);
 
     Page<CamperPlace> findAll();
 
-    CamperPlace findById(int id);
-
     boolean checkIsCamperPlaceOccupied(CamperPlace camperPlace, LocalDate checkin, LocalDate checkout, int reservationId);
 
     void create(Type type, double price);
 
-    void delete(CamperPlace camperPlace);
-
-    void delete(String index);
+    void deleteByIndex(String index);
 
     Page<CamperPlaceDTO> findAllDTO();
 

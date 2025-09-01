@@ -1,7 +1,5 @@
 package CPSF.com.demo.service;
 
-import CPSF.com.demo.DTO.DTO;
-import CPSF.com.demo.entity.DbObject;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
@@ -23,6 +21,10 @@ public interface CRUDService<T, D> {
 
     void delete(T t);
 
-    List<T> findBy(String fieldName, String value);
+    void delete(int id);
+
+    void create(T t);
+
+    List<T> findBy(String fieldName, String value) throws InstantiationException, IllegalAccessException, NoSuchFieldException;
 
 }

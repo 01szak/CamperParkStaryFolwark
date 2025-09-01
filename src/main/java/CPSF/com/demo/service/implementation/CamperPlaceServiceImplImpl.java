@@ -61,7 +61,7 @@ public class CamperPlaceServiceImplImpl extends CRUDServiceImpl<CamperPlace, Cam
 
     @Override
     @Transactional
-    public void delete(String idnex) {
+    public void deleteByIndex(String idnex) {
         CamperPlace cp = findByIndex(idnex);
         delete(cp);
     }

@@ -34,7 +34,7 @@ public abstract class CRUDServiceImpl<T extends DbObject, D extends DTO> impleme
     };
 
     @Override
-    public Page<D> findAll(Pageable pageable){
+    public Page<T> findAll(Pageable pageable){
         if (pageable.getSort().isEmpty()) {
             pageable =
                     PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(), sort);
@@ -42,34 +42,46 @@ public abstract class CRUDServiceImpl<T extends DbObject, D extends DTO> impleme
         return repository.findAll(pageable);
     }
 
+    @Override
     @EntityGraph()
-    protected Page<T> findAll(){
+    public Page<T> findAll(){
         return findAll(Pageable.unpaged(sort));
     };
 
+    @Override
     @EntityGraph()
-    protected Page<D> findAllDTO(Pageable pageable){
+    public Page<D> findAllDTO(Pageable pageable){
         return (Page<D>) findAll(pageable).map(Mapper::toDTO);
     }
 
+    @Override
     @EntityGraph()
-    protected Page<D> findAllDTO(){
+    public Page<D> findAllDTO(){
         return findAllDTO(Pageable.unpaged(sort));
     };
 
-    protected T findById(int id){
+    @Override
+    public T findById(int id){
         return repository.findById(id).orElseThrow();
     };
 
-    protected void update(T t){
+    @Override
+    public void update(T t){
         repository.save(t);
     };
 
-    protected void delete(T t){
+    @Override
+    public void delete(T t){
         repository.delete(t);
     };
 
-    protected List<T> findBy(String fieldName, String value)
+    @Override
+    public void delete(int id){
+        repository.deleteById(id);
+    };
+
+    @Override
+    public List<T> findBy(String fieldName, String value)
             throws InstantiationException, IllegalAccessException, NoSuchFieldException {
         T t = getClassForDbObject().newInstance();
         Field field = getClassForDbObject().getDeclaredField(fieldName);

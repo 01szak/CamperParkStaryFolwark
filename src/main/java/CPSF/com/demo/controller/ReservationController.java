@@ -5,7 +5,7 @@ import CPSF.com.demo.DTO.ReservationDTO;
 import CPSF.com.demo.DTO.ReservationMetadataDTO;
 import CPSF.com.demo.request.ReservationRequest;
 import CPSF.com.demo.util.ReservationMetadataMapper;
-import CPSF.com.demo.service.implementation.ReservationServiceImplImpl;
+import CPSF.com.demo.service.implementation.ReservationServiceImpl;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -24,7 +24,7 @@ import java.util.Map;
 public class ReservationController {
 
     private final ReservationMetadataMapper reservationMetadataMapper;
-    private final ReservationServiceImplImpl reservationService;
+    private final ReservationServiceImpl reservationService;
 
     @PostMapping("/createReservation")
     public ResponseEntity<?> createReservation(@RequestBody ReservationRequest request) {

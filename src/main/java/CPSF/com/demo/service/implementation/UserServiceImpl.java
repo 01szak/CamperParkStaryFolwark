@@ -20,11 +20,11 @@ import java.util.Optional;
 import static exception.ClientInputExceptionUtil.ensure;
 
 @Service
-public class UserServiceImplImpl extends CRUDServiceImpl<User, UserDTO> implements UserService{
+public class UserServiceImpl extends CRUDServiceImpl<User, UserDTO> implements UserService{
 
     private final UserRepository repository;
 
-    public UserServiceImplImpl(UserRepository repository) {
+    public UserServiceImpl(UserRepository repository) {
         super(repository);
         this.repository = repository;
     }

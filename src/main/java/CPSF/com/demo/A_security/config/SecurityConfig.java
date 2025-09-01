@@ -1,6 +1,6 @@
 package CPSF.com.demo.A_security.config;
 
-import CPSF.com.demo.service.implementation.UserServiceImplImpl;
+import CPSF.com.demo.service.implementation.UserServiceImpl;
 import com.nimbusds.jose.jwk.JWKSet;
 import com.nimbusds.jose.jwk.RSAKey;
 import com.nimbusds.jose.jwk.source.ImmutableJWKSet;
@@ -33,7 +33,7 @@ import org.springframework.security.web.DefaultSecurityFilterChain;
 public class SecurityConfig {
 
     private final RsaConfig rsaConfig;
-    private final UserServiceImplImpl userService;
+    private final UserServiceImpl userService;
 
 
 
