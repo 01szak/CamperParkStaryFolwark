@@ -65,3 +65,35 @@ ALTER TABLE camper_places ADD COLUMN updated_at DATE;
 
 ALTER TABLE reservations ADD COLUMN created_at DATE;
 ALTER TABLE reservations ADD COLUMN updated_at DATE;
+
+-- changeset kacper:7
+
+ALTER TABLE users
+DROP COLUMN created_at;
+ALTER TABLE users
+DROP COLUMN updated_at;
+
+ALTER TABLE camper_places
+DROP COLUMN created_at;
+ALTER TABLE camper_places
+DROP COLUMN updated_at;
+
+ALTER TABLE reservations
+DROP COLUMN created_at;
+ALTER TABLE reservations
+DROP COLUMN updated_at;
+
+ALTER TABLE users
+    ADD COLUMN created_at DATETIME;
+ALTER TABLE users
+    ADD COLUMN updated_at DATETIME;
+
+ALTER TABLE camper_places
+    ADD COLUMN created_at DATETIME;
+ALTER TABLE camper_places
+    ADD COLUMN updated_at DATETIME;
+
+ALTER TABLE reservations
+    ADD COLUMN created_at DATETIME;
+ALTER TABLE reservations
+    ADD COLUMN updated_at DATETIME;
