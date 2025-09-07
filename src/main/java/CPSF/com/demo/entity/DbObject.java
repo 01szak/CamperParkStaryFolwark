@@ -28,10 +28,11 @@ public abstract class DbObject {
 
     @PrePersist
     protected void onCreate() {
-        setCreatedAt(new Date());
-
-        if (updatedAt == null) {
-            updatedAt = createdAt;
+        if (getCreatedAt() == null) {
+            setCreatedAt(new Date());
+        }
+        if (getUpdatedAt() == null) {
+            setUpdatedAt(getCreatedAt());
         }
     }
 

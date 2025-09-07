@@ -11,6 +11,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 
 import static CPSF.com.demo.enums.ReservationStatus.ACTIVE;
@@ -54,7 +55,7 @@ public class ReservationStatusValidator implements StatusValidator {
             reservation.setReservationStatus(ACTIVE);
         }
 
-        if (!previousStatus.equals(reservation.getReservationStatus())) {
+        if (!Objects.equals(previousStatus, reservation.getReservationStatus())) {
             return Optional.of(reservation);
         }
 

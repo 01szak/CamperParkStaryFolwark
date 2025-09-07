@@ -25,12 +25,12 @@ public class DateValidator implements StatusValidator{
     }
 
     @Override
-    @Scheduled(fixedRate = 100000)
+    @Scheduled(fixedRate = 1000000)
     @Transactional(propagation = Propagation.REQUIRES_NEW)
     public void validateStatus() {
-        updateCreationOrUpdate(reservationRepository.findAll(), reservationRepository);
-        updateCreationOrUpdate(camperPlaceRepository.findAll(), camperPlaceRepository);
-        updateCreationOrUpdate(userRepository.findAll(), userRepository);
+        updateCreationOrUpdate(reservationRepository.findByCreatedAtIsNull(), reservationRepository);
+        updateCreationOrUpdate(camperPlaceRepository.findByCreatedAtIsNull(), camperPlaceRepository);
+        updateCreationOrUpdate(userRepository.findByCreatedAtIsNull(), userRepository);
     }
 
     private <T extends DbObject> void updateCreationOrUpdate(List<T> objects, CRUDRepository<T> repository) {
