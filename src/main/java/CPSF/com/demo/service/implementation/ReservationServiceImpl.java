@@ -121,20 +121,25 @@ public class ReservationServiceImpl extends CRUDServiceImpl<Reservation, Reserva
         }
 
         ensure (camperPlaceService.checkIsCamperPlaceOccupied(
-                    camperPlace, checkin, checkout, id),
-                "Parcela jest już zajęta!");
+                camperPlace,
+                checkin,
+                checkout,
+                id),
+        "Parcela jest już zajęta!");
 
         ensure (checkin != null
-                        && checkout != null
-                        && checkout.isBefore(checkin),
-                "Data wyjazdu nie może być przed datą wjazdu");
+                    && checkout != null
+                    && checkout.isBefore(checkin),
+            "Data wyjazdu nie może być przed datą wjazdu");
 
         Reservation reservationToUpdate = findById(id);
+        User user = reservationToUpdate.getUser();
 
-        User reservationOwner = reservationToUpdate.getUser();
-        reservationOwner.setUpdatedAt(new Date());
-        userService.update(reservationOwner);
+        if (!user.equals(request.user())) {
+            userService.update(user.getId(), request.user());
+        }
 
+        reservationToUpdate.setUpdatedAt(new Date());
         Optional.ofNullable(checkin).ifPresent(reservationToUpdate::setCheckin);
         Optional.ofNullable(checkout).ifPresent(reservationToUpdate::setCheckout);
         Optional.ofNullable(camperPlace).ifPresent(reservationToUpdate::setCamperPlace);

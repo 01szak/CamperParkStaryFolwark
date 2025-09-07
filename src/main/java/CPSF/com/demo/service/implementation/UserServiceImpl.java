@@ -65,14 +65,22 @@ public class UserServiceImpl extends CRUDServiceImpl<User, UserDTO> implements U
     @Override
     @Transactional
     public void update(int id, UserRequest request) {
-        User user = super.findById(id);
 
-        if (!request.email().isEmpty()) {
-            User u = repository.findByEmail(request.email()).orElse(null);
+        User user = findById(id);
+
+        if (!request.email().isBlank()) {
+            User u = userRepository.findByEmail(request.email()).orElse(null);
             ensure(u != null && !u.equals(user), "Ten email jest już używany");
         }
 
-//        user.setUpdatedAt(new Date());
+        ensure(
+                user.getFirstName().equals(request.firstName())
+                        && user.getLastName().equals(request.lastName())
+                        && user.getEmail().equals(request.email())
+                        && user.getCarRegistration().equals(request.carRegistration())
+                        && user.getPhoneNumber().equals(request.phoneNumber()),
+                "Nie podano żadnych zmian"
+        );
 
         Optional.ofNullable(request.firstName()).ifPresent(user::setFirstName);
         Optional.ofNullable(request.lastName()).ifPresent(user::setLastName);
