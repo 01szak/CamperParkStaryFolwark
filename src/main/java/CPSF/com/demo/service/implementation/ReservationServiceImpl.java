@@ -136,7 +136,7 @@ public class ReservationServiceImpl extends CRUDServiceImpl<Reservation, Reserva
         User user = reservationToUpdate.getUser();
 
         if (!user.equals(request.user())) {
-            userService.update(user.getId(), request.user());
+            userService.update(request.user());
         }
 
         reservationToUpdate.setUpdatedAt(new Date());

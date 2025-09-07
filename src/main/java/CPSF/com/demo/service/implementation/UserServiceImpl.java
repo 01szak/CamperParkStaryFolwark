@@ -69,7 +69,7 @@ public class UserServiceImpl extends CRUDServiceImpl<User, UserDTO> implements U
         User user = findById(id);
 
         if (!request.email().isBlank()) {
-            User u = userRepository.findByEmail(request.email()).orElse(null);
+            User u = repository.findByEmail(request.email()).orElse(null);
             ensure(u != null && !u.equals(user), "Ten email jest już używany");
         }
 
