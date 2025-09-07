@@ -28,9 +28,9 @@ public class DateValidator implements StatusValidator{
     @Scheduled(fixedRate = 1000000)
     @Transactional(propagation = Propagation.REQUIRES_NEW)
     public void validateStatus() {
-        updateCreationOrUpdate(reservationRepository.findByCreatedAtIsNull(), reservationRepository);
-        updateCreationOrUpdate(camperPlaceRepository.findByCreatedAtIsNull(), camperPlaceRepository);
-        updateCreationOrUpdate(userRepository.findByCreatedAtIsNull(), userRepository);
+        updateCreationOrUpdate(reservationRepository.findAll(), reservationRepository);
+        updateCreationOrUpdate(camperPlaceRepository.findAll(), camperPlaceRepository);
+        updateCreationOrUpdate(userRepository.findAll(), userRepository);
     }
 
     private <T extends DbObject> void updateCreationOrUpdate(List<T> objects, CRUDRepository<T> repository) {

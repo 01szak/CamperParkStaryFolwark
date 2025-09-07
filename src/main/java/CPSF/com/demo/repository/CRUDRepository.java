@@ -12,5 +12,4 @@ import java.util.List;
 @Repository
 public interface CRUDRepository <T extends DbObject> extends JpaRepository<T, Integer> {
 
-    List<T> findByCreatedAtIsNull();
 }
