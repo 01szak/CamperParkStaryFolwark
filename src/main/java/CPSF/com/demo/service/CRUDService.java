@@ -1,25 +1,30 @@
 package CPSF.com.demo.service;
 
-import CPSF.com.demo.DTO.DTO;
-import CPSF.com.demo.DTO.ReservationDTO;
-import CPSF.com.demo.entity.DbObject;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.jpa.repository.EntityGraph;
 
-public interface CRUDService <T extends DbObject, D extends DTO> {
+import java.util.List;
 
-    void create(T t);
+public interface CRUDService<T, D> {
 
-    @EntityGraph()
     Page<T> findAll(Pageable pageable);
 
-    @EntityGraph()
+    Page<T> findAll();
+
     Page<D> findAllDTO(Pageable pageable);
+
+    Page<D> findAllDTO();
 
     T findById(int id);
 
-    void update(int id, T t);
+    void update(T t);
+
+    void delete(T t);
 
     void delete(int id);
+
+    void create(T t);
+
+    List<T> findBy(String fieldName, String value) throws InstantiationException, IllegalAccessException, NoSuchFieldException;
+
 }

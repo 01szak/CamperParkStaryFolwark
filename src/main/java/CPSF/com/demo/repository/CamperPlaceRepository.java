@@ -1,5 +1,6 @@
 package CPSF.com.demo.repository;
 
+import CPSF.com.demo.controller.CamperPlaceController;
 import CPSF.com.demo.entity.CamperPlace;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -11,15 +12,9 @@ import java.util.Collection;
 import java.util.List;
 
 @Repository
-public interface CamperPlaceRepository extends JpaRepository<CamperPlace, Integer> {
-
-    CamperPlace findCamperPlaceByIndex(String index);
-
-    List<CamperPlace> findCamperPlaceByIdIn(Collection<Integer> ids);
+public interface CamperPlaceRepository extends CRUDRepository<CamperPlace> {
 
     @EntityGraph(attributePaths = {"reservations", "reservations.user"})
-    Page<CamperPlace> findAll(Pageable pageable);
+     CamperPlace findByIndex(String index);
 
-    @EntityGraph(attributePaths = {"reservations", "reservations.user"})
-    CamperPlace findByIndex(String index);
 }

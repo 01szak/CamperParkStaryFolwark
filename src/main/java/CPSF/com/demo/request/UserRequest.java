@@ -10,9 +10,5 @@ public record  UserRequest(
         String lastName,
         String email,
         String phoneNumber,
-        List<Reservation> reservations,
-        String carRegistration,
-        String country,
-        String city,
-        String streetAddress
+        String carRegistration
 ) { }

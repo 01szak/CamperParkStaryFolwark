@@ -21,7 +21,7 @@ public class ReservationMetadataMapper {
 
 	public Map<String, ReservationMetadataDTO> getReservationMetaDataDTO() {
 		Map<String, ReservationMetadataDTO> metadataMap = new HashMap<>();
-		List<CamperPlace> camperPlaces = camperPlaceService.findAll(null).toList();
+		List<CamperPlace> camperPlaces = camperPlaceService.findAll().toList();
 
 		for (CamperPlace cp : camperPlaces) {
 			metadataMap.put(cp.getIndex(), assignReservationMetadata(cp));
@@ -32,7 +32,7 @@ public class ReservationMetadataMapper {
 
 	public Map<String, PaidReservationsDTO> getPaidReservations() {
 		Map<String, PaidReservationsDTO> metadataMap = new HashMap<>();
-		List<CamperPlace> camperPlaces = camperPlaceService.findAll(null).toList();
+		List<CamperPlace> camperPlaces = camperPlaceService.findAll().toList();
 
 		for(CamperPlace cp : camperPlaces) {
 			metadataMap.put(cp.getIndex(), assignReservationIfPaidOrNotPaid(true, cp));
@@ -43,7 +43,7 @@ public class ReservationMetadataMapper {
 
 	public Map<String, PaidReservationsDTO> getUnPaidReservations() {
 		Map<String, PaidReservationsDTO> metadataMap = new HashMap<>();
-		List<CamperPlace> camperPlaces = camperPlaceService.findAll(null).toList();
+		List<CamperPlace> camperPlaces = camperPlaceService.findAll().toList();
 
 		for(CamperPlace cp : camperPlaces) {
 			metadataMap.put(cp.getIndex(), assignReservationIfPaidOrNotPaid(false, cp));
@@ -54,7 +54,7 @@ public class ReservationMetadataMapper {
 
 	public Map<String, Map<String,List<String>>> getUserPerReservation() {
 		UserPerReservationDTO metadataMap = new UserPerReservationDTO();
-		List<CamperPlace> camperPlaces = camperPlaceService.findAll(null).toList();
+		List<CamperPlace> camperPlaces = camperPlaceService.findAll().toList();
 
 		for (CamperPlace cp: camperPlaces) {
 				metadataMap.setUserPerReservation(assignUserPerReservation(cp));

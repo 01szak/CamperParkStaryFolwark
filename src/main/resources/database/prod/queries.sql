@@ -65,3 +65,18 @@ ALTER TABLE camper_places ADD COLUMN updated_at DATE;
 
 ALTER TABLE reservations ADD COLUMN created_at DATE;
 ALTER TABLE reservations ADD COLUMN updated_at DATE;
+
+-- changeset kacper:7
+
+ALTER TABLE users
+    MODIFY COLUMN created_at DATETIME NULL,
+    MODIFY COLUMN updated_at DATETIME NULL;
+
+ALTER TABLE camper_places
+    MODIFY COLUMN created_at DATETIME NULL,
+    MODIFY COLUMN updated_at DATETIME NULL;
+
+ALTER TABLE reservations
+    MODIFY COLUMN created_at DATETIME NULL,
+    MODIFY COLUMN updated_at DATETIME NULL;
+
