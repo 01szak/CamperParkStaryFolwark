@@ -40,8 +40,8 @@ public class CamperPlaceController {
         camperPlaceService.deleteByIndex(index);
     }
 
-    @GetMapping("/find/{id}")
-    public CamperPlace findCamperPlaceByCamperPlaceNumber(@PathVariable int id) {
-        return camperPlaceService.findById(id);
-    }
+//    @GetMapping("/find/{id}")
+//    public CamperPlace findCamperPlaceByCamperPlaceNumber(@PathVariable int id) {
+//        return camperPlaceService.findById(id);
+//    }
 }

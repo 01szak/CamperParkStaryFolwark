@@ -3,8 +3,6 @@ package CPSF.com.demo.service;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
-import java.util.List;
-
 public interface CRUDService<T, D> {
 
     Page<T> findAll(Pageable pageable);
@@ -25,6 +23,7 @@ public interface CRUDService<T, D> {
 
     void create(T t);
 
-    List<T> findBy(String fieldName, String value) throws InstantiationException, IllegalAccessException, NoSuchFieldException;
+    Page<T> findBy(Pageable pageable, String fieldName, String value) throws InstantiationException, IllegalAccessException, NoSuchFieldException;
 
+    Page<D> findDTOBy(Pageable pageable, String fieldName, String value) throws NoSuchFieldException, InstantiationException, IllegalAccessException;
 }

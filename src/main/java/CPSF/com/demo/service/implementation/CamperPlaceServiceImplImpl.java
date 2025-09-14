@@ -5,7 +5,6 @@ import CPSF.com.demo.entity.CamperPlace;
 import CPSF.com.demo.entity.Reservation;
 import CPSF.com.demo.enums.Type;
 import CPSF.com.demo.repository.CamperPlaceRepository;
-import CPSF.com.demo.service.CRUDServiceImpl;
 import CPSF.com.demo.service.CamperPlaceService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;

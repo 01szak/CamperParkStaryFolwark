@@ -27,8 +27,14 @@ public class UserController {
 //        return userService.getFilteredUsers(value);
 //    }
 
-    @GetMapping("/findAll")
-    public Page<UserDTO> findAll(Pageable pageable) {
+    @GetMapping("/")
+    public Page<UserDTO> findAll(Pageable pageable,
+                                 @RequestParam(required = false) String by,
+                                 @RequestParam(required = false) String value)
+            throws NoSuchFieldException, InstantiationException, IllegalAccessException {
+        if (by != null && value != null) {
+            return userService.findDTOBy(pageable, by, value);
+        }
         return userService.findAllDTO(pageable);
     }
 

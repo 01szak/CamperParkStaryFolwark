@@ -91,8 +91,8 @@ public class StatisticsServiceImpl implements StatisticsService {
                         .year(year)
                         .month(month)
                         .camperPlace(camperPlace)
-                        .revenue(revenue != null ? revenue : 0)
-                        .reservationCount(reservationCount == null ? 0 : reservationCount)
+                        .revenue(revenue)
+                        .reservationCount(reservationCount)
                         .build();
     }
 

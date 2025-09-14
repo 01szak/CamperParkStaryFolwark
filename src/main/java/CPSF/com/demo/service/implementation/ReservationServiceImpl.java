@@ -3,16 +3,16 @@ package CPSF.com.demo.service.implementation;
 import CPSF.com.demo.DTO.ReservationDTO;
 import CPSF.com.demo.DTO.ReservationMetadataDTO;
 import CPSF.com.demo.request.ReservationRequest;
-import CPSF.com.demo.service.CRUDServiceImpl;
 import CPSF.com.demo.service.CamperPlaceService;
 import CPSF.com.demo.service.UserService;
+import CPSF.com.demo.util.Mapper;
 import CPSF.com.demo.util.ReservationMetadataMapper;
 import CPSF.com.demo.service.ReservationService;
-import CPSF.com.demo.util.Mapper;
 import CPSF.com.demo.entity.*;
-import CPSF.com.demo.enums.ReservationStatus;
 import CPSF.com.demo.repository.ReservationRepository;
+import org.springframework.boot.web.server.ErrorPageRegistrarBeanPostProcessor;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -75,32 +75,6 @@ public class ReservationServiceImpl extends CRUDServiceImpl<Reservation, Reserva
         super.create(toCreate.build());
     }
 
-    private boolean isActive(LocalDate checkin, LocalDate checkout) {
-        LocalDate currentDate = LocalDate.now();
-        return checkin.isBefore(currentDate.plusDays(1)) && checkout.isAfter(currentDate.minusDays(1));
-    }
-
-
-    @Override
-    public Page<Reservation> findAll(Pageable pageable) {
-        return super.findAll(pageable);
-    }
-
-    @Override
-    public Page<Reservation> findAll() {
-        return super.findAll();
-    }
-
-    @Override
-    public Page<ReservationDTO> findAllDTO(Pageable pageable) {
-        return super.findAll(pageable).map(Mapper::toReservationDTO);
-    }
-
-    @Override
-    public Reservation findById(int id) {
-        return super.findById(id);
-    }
-
     @Override
     @Transactional
     public void delete(int id) {
@@ -148,17 +122,18 @@ public class ReservationServiceImpl extends CRUDServiceImpl<Reservation, Reserva
         super.update(reservationToUpdate);
     }
 
-    @Transactional
-    public void updateReservationStatus(Reservation reservation) {
-
-        if (isLocalDateInBetweenCheckinAndCheckout(reservation.getCheckin(), reservation.getCheckout())) {
-            reservation.setReservationStatus(ACTIVE);
-        } else if (!isLocalDateInBetweenCheckinAndCheckout(reservation.getCheckin(), reservation.getCheckout()) && LocalDate.now().isBefore(reservation.getCheckin())) {
-            reservation.setReservationStatus(ReservationStatus.COMING);
-        } else {
-            reservation.setReservationStatus(ReservationStatus.EXPIRED);
+    public Page<ReservationDTO> findDTOBy(Pageable pageable, String fieldName, String value)
+            throws InstantiationException, IllegalAccessException {
+        try {
+            return super.findDTOBy(pageable, fieldName, value);
+        } catch (NoSuchFieldException e) {
+            if (fieldName.equals("camperPlaceIndex")) {
+               return repository.findAllByCamperPlace_Index(pageable, value).map(Mapper::toReservationDTO);
+            } else if (fieldName.equals("stringUser")) {
+                return repository.findAllByUserFullName(pageable, value).map(Mapper::toReservationDTO);
+            }
         }
-        repository.save(reservation);
+        return null;
     }
 
     @Override
@@ -181,94 +156,6 @@ public class ReservationServiceImpl extends CRUDServiceImpl<Reservation, Reserva
         return reservationMetadataMapper.getReservationMetaDataDTO();
     }
 
-//    public List<ReservationDTO> findAllReservationsDto() {
-//        return repository.findAll().stream().map(Mapper::toReservationDTO).toList();
-//    }
-
-//    public List<ReservationDTO> getFilteredData(String value) {
-//        if (value == null) {
-//            return findAllReservationsDto();
-//        }
-//        List<ReservationDTO> allReservationsDto = findAllReservationsDto();
-//
-//        List<ReservationDTO> filteredList = new ArrayList<>();
-//        String filterValue = value.toLowerCase();
-//        allReservationsDto.forEach(reservationDto -> {
-//            if (reservationDto.getCheckin().toString().contains(filterValue) ||
-//                    reservationDto.getCheckout().toString().contains(filterValue) ||
-//                    reservationDto.getUser().getFirstName().toLowerCase().contains(filterValue) ||
-//                    reservationDto.getUser().getLastName().toLowerCase().contains(filterValue) ||
-//                    reservationDto.getReservationStatus().toLowerCase().contains(filterValue) ||
-//                    (isNumber(value) && reservationDto.getCamperPlaceIndex().equals(value))
-//
-//            ) {
-//                filteredList.add(reservationDto);
-//            }
-//
-//        });
-//        return filteredList;
-//    }
-//
-//    public List<ReservationDTO> getSortedReservations(String sortedHeader, int isAsc) {
-//        if (isAsc == 1) {
-//            return sortAsc(sortedHeader);
-//        }
-//        return sortDesc(sortedHeader);
-//    }
-
-    private boolean isNumber(String value) {
-        try {
-            Integer.parseInt(value);
-        } catch (NumberFormatException e) {
-            return false;
-        }
-        return true;
-    }
-
-    private boolean isLocalDateInBetweenCheckinAndCheckout(LocalDate checkin, LocalDate checkout) {
-        return (LocalDate.now().isEqual(checkin) || LocalDate.now().isAfter(checkin))
-                && (LocalDate.now().isEqual(checkout) || LocalDate.now().isBefore(checkout));
-    }
-//
-//    private List<ReservationDTO> sortAsc(String sortedHeader) {
-//        switch (sortedHeader) {
-//            case "checkin" -> {
-//                return reservationRepository.orderByCheckinAsc().stream().map(Mapper::toReservationDTO).toList();
-//            }
-//            case "checkout" -> {
-//                return reservationRepository.orderByCheckoutAsc().stream().map(Mapper::toReservationDTO).toList();
-//            }
-//            case "guest" -> {
-//                return reservationRepository.orderByLastNameAsc().stream().map(Mapper::toReservationDTO).toList();
-//            }
-//            case "number" -> {
-//                return reservationRepository.orderByCamperPlaceNumberAsc().stream().map(Mapper::toReservationDTO).toList();
-//            }
-//            default -> {
-//                return findAllReservationsDto();
-//            }
-//        }
-//    }
-//
-//    private List<ReservationDTO> sortDesc(String sortedHeader) {
-//        switch (sortedHeader) {
-//            case "checkin" -> {
-//                return reservationRepository.orderByCheckinDesc().stream().map(Mapper::toReservationDTO).toList();
-//            }
-//            case "checkout" -> {
-//                return reservationRepository.orderByCheckoutDesc().stream().map(Mapper::toReservationDTO).toList();
-//            }
-//            case "guest" -> {
-//                return reservationRepository.orderByLastNameDesc().stream().map(Mapper::toReservationDTO).toList();
-//            }
-//            case "number" -> {
-//                return reservationRepository.orderByCamperPlaceNumberDesc().stream().map(Mapper::toReservationDTO).toList();
-//            }
-//            default -> {
-//                return findAllReservationsDto();
-//            }
-//        }
-//    }
 
     private void ensureDataIsCorrect(String checkin, String checkout, CamperPlace camperPlace, User user) {
 
@@ -293,17 +180,14 @@ public class ReservationServiceImpl extends CRUDServiceImpl<Reservation, Reserva
                         camperPlace, LocalDate.parse(checkin), LocalDate.parse(checkout), 0),
                 "Parcela jest już zajęta!");
     }
-//    @Override
-//    protected Reservation copy(Reservation from, Reservation to) {
-//            return Reservation.builder()
-//                    .id(from.getId())
-//                    .
-//                    .build();
-//    }
 
     private String setToStringIfNull(String s) {
 		return s == null ? "" : s;
 	}
 
+    private boolean isActive(LocalDate checkin, LocalDate checkout) {
+        LocalDate currentDate = LocalDate.now();
+        return checkin.isBefore(currentDate.plusDays(1)) && checkout.isAfter(currentDate.minusDays(1));
+    }
 }
 

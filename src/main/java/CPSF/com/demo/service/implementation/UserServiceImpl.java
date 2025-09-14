@@ -2,7 +2,6 @@ package CPSF.com.demo.service.implementation;
 
 import CPSF.com.demo.DTO.UserDTO;
 import CPSF.com.demo.request.UserRequest;
-import CPSF.com.demo.service.CRUDServiceImpl;
 import CPSF.com.demo.service.UserService;
 import CPSF.com.demo.util.Mapper;
 import CPSF.com.demo.entity.User;
