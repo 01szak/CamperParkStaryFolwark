@@ -5,14 +5,11 @@ import CPSF.com.demo.DTO.ReservationDTO;
 import CPSF.com.demo.DTO.ReservationMetadataDTO;
 import CPSF.com.demo.repository.ReservationRepository;
 import CPSF.com.demo.request.ReservationRequest;
-import CPSF.com.demo.util.Mapper;
 import CPSF.com.demo.util.ReservationMetadataMapper;
 import CPSF.com.demo.service.implementation.ReservationServiceImpl;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.transaction.annotation.Transactional;
@@ -60,29 +57,10 @@ public class ReservationController {
         return reservationService.findAllDTO(pageable);
     }
 
-//    @GetMapping({"/getFilteredReservations/{value}", "/getFilteredReservations"})
-//    public List<ReservationDTO> getFilteredReservations(@PathVariable(required = false) String value) {
-//        if (value != null && value.trim().isEmpty()) {
-//            value = null;
-//        }
-//        return reservationService.getFilteredData(value);
-//    }
-
-
     @GetMapping({"/getReservationMetadata"})
     public Map<String, ReservationMetadataDTO> getReservationMetadata() {
         return reservationService.getReservationMetadataDTO();
     }
-
-//    @GetMapping("/getAll")
-//    public List<ReservationDTO> getAll() {
-//        return reservationService.getFilteredData("");
-//    }
-
-//    @GetMapping("sortTable/{header}/{isAsc}")
-//    public List<ReservationDTO> getSortedReservations(@PathVariable String header, @PathVariable int isAsc) {
-//        return reservationService.getSortedReservations(header, isAsc);
-//    }
 
     @GetMapping("/getPaidReservations")
     public Map<String, PaidReservationsDTO> getPaidReservations() {

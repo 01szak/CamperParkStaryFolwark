@@ -55,6 +55,13 @@ public class UserServiceImpl extends CRUDServiceImpl<User, UserDTO> implements U
         );
     }
 
+    public Page<UserDTO> findDTOBy(Pageable pageable, String by, String value)
+            throws InstantiationException, IllegalAccessException, NoSuchFieldException {
+            if (by.equals("fullName")) {
+                return repository.findAllByFullName(pageable, value).map(Mapper::toUserDTO);
+            }
+            return super.findDTOBy(pageable, by, value);
+    }
     @Override
     @Transactional
     public void create(User user) {

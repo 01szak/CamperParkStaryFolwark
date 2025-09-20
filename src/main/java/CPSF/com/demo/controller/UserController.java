@@ -19,13 +19,6 @@ public class UserController {
         userService = theUserService;
     }
 
-//    @GetMapping({"/getFilteredUsers/{value}", "/getFilteredUsers"})
-//    public List<UserDTO> getFilteredUsers(@PathVariable(required = false) String value) {
-//        if(value != null && value.trim().isEmpty()) {
-//            value = null;
-//        }
-//        return userService.getFilteredUsers(value);
-//    }
 
     @GetMapping("/")
     public Page<UserDTO> findAll(Pageable pageable,

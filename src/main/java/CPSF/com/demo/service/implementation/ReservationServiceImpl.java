@@ -10,9 +10,7 @@ import CPSF.com.demo.util.ReservationMetadataMapper;
 import CPSF.com.demo.service.ReservationService;
 import CPSF.com.demo.entity.*;
 import CPSF.com.demo.repository.ReservationRepository;
-import org.springframework.boot.web.server.ErrorPageRegistrarBeanPostProcessor;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -123,17 +121,13 @@ public class ReservationServiceImpl extends CRUDServiceImpl<Reservation, Reserva
     }
 
     public Page<ReservationDTO> findDTOBy(Pageable pageable, String fieldName, String value)
-            throws InstantiationException, IllegalAccessException {
-        try {
-            return super.findDTOBy(pageable, fieldName, value);
-        } catch (NoSuchFieldException e) {
-            if (fieldName.equals("camperPlaceIndex")) {
-               return repository.findAllByCamperPlace_Index(pageable, value).map(Mapper::toReservationDTO);
-            } else if (fieldName.equals("stringUser")) {
-                return repository.findAllByUserFullName(pageable, value).map(Mapper::toReservationDTO);
-            }
+            throws InstantiationException, IllegalAccessException, NoSuchFieldException {
+        if (fieldName.equals("camperPlaceIndex")) {
+            return repository.findAllByCamperPlace_Index(pageable, value).map(Mapper::toReservationDTO);
+        } else if (fieldName.equals("stringUser")) {
+            return repository.findAllByUserFullName(pageable, value).map(Mapper::toReservationDTO);
         }
-        return null;
+        return super.findDTOBy(pageable, fieldName, value);
     }
 
     @Override
