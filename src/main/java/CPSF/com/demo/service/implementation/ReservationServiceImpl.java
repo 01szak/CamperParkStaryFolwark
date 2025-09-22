@@ -6,6 +6,7 @@ import CPSF.com.demo.request.ReservationRequest;
 import CPSF.com.demo.service.CamperPlaceService;
 import CPSF.com.demo.service.UserService;
 import CPSF.com.demo.util.Mapper;
+import CPSF.com.demo.util.ReservationCalculator;
 import CPSF.com.demo.util.ReservationMetadataMapper;
 import CPSF.com.demo.service.ReservationService;
 import CPSF.com.demo.entity.*;
@@ -28,18 +29,20 @@ public class ReservationServiceImpl extends CRUDServiceImpl<Reservation, Reserva
     private final UserService userService;
     private final CamperPlaceService camperPlaceService;
     private final ReservationMetadataMapper reservationMetadataMapper;
+    private final ReservationCalculator calculator;
 
     public ReservationServiceImpl(
             ReservationRepository repository,
             CamperPlaceService camperPlaceService,
             UserService userService,
-            ReservationMetadataMapper mapper
+            ReservationMetadataMapper mapper, ReservationCalculator calculator
     ) {
         super(repository);
         this.repository = repository;
         this.camperPlaceService = camperPlaceService;
         this.userService = userService;
         this.reservationMetadataMapper = mapper;
+        this.calculator = calculator;
     }
 
 
@@ -64,6 +67,7 @@ public class ReservationServiceImpl extends CRUDServiceImpl<Reservation, Reserva
                 .checkout(checkoutDate)
                 .camperPlace(camperPlace)
                 .user(user)
+                .price(calculator.calculateFinalReservationCost(checkinDate, checkoutDate, camperPlace.getPrice()))
                 .paid(false);
 
         if (isActive(checkinDate, checkoutDate)) {
@@ -131,18 +135,33 @@ public class ReservationServiceImpl extends CRUDServiceImpl<Reservation, Reserva
     }
 
     @Override
-    public List<Reservation> findByCamperPlaceId(int id) {
-        return repository.findByCamperPlace_Id(id);
+    public List<Reservation> findByCamperPlaceIdIfPaid(int id) {
+        return repository.findByCamperPlace_IdIfPaid(id);
     }
 
     @Override
-    public List<Reservation> findByYearAndCamperPlaceId(int year, int id) {
-        return repository.findByYearAndCamperPlaceId(year, id);
+    public List<Reservation> findByYearAndCamperPlaceIdIfPaid(int year, int id) {
+        return repository.findAllByYearAndCamperPlaceIdIfPaid(year, id);
     }
 
     @Override
-    public  List<Reservation> findByMonthYearAndCamperPlaceId(int month, int year, int camperPlaceId) {
-        return repository.findByMonthYearAndCamperPlaceId(month, year, camperPlaceId);
+    public  List<Reservation> findByMonthYearAndCamperPlaceIdIfPaid(int month, int year, int camperPlaceId) {
+        return repository.findAllByMonthYearAndCamperPlaceIdIfPaid(month, year, camperPlaceId);
+    }
+
+    @Override
+    public List<Reservation> findByCamperPlaceIdIfStatusNotComing(int id) {
+        return repository.findAllByCamperPlaceIdIfStatusNotComing(id);
+    }
+
+    @Override
+    public List<Reservation> findByYearAndCamperPlaceIdIfStatusNotComing(int year, int id) {
+        return repository.findAllByYearAndCamperPlace_IdIfStatusNotComing(year, id);
+    }
+
+    @Override
+    public List<Reservation> findByMonthYearAndCamperPlaceIdIfStatusNotComing(int month, int year, int id) {
+        return repository.findAllByMonthYearAndCamperPlace_IdIfStatusNotComing(month, year, id);
     }
 
     @Override

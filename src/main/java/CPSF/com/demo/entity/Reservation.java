@@ -9,6 +9,7 @@ import lombok.*;
 import lombok.experimental.SuperBuilder;
 import org.springframework.context.annotation.Lazy;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 
 import static CPSF.com.demo.enums.ReservationStatus.*;
@@ -42,11 +43,17 @@ public class Reservation extends DbObject {
     @Lazy
     @JsonBackReference("user-reservations")
     private User user;
+
     @Enumerated(EnumType.STRING)
     @Column(name = "status")
     @Builder.Default
     private ReservationStatus reservationStatus = COMING;
+
     @Column(name = "is_paid")
     private Boolean paid = false;
+
+    @Column(name = "price")
+    private BigDecimal price;
+
 
 }

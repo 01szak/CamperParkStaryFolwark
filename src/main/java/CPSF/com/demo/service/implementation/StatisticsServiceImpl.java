@@ -65,24 +65,18 @@ public class StatisticsServiceImpl implements StatisticsService {
     }
 
     private long countReservationCount(int month, int year, CamperPlace camperPlace) {
-        List<Reservation> reservations = returnReservationsBasedOnDate(month, year, camperPlace);
+        List<Reservation> reservations = getReservationsBasedOnDateWithNoComingStatus(month, year, camperPlace);
         return reservations.size();
     }
 
+
     private double countRevenue(int month, int year, CamperPlace camperPlace) {
-        List<Reservation> reservations = returnReservationsBasedOnDate(month, year, camperPlace);
-        List<Reservation> paidReservations = reservations.stream()
-                        .filter(Reservation::getPaid)
-                        .toList();
+        List<Reservation> paidReservations = getPaidReservationsBasedOnDate(month, year, camperPlace);
 
         if (paidReservations.isEmpty()) {
             return 0;
         } else  {
-            return paidReservations.stream().mapToDouble(r ->
-                    reservationCalculator.calculateFinalReservationCost(
-                            r.getCheckin(), r.getCheckout(), r.getCamperPlace().getPrice()
-                    )
-            ).sum();
+            return paidReservations.stream().mapToDouble(r -> r.getPrice().doubleValue()).sum();
         }
     }
 
@@ -96,17 +90,27 @@ public class StatisticsServiceImpl implements StatisticsService {
                         .build();
     }
 
-    private List<Reservation> returnReservationsBasedOnDate(int month, int year, CamperPlace camperPlace) {
+    private List<Reservation> getPaidReservationsBasedOnDate(int month, int year, CamperPlace camperPlace) {
         List<Reservation> reservations;
         if (year == 0) {
-            reservations = reservationService.findByCamperPlaceId(camperPlace.getId());
-        }
-        else if (month == 0) {
-            reservations = reservationService.findByYearAndCamperPlaceId(year, camperPlace.getId());
+            reservations = reservationService.findByCamperPlaceIdIfPaid(camperPlace.getId());
+        } else if (month == 0) {
+            reservations = reservationService.findByYearAndCamperPlaceIdIfPaid(year, camperPlace.getId());
         } else  {
-            reservations = reservationService.findByMonthYearAndCamperPlaceId(month, year, camperPlace.getId());
+            reservations = reservationService.findByMonthYearAndCamperPlaceIdIfPaid(month, year, camperPlace.getId());
         }
         return reservations;
     }
 
+    private List<Reservation> getReservationsBasedOnDateWithNoComingStatus(int month, int year, CamperPlace camperPlace) {
+        List<Reservation> reservations;
+        if (year == 0) {
+            reservations = reservationService.findByCamperPlaceIdIfStatusNotComing(camperPlace.getId());
+        } else if (month == 0) {
+            reservations = reservationService.findByYearAndCamperPlaceIdIfStatusNotComing(year, camperPlace.getId());
+        } else  {
+            reservations = reservationService.findByMonthYearAndCamperPlaceIdIfStatusNotComing(month, year, camperPlace.getId());
+        }
+        return reservations;
+    }
 }

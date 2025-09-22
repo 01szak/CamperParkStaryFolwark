@@ -6,6 +6,7 @@ import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 
@@ -33,7 +34,7 @@ public class CamperPlace extends DbObject {
     private Type type;
 
     @Column(name = "price")
-    private double price;
+    private BigDecimal price;
 
     @OneToMany(mappedBy = "camperPlace", fetch = FetchType.LAZY, cascade = {
             CascadeType.DETACH,
