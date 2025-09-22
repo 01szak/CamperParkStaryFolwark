@@ -17,15 +17,9 @@ public interface ReservationService extends CRUDService<Reservation, Reservation
 
     Map<String, ReservationMetadataDTO> getReservationMetadataDTO();
 
-    List<Reservation> findByCamperPlaceIdIfPaid(int id);
+    List<Reservation> findByCamperPlaceId(int id);
 
-    List<Reservation> findByYearAndCamperPlaceIdIfPaid(int year, int id);
+    List<Reservation> findByYearAndCamperPlaceId(int year, int id);
 
-    List<Reservation> findByMonthYearAndCamperPlaceIdIfPaid(int month, int year, int id);
-
-    List<Reservation> findByCamperPlaceIdIfStatusNotComing(int id);
-
-    List<Reservation> findByYearAndCamperPlaceIdIfStatusNotComing(int year, int id);
-
-    List<Reservation> findByMonthYearAndCamperPlaceIdIfStatusNotComing(int month, int year, int id);
+    List<Reservation> findByMonthYearAndCamperPlaceId(int month, int year, int id);
 }

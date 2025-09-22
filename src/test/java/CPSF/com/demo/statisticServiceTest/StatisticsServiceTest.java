@@ -13,11 +13,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
-import org.springframework.data.domain.PageRequest;
 
-import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.List;
 
@@ -50,7 +46,7 @@ public class StatisticsServiceTest {
 
 
 	private  CamperPlace mockCamperPlace
-			= CamperPlace.builder().index("1").isOccupied(true).price(BigDecimal.valueOf(100)).type(Type.STANDARD).build();
+			= CamperPlace.builder().index("1").isOccupied(true).price(100).type(Type.STANDARD).build();
 	private  Reservation mockReservation
 			=  Reservation.builder().checkin(mockCheckin).checkout(mockCheckout).paid(false).camperPlace(mockCamperPlace).build();
 
@@ -69,7 +65,7 @@ public class StatisticsServiceTest {
 	@Test
 	public void shouldCorrectlyGenerateStatisticsWithNoRevenueAndOneReservation() {
 		when(camperPlaceService.findAll().toList()).thenReturn(List.of(mockCamperPlace));
-		when(reservationService.findByMonthYearAndCamperPlaceIdIfPaid(any(Integer.class), any(Integer.class), any(Integer.class)))
+		when(reservationService.findByMonthYearAndCamperPlaceId(any(Integer.class), any(Integer.class), any(Integer.class)))
 				.thenReturn(mockCamperPlace.getReservations());
 		Statistics expected = Statistics.builder()
 				.year(year)
@@ -89,7 +85,7 @@ public class StatisticsServiceTest {
 	public void shouldCorrectlyGenerateStatisticsWithNoRevenueAndMultipleReservation() {
 		mockCamperPlace.setReservations(reservationGenerator(10,false, mockCamperPlace, month, year));
 		when(camperPlaceService.findAll().toList()).thenReturn(List.of(mockCamperPlace));
-		when(reservationService.findByMonthYearAndCamperPlaceIdIfPaid(any(Integer.class), any(Integer.class), any(Integer.class)))
+		when(reservationService.findByMonthYearAndCamperPlaceId(any(Integer.class), any(Integer.class), any(Integer.class)))
 				.thenReturn(mockCamperPlace.getReservations());
 		Statistics expected = Statistics.builder()
 				.year(year)
@@ -109,11 +105,11 @@ public class StatisticsServiceTest {
 	public void shouldCountRevenueForSingleReservationCorrectly() {
 		mockCamperPlace.setReservations(reservationGenerator(1,true, mockCamperPlace, month, year));
 		when(camperPlaceService.findAll().toList()).thenReturn(List.of(mockCamperPlace));
-		when(reservationService.findByMonthYearAndCamperPlaceIdIfPaid(any(Integer.class), any(Integer.class), any(Integer.class)))
+		when(reservationService.findByMonthYearAndCamperPlaceId(any(Integer.class), any(Integer.class), any(Integer.class)))
 				.thenReturn(mockCamperPlace.getReservations());
 		Reservation generatedReservation = mockCamperPlace.getReservations().get(0);
 		long daysInReservation = generatedReservation.getCheckin().datesUntil(generatedReservation.getCheckout().plusDays(1)).count();
-		BigDecimal expectedRevenue = reservationCalculator.calculateFinalReservationCost(generatedReservation.getCheckin(), generatedReservation.getCheckout(), mockCamperPlace.getPrice());
+		double expectedRevenue = reservationCalculator.calculateFinalReservationCost(generatedReservation.getCheckin(), generatedReservation.getCheckout(), mockCamperPlace.getPrice());
 		List<Statistics> actual = statisticsService.generateStatistics(1, 2025);
 
 		assertEquals(1, actual.size());
@@ -123,15 +119,15 @@ public class StatisticsServiceTest {
 	@Test
 	public void shouldCountRevenueForMultipleReservationsCorrectly() {
 		mockCamperPlace.setReservations(reservationGenerator(10,true, mockCamperPlace, month, year));
-		when(camperPlaceService.findAll()).thenReturn(new PageImpl<>(List.of(mockCamperPlace)));
-		when(reservationService.findByMonthYearAndCamperPlaceIdIfPaid(any(Integer.class), any(Integer.class), any(Integer.class)))
+		when(camperPlaceService.findAll().toList()).thenReturn(List.of(mockCamperPlace));
+		when(reservationService.findByMonthYearAndCamperPlaceId(any(Integer.class), any(Integer.class), any(Integer.class)))
 				.thenReturn(mockCamperPlace.getReservations());
 		List<Reservation> generatedReservations = mockCamperPlace.getReservations();
-		BigDecimal expectedRevenue = BigDecimal.ZERO;
+		double expectedRevenue = 0;
 
 		for (Reservation r : generatedReservations) {
 			long daysInReservation = r.getCheckin().datesUntil(r.getCheckout().plusDays(1)).count();
-			expectedRevenue = expectedRevenue.add(reservationCalculator.calculateFinalReservationCost(r.getCheckin(), r.getCheckout(), mockCamperPlace.getPrice()));
+			expectedRevenue += reservationCalculator.calculateFinalReservationCost(r.getCheckin(), r.getCheckout(), mockCamperPlace.getPrice());
 		}
 
 		List<Statistics> actual = statisticsService.generateStatistics(1, 2025);
@@ -145,14 +141,19 @@ public class StatisticsServiceTest {
 		Reservation generatedReservation = reservationGenerator(1,true, mockCamperPlace, month, year).get(0);
 		mockCamperPlace.setReservations(List.of(generatedReservation));
 		when(camperPlaceService.findAll().toList()).thenReturn(List.of(mockCamperPlace));
-		when(reservationService.findByMonthYearAndCamperPlaceIdIfPaid(any(Integer.class), any(Integer.class),any(Integer.class)))
+		when(reservationService.findByMonthYearAndCamperPlaceId(any(Integer.class), any(Integer.class),any(Integer.class)))
 				.thenReturn(mockCamperPlace.getReservations());
 
 		List<StatisticsDTO> actual = statisticsService.getStatisticsDTOWithRevenue(month, year);
 
 		StatisticsDTO expected = new StatisticsDTO(
 				generatedReservation.getCamperPlace().getIndex(),
-				reservationCalculator.calculateFinalReservationCost(generatedReservation.getCheckin(), generatedReservation.getCheckout(), mockCamperPlace.getPrice()).doubleValue());
+				reservationCalculator.calculateFinalReservationCost(
+						generatedReservation.getCheckin(),
+						generatedReservation.getCheckout(),
+						mockCamperPlace.getPrice()
+				)
+		);
 		assertEquals(expected, actual.get(0));
 	}
 

@@ -6,7 +6,6 @@ import CPSF.com.demo.enums.Type;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
-import java.math.BigDecimal;
 import java.time.LocalDate;
 
 public interface CamperPlaceService extends CRUDService<CamperPlace, CamperPlaceDTO>  {
@@ -17,7 +16,7 @@ public interface CamperPlaceService extends CRUDService<CamperPlace, CamperPlace
 
     boolean checkIsCamperPlaceOccupied(CamperPlace camperPlace, LocalDate checkin, LocalDate checkout, int reservationId);
 
-    void create(Type type, BigDecimal price);
+    void create(Type type, double price);
 
     void deleteByIndex(String index);
 

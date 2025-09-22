@@ -12,7 +12,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.*;
 import java.util.stream.Stream;
@@ -29,12 +28,12 @@ public class CamperPlaceServiceImplImpl extends CRUDServiceImpl<CamperPlace, Cam
     }
 
     @Override
-    public void create(Type type, BigDecimal price) {
+    public void create(Type type, double price) {
         if (Stream.of(Type.values()).noneMatch(type::equals)) {
             throw new IllegalArgumentException("Invalid type");
         }
 
-        if (price.intValue() <= 0) {
+        if (price <= 0) {
             throw new IllegalArgumentException("Price must be positive");
         }
 

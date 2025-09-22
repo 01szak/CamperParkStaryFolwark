@@ -7,7 +7,6 @@ import CPSF.com.demo.request.CamperPlaceRequest;
 import CPSF.com.demo.service.CamperPlaceService;
 import org.springframework.web.bind.annotation.*;
 
-import java.math.BigDecimal;
 import java.util.Arrays;
 import java.util.List;
 
@@ -23,7 +22,7 @@ public class CamperPlaceController {
 
     @PostMapping("/create")
     public void createCamperPlace(@RequestBody CamperPlaceRequest request) {
-        camperPlaceService.create(request.type(), BigDecimal.valueOf(request.price()));
+        camperPlaceService.create(request.type(), request.price());
     }
 
     @GetMapping("/getAll")
