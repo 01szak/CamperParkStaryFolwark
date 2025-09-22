@@ -60,7 +60,7 @@ public class Mapper {
         return CamperPlaceDTO.builder()
                 .id(camperPlace.getId())
                 .index(camperPlace.getIndex())
-                .price(camperPlace.getPrice())
+                .price(camperPlace.getPrice().doubleValue())
                 .isOccupied(camperPlace.getIsOccupied())
                 .type(camperPlace.getType())
                 .reservations(camperPlace.getReservations().stream().map(r -> toReservationDTO(r)).toList())

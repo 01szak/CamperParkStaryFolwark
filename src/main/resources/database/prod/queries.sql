@@ -80,3 +80,6 @@ ALTER TABLE reservations
     MODIFY COLUMN created_at DATETIME NULL,
     MODIFY COLUMN updated_at DATETIME NULL;
 
+-- changeset kacper:8
+alter table reservations
+    add column price double default 0;
