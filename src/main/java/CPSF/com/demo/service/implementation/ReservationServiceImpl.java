@@ -20,7 +20,7 @@ import java.time.LocalDate;
 import java.util.*;
 
 import static CPSF.com.demo.enums.ReservationStatus.ACTIVE;
-import static exception.ClientInputExceptionUtil.ensure;
+import static CPSF.com.demo.exception.ClientInputExceptionUtil.ensure;
 
 @Service
 public class ReservationServiceImpl extends CRUDServiceImpl<Reservation, ReservationDTO> implements ReservationService {

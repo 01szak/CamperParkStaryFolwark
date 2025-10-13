@@ -16,7 +16,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.Date;
 import java.util.Optional;
 
-import static exception.ClientInputExceptionUtil.ensure;
+import static CPSF.com.demo.exception.ClientInputExceptionUtil.ensure;
 
 @Service
 public class UserServiceImpl extends CRUDServiceImpl<User, UserDTO> implements UserService{

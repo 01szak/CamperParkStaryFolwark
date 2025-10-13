@@ -20,7 +20,7 @@ public class UserController {
     }
 
 
-    @GetMapping("/")
+    @GetMapping
     public Page<UserDTO> findAll(Pageable pageable,
                                  @RequestParam(required = false) String by,
                                  @RequestParam(required = false) String value)
@@ -31,21 +31,22 @@ public class UserController {
         return userService.findAllDTO(pageable);
     }
 
-    @PatchMapping("/update/{id}")
+    @PatchMapping("/{id}")
     public void update(@PathVariable int id, @RequestBody UserRequest request){
         userService.update(id,request);
     }
-    @PostMapping("/create")
+
+    @PostMapping
     public void create(@RequestBody UserRequest request) {
         userService.create(request);
     }
 
-
-    @GetMapping("/getUser/{id}")
+    @GetMapping("/{id}")
     public UserDTO getUserById(@PathVariable int id){
         return userService.findDTOById(id);
     }
-    @DeleteMapping("/delete/{id}")
+
+    @DeleteMapping("/{id}")
     public void deleteUser(@PathVariable int id){
          userService.delete(id);
     }

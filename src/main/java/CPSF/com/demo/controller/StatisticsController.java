@@ -15,12 +15,12 @@ public class StatisticsController {
 
     private final StatisticsServiceImpl statisticsService;
 
-    @GetMapping("/getRevenue/{month}/{year}")
+    @GetMapping("/revenue/{month}/{year}")
     public List<StatisticsDTO> getRevenue(@PathVariable int month, @PathVariable int year) {
         return statisticsService.getStatisticsDTOWithRevenue(month, year);
     }
 
-    @GetMapping("/getReservationCount/{month}/{year}")
+    @GetMapping("/reservationCount/{month}/{year}")
     public List<StatisticsDTO> getReservationCount(@PathVariable int month, @PathVariable int year) {
         return statisticsService.getStatisticsDTOWithReservationCount(month, year);
     }

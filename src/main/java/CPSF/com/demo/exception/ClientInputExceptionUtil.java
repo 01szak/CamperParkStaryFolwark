@@ -1,4 +1,4 @@
-package exception;
+package CPSF.com.demo.exception;
 
 public class ClientInputExceptionUtil {
 

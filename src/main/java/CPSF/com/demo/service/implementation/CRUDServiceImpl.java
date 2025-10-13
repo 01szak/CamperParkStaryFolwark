@@ -5,7 +5,7 @@ import CPSF.com.demo.entity.DbObject;
 import CPSF.com.demo.repository.CRUDRepository;
 import CPSF.com.demo.service.CRUDService;
 import CPSF.com.demo.util.Mapper;
-import exception.ClientInputException;
+import CPSF.com.demo.exception.ClientInputException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.*;
 import org.springframework.data.jpa.repository.EntityGraph;
@@ -24,7 +24,7 @@ public abstract class CRUDServiceImpl<T extends DbObject, D extends DTO> impleme
 
     private final CRUDRepository<T> repository;
 
-    private final Sort sort = Sort.by(
+    private final Sort UPDATED_AT_DESC = Sort.by(
             Sort.Direction.DESC,"updatedAt"
     );
 
@@ -42,9 +42,9 @@ public abstract class CRUDServiceImpl<T extends DbObject, D extends DTO> impleme
     public Page<T> findAll(Pageable pageable){
         var sort = pageable.getSort();
 
-        if (pageable.getSort().isEmpty()) {
+        if (sort.isEmpty()) {
             pageable =
-                    PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(), sort);
+                    PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(), UPDATED_AT_DESC);
         }
         return repository.findAll(pageable);
     }
@@ -52,7 +52,7 @@ public abstract class CRUDServiceImpl<T extends DbObject, D extends DTO> impleme
     @Override
     @EntityGraph()
     public Page<T> findAll(){
-        return findAll(Pageable.unpaged(sort));
+        return findAll(Pageable.unpaged(UPDATED_AT_DESC));
     };
 
     @Override
@@ -64,7 +64,7 @@ public abstract class CRUDServiceImpl<T extends DbObject, D extends DTO> impleme
     @Override
     @EntityGraph()
     public Page<D> findAllDTO(){
-        return findAllDTO(Pageable.unpaged(sort));
+        return findAllDTO(Pageable.unpaged(UPDATED_AT_DESC));
     };
 
     @Override

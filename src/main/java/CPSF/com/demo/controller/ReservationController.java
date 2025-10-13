@@ -28,25 +28,25 @@ public class ReservationController {
     private final ReservationServiceImpl reservationService;
     private final ReservationRepository repository;
 
-    @PostMapping("/createReservation")
+    @PostMapping
     public ResponseEntity<?> createReservation(@RequestBody ReservationRequest request) {
         reservationService.create(request.checkin(), request.checkout(), request.camperPlaceIndex(), request.user());
-        return ResponseEntity.status(HttpStatus.CREATED).body(Map.of("Sukces","Rezeracja została dodana"));
+        return ResponseEntity.status(HttpStatus.CREATED).body(Map.of("success","Rezeracja została dodana"));
     }
 
-    @PatchMapping("updateReservation/{id}")
+    @PatchMapping("/{id}")
     public ResponseEntity<?> updateReservation(@PathVariable int id, @RequestBody ReservationRequest request) {
         reservationService.update(id, request);
-        return ResponseEntity.status(HttpStatus.CREATED).body(Map.of("Sukces","Rezeracja została zmieniona"));
+        return ResponseEntity.status(HttpStatus.CREATED).body(Map.of("success","Rezeracja została zmieniona"));
     }
 
-    @DeleteMapping("deleteReservation/{id}")
+    @DeleteMapping("/{id}")
     public ResponseEntity<?> deleteReservation(@PathVariable int id) {
         reservationService.delete(id);
-        return ResponseEntity.status(HttpStatus.OK).body(Map.of("Sukces","Rezeracja została usunięta"));
+        return ResponseEntity.status(HttpStatus.OK).body(Map.of("success","Rezeracja została usunięta"));
     }
 
-    @GetMapping("/")
+    @GetMapping
     public Page<ReservationDTO> findAll(Pageable pageable,
                                         @RequestParam(required = false) String by,
                                         @RequestParam(required = false) String value)
