@@ -6,7 +6,11 @@ import CPSF.com.demo.service.implementation.UserServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.Map;
 
 @RestController
 @RequestMapping("/users")
@@ -32,13 +36,15 @@ public class UserController {
     }
 
     @PatchMapping("/{id}")
-    public void update(@PathVariable int id, @RequestBody UserRequest request){
+    public ResponseEntity<Map<String, String>> update(@PathVariable int id, @RequestBody UserRequest request){
         userService.update(id,request);
+        return ResponseEntity.status(HttpStatus.CREATED).body(Map.of("success","Gość został zmieniony"));
     }
 
     @PostMapping
-    public void create(@RequestBody UserRequest request) {
+    public ResponseEntity<Map<String, String>> create(@RequestBody UserRequest request) {
         userService.create(request);
+        return ResponseEntity.status(HttpStatus.CREATED).body(Map.of("success","Gość został utworzony"));
     }
 
     @GetMapping("/{id}")
@@ -47,8 +53,9 @@ public class UserController {
     }
 
     @DeleteMapping("/{id}")
-    public void deleteUser(@PathVariable int id){
+    public ResponseEntity<Map<String, String>> deleteUser(@PathVariable int id){
          userService.delete(id);
+        return ResponseEntity.status(HttpStatus.CREATED).body(Map.of("success","Gość został usunięty"));
     }
 }
 
