@@ -11,7 +11,7 @@ import java.util.Arrays;
 import java.util.List;
 
 @RestController
-@RequestMapping("/camperPlaces")
+@RequestMapping("/camperPlace")
 public class CamperPlaceController {
 
     private final CamperPlaceService camperPlaceService;

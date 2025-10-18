@@ -7,7 +7,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.userdetails.UserDetailsService;
 
-public interface UserService extends UserDetailsService, CRUDService<User, UserDTO> {
+public interface UserService extends CRUDService<User, UserDTO> {
 
     void create(UserRequest user);
 

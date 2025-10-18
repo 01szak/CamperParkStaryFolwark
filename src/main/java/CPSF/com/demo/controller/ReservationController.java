@@ -18,15 +18,17 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 import java.util.Map;
 
-@Transactional
 @RestController
-@RequestMapping("/reservations")
-@RequiredArgsConstructor
+@RequestMapping("/reservation")
 public class ReservationController {
 
     private final ReservationMetadataMapper reservationMetadataMapper;
     private final ReservationServiceImpl reservationService;
-    private final ReservationRepository repository;
+
+    public ReservationController(ReservationMetadataMapper reservationMetadataMapper, ReservationServiceImpl reservationService) {
+        this.reservationMetadataMapper = reservationMetadataMapper;
+        this.reservationService = reservationService;
+    }
 
     @PostMapping
     public ResponseEntity<?> createReservation(@RequestBody ReservationRequest request) {

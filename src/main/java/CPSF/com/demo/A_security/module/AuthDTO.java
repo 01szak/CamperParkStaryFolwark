@@ -1,9 +1,9 @@
 package CPSF.com.demo.A_security.module;
 
-import CPSF.com.demo.enums.Role;
+import CPSF.com.demo.enums.EmployeeRole;
 
 public class AuthDTO {
-    public record LoginRequest(String email, String password) {
+    public record LoginRequest(String login, String password) {
     }
 
     public record RegisterRequest(
@@ -16,7 +16,7 @@ public class AuthDTO {
             String city,
             String streetAddress,
             String password,
-            Role role
+            EmployeeRole employeeRole
     ) {
     }
 

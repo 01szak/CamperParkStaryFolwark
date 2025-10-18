@@ -1,11 +1,8 @@
 package CPSF.com.demo.util;
 
 import CPSF.com.demo.DTO.*;
-import CPSF.com.demo.entity.CamperPlace;
+import CPSF.com.demo.entity.*;
 
-import CPSF.com.demo.entity.DbObject;
-import CPSF.com.demo.entity.Reservation;
-import CPSF.com.demo.entity.User;
 import org.hibernate.WrongClassException;
 
 import java.time.format.DateTimeFormatter;
@@ -24,9 +21,19 @@ public class Mapper {
             return toReservationDTO((Reservation) dbObject);
         } else if (dbObject instanceof CamperPlace) {
             return toCamperPlaceDTO((CamperPlace) dbObject);
+        } else if (dbObject instanceof Employee) {
+            return toEmployeeDTO((Employee) dbObject);
         } else  {
             throw new WrongClassException("No mapper for this class!", dbObject.getClass(), dbObject.toString());
         }
+    }
+
+    public static DTO toEmployeeDTO(Employee employee) {
+        return EmployeeDTO.builder()
+                .username(employee.getUsername())
+                .email(employee.getEmail())
+                .role(employee.getEmployeeRole().getAuthority())
+                .build();
     }
 
     public static UserDTO toUserDTO(User user) {
@@ -37,11 +44,7 @@ public class Mapper {
                 .email(user.getEmail())
                 .phoneNumber(user.getPhoneNumber())
                 .carRegistration(user.getCarRegistration())
-                .country(user.getCountry())
-                .city(user.getCity())
-                .streetAddress(user.getStreetAddress())
                 .build();
-
     }
 
     public static ReservationDTO toReservationDTO(Reservation reservation) {

@@ -1,12 +1,12 @@
 package CPSF.com.demo.A_security.config;
 
-import CPSF.com.demo.service.implementation.UserServiceImpl;
+import CPSF.com.demo.enums.EmployeeRole;
+import CPSF.com.demo.service.EmployeeService;
 import com.nimbusds.jose.jwk.JWKSet;
 import com.nimbusds.jose.jwk.RSAKey;
 import com.nimbusds.jose.jwk.source.ImmutableJWKSet;
 import com.nimbusds.jose.jwk.source.JWKSource;
 import com.nimbusds.jose.proc.SecurityContext;
-import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -26,21 +26,25 @@ import org.springframework.security.oauth2.jwt.NimbusJwtDecoder;
 import org.springframework.security.oauth2.jwt.NimbusJwtEncoder;
 import org.springframework.security.web.DefaultSecurityFilterChain;
 
-@EnableWebSecurity
+import static CPSF.com.demo.enums.EmployeeRole.SUPER_ADMIN;
+
 @Configuration
+@EnableWebSecurity
 @EnableMethodSecurity
-@RequiredArgsConstructor
 public class SecurityConfig {
 
     private final RsaConfig rsaConfig;
-    private final UserServiceImpl userService;
+    private final EmployeeService service;
 
-
+    public SecurityConfig(RsaConfig rsaConfig, EmployeeService service) {
+        this.rsaConfig = rsaConfig;
+        this.service = service;
+    }
 
     @Bean
     public AuthenticationManager authenticationManager() {
-        var authProvider = new DaoAuthenticationProvider();
-        authProvider.setUserDetailsService(userService);
+        DaoAuthenticationProvider authProvider = new DaoAuthenticationProvider();
+        authProvider.setUserDetailsService(service);
         authProvider.setPasswordEncoder(passwordEncoder());
         return new ProviderManager(authProvider);
     }
@@ -51,21 +55,24 @@ public class SecurityConfig {
                 .csrf(AbstractHttpConfigurer::disable)
                 .cors(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/error/**", "/auth/login", "/auth/register", "/swagger-ui/**", "/swagger-ui.html/**", "/v3/api-docs/**").permitAll()
+                        .requestMatchers("/swagger-ui/**", "/swagger-ui.html/**", "/v3/api-docs/**").hasRole(SUPER_ADMIN.getAuthority())
+                        .requestMatchers("/error/**", "/auth/login", "/auth/register").permitAll()
                         .anyRequest().authenticated()
                 )
                 .sessionManagement(s -> s.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .oauth2ResourceServer((oauth2) -> oauth2.jwt((jwt) -> jwt.decoder(decoder())))
-                .userDetailsService(userService)
+                .userDetailsService(service)
                 .build();
     }
+
     @Bean
     public AuthenticationProvider authenticationProvider() {
         DaoAuthenticationProvider authenticationProvider = new DaoAuthenticationProvider();
-        authenticationProvider.setUserDetailsService(userService);
+        authenticationProvider.setUserDetailsService(service);
         authenticationProvider.setPasswordEncoder(passwordEncoder());
         return authenticationProvider;
     }
+
     @Bean
     JwtDecoder decoder() {
         return NimbusJwtDecoder.withPublicKey(this.rsaConfig.publicKey()).build();
@@ -82,4 +89,5 @@ public class SecurityConfig {
     PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
     }
+
 }

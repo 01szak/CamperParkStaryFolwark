@@ -35,11 +35,6 @@ public class UserServiceImpl extends CRUDServiceImpl<User, UserDTO> implements U
 //    }
 
     @Override
-    public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
-        return repository.findByEmail(email).orElseThrow();
-    }
-
-    @Override
     @Transactional
     public void create(UserRequest user) {
         checkIsDataCorrect(user);
