@@ -2,7 +2,7 @@ package CPSF.com.demo.service;
 
 import CPSF.com.demo.DTO.CamperPlaceDTO;
 import CPSF.com.demo.entity.CamperPlace;
-import CPSF.com.demo.enums.Type;
+import CPSF.com.demo.enums.CamperPlaceType;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
@@ -17,7 +17,7 @@ public interface CamperPlaceService extends CRUDService<CamperPlace, CamperPlace
 
     boolean checkIsCamperPlaceOccupied(CamperPlace camperPlace, LocalDate checkin, LocalDate checkout, int reservationId);
 
-    void create(Type type, BigDecimal price);
+    void create(CamperPlaceType camperPlaceType, BigDecimal price);
 
     void deleteByIndex(String index);
 

@@ -4,7 +4,7 @@ import CPSF.com.demo.DTO.ReservationDTO;
 import CPSF.com.demo.DTO.ReservationMetadataDTO;
 import CPSF.com.demo.request.ReservationRequest;
 import CPSF.com.demo.service.CamperPlaceService;
-import CPSF.com.demo.service.UserService;
+import CPSF.com.demo.service.GuestService;
 import CPSF.com.demo.util.Mapper;
 import CPSF.com.demo.util.ReservationCalculator;
 import CPSF.com.demo.util.ReservationMetadataMapper;
@@ -26,7 +26,7 @@ import static CPSF.com.demo.exception.ClientInputExceptionUtil.ensure;
 public class ReservationServiceImpl extends CRUDServiceImpl<Reservation, ReservationDTO> implements ReservationService {
 
     private final ReservationRepository repository;
-    private final UserService userService;
+    private final GuestService guestService;
     private final CamperPlaceService camperPlaceService;
     private final ReservationMetadataMapper reservationMetadataMapper;
     private final ReservationCalculator calculator;
@@ -34,39 +34,39 @@ public class ReservationServiceImpl extends CRUDServiceImpl<Reservation, Reserva
     public ReservationServiceImpl(
             ReservationRepository repository,
             CamperPlaceService camperPlaceService,
-            UserService userService,
+            GuestService guestService,
             ReservationMetadataMapper mapper, ReservationCalculator calculator
     ) {
         super(repository);
         this.repository = repository;
         this.camperPlaceService = camperPlaceService;
-        this.userService = userService;
+        this.guestService = guestService;
         this.reservationMetadataMapper = mapper;
         this.calculator = calculator;
     }
 
 
     @Transactional
-    public void create(String checkin, String checkout, String camperPlaceIndex, User user) {
+    public void create(String checkin, String checkout, String camperPlaceIndex, Guest guest) {
         CamperPlace camperPlace = camperPlaceService.findByIndex(camperPlaceIndex);
 
-        ensureDataIsCorrect(checkin, checkout, camperPlace, user);
+        ensureDataIsCorrect(checkin, checkout, camperPlace, guest);
 
         LocalDate checkinDate = LocalDate.parse(checkin);
         LocalDate checkoutDate = LocalDate.parse(checkout);
 
-        if (user.getId() <= 0) {
-            userService.create(user);
+        if (guest.getId() <= 0) {
+            guestService.create(guest);
         } else {
-          user.setUpdatedAt(new Date());
-          userService.update(user);
+          guest.setUpdatedAt(new Date());
+          guestService.update(guest);
         }
 
         var toCreate = Reservation.builder()
                 .checkin(checkinDate)
                 .checkout(checkoutDate)
                 .camperPlace(camperPlace)
-                .user(user)
+                .guest(guest)
                 .price(calculator.calculateFinalReservationCost(checkinDate, checkoutDate, camperPlace.getPrice()))
                 .paid(false);
 
@@ -109,10 +109,10 @@ public class ReservationServiceImpl extends CRUDServiceImpl<Reservation, Reserva
             "Data wyjazdu nie może być przed datą wjazdu");
 
         Reservation reservationToUpdate = findById(id);
-        User user = reservationToUpdate.getUser();
+        Guest guest = reservationToUpdate.getGuest();
 
-        if (!user.equals(request.user())) {
-            userService.update(request.user());
+        if (!guest.equals(request.guest())) {
+            guestService.update(request.guest());
         }
 
         reservationToUpdate.setUpdatedAt(new Date());
@@ -170,7 +170,7 @@ public class ReservationServiceImpl extends CRUDServiceImpl<Reservation, Reserva
     }
 
 
-    private void ensureDataIsCorrect(String checkin, String checkout, CamperPlace camperPlace, User user) {
+    private void ensureDataIsCorrect(String checkin, String checkout, CamperPlace camperPlace, Guest guest) {
 
         ensure(checkin.isEmpty(), "Podaj datę wjazdu");
 
@@ -180,11 +180,11 @@ public class ReservationServiceImpl extends CRUDServiceImpl<Reservation, Reserva
                         || LocalDate.parse(checkin).isEqual(LocalDate.parse(checkout)),
                 "Wprowadzone daty są nieprawidłowe");
 
-        ensure(user == null, "Pole gościa nie może być puste");
+        ensure(guest == null, "Pole gościa nie może być puste");
 
-        ensure(setToStringIfNull(user.getLastName()).isEmpty()
-                        && setToStringIfNull(user.getFirstName()).isEmpty()
-                        && setToStringIfNull(user.getPhoneNumber()).isEmpty(),
+        ensure(setToStringIfNull(guest.getLastName()).isEmpty()
+                        && setToStringIfNull(guest.getFirstName()).isEmpty()
+                        && setToStringIfNull(guest.getPhoneNumber()).isEmpty(),
                 "Podaj dane gościa");
 
         ensure(camperPlace == null, "Wybierz nr. parceli");

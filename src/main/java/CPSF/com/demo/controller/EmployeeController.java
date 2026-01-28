@@ -1,7 +1,7 @@
 package CPSF.com.demo.controller;
 
-import CPSF.com.demo.DTO.EmployeeDTO;
-import CPSF.com.demo.service.EmployeeService;
+import CPSF.com.demo.DTO.UserDTO;
+import CPSF.com.demo.service.UserService;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.oauth2.jwt.Jwt;
@@ -13,17 +13,17 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/employee")
 public class EmployeeController {
 
-    private final EmployeeService employeeService;
+    private final UserService userService;
 
-    public EmployeeController(EmployeeService employeeService) {
-        this.employeeService = employeeService;
+    public EmployeeController(UserService userService) {
+        this.userService = userService;
     }
 
     @GetMapping
-    public EmployeeDTO getEmployee() {
+    public UserDTO getEmployee() {
         Authentication a =  SecurityContextHolder.getContext().getAuthentication();
         Jwt jwt = (Jwt) a.getPrincipal();
         String username = jwt.getClaimAsString("iss");
-        return employeeService.getEmployeeDto(username);
+        return userService.getUserDTO(username);
     }
 }

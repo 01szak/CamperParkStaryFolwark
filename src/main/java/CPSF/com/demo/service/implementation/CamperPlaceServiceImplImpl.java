@@ -3,7 +3,7 @@ package CPSF.com.demo.service.implementation;
 import CPSF.com.demo.DTO.CamperPlaceDTO;
 import CPSF.com.demo.entity.CamperPlace;
 import CPSF.com.demo.entity.Reservation;
-import CPSF.com.demo.enums.Type;
+import CPSF.com.demo.enums.CamperPlaceType;
 import CPSF.com.demo.repository.CamperPlaceRepository;
 import CPSF.com.demo.service.CamperPlaceService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,8 +29,8 @@ public class CamperPlaceServiceImplImpl extends CRUDServiceImpl<CamperPlace, Cam
     }
 
     @Override
-    public void create(Type type, BigDecimal price) {
-        if (Stream.of(Type.values()).noneMatch(type::equals)) {
+    public void create(CamperPlaceType camperPlaceType, BigDecimal price) {
+        if (Stream.of(CamperPlaceType.values()).noneMatch(camperPlaceType::equals)) {
             throw new IllegalArgumentException("Invalid type");
         }
 
@@ -39,7 +39,7 @@ public class CamperPlaceServiceImplImpl extends CRUDServiceImpl<CamperPlace, Cam
         }
 
         create(CamperPlace.builder()
-                .type(type)
+                .camperPlaceType(camperPlaceType)
                 .price(price)
                 .createdAt(new Date())
                 .build()

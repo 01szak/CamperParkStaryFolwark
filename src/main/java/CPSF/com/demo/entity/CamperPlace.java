@@ -1,6 +1,6 @@
 package CPSF.com.demo.entity;
 
-import CPSF.com.demo.enums.Type;
+import CPSF.com.demo.enums.CamperPlaceType;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.*;
@@ -11,7 +11,7 @@ import java.util.List;
 
 
 @Entity
-@Table(name = "camper_places")
+@Table(name = "camper_place")
 @Getter
 @Setter
 @Data
@@ -24,14 +24,14 @@ public class CamperPlace extends DbObject {
     @NonNull
     private String index;
 
-    @Column(name = "is_Occupied")
+    @Column(name = "is_occupied")
     @NonNull
     private Boolean isOccupied;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "type")
     @NonNull
-    private Type type;
+    private CamperPlaceType camperPlaceType;
 
     @Column(name = "price")
     private BigDecimal price;

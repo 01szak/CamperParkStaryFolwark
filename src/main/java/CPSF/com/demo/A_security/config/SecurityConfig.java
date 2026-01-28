@@ -1,7 +1,6 @@
 package CPSF.com.demo.A_security.config;
 
-import CPSF.com.demo.enums.EmployeeRole;
-import CPSF.com.demo.service.EmployeeService;
+import CPSF.com.demo.service.UserService;
 import com.nimbusds.jose.jwk.JWKSet;
 import com.nimbusds.jose.jwk.RSAKey;
 import com.nimbusds.jose.jwk.source.ImmutableJWKSet;
@@ -34,17 +33,17 @@ import static CPSF.com.demo.enums.EmployeeRole.SUPER_ADMIN;
 public class SecurityConfig {
 
     private final RsaConfig rsaConfig;
-    private final EmployeeService service;
+    private final UserService userService;
 
-    public SecurityConfig(RsaConfig rsaConfig, EmployeeService service) {
+    public SecurityConfig(RsaConfig rsaConfig, UserService userService) {
         this.rsaConfig = rsaConfig;
-        this.service = service;
+        this.userService = userService;
     }
 
     @Bean
     public AuthenticationManager authenticationManager() {
         DaoAuthenticationProvider authProvider = new DaoAuthenticationProvider();
-        authProvider.setUserDetailsService(service);
+        authProvider.setUserDetailsService(userService);
         authProvider.setPasswordEncoder(passwordEncoder());
         return new ProviderManager(authProvider);
     }
@@ -61,14 +60,14 @@ public class SecurityConfig {
                 )
                 .sessionManagement(s -> s.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .oauth2ResourceServer((oauth2) -> oauth2.jwt((jwt) -> jwt.decoder(decoder())))
-                .userDetailsService(service)
+                .userDetailsService(userService)
                 .build();
     }
 
     @Bean
     public AuthenticationProvider authenticationProvider() {
         DaoAuthenticationProvider authenticationProvider = new DaoAuthenticationProvider();
-        authenticationProvider.setUserDetailsService(service);
+        authenticationProvider.setUserDetailsService(userService);
         authenticationProvider.setPasswordEncoder(passwordEncoder());
         return authenticationProvider;
     }

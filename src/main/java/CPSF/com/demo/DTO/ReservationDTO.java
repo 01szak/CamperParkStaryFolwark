@@ -2,8 +2,6 @@ package CPSF.com.demo.DTO;
 
 import lombok.*;
 
-import java.time.LocalDate;
-
 @Data
 @Builder
 @NoArgsConstructor
@@ -14,6 +12,6 @@ public class ReservationDTO extends DTO {
     private String checkout;
     private String reservationStatus;
     private String camperPlaceIndex;
-    private UserDTO user;
+    private GuestDTO user;
     private boolean paid;
 }

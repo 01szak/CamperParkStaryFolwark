@@ -15,7 +15,7 @@ import java.time.LocalDate;
 import static CPSF.com.demo.enums.ReservationStatus.*;
 
 @Entity
-@Table(name = "reservations")
+@Table(name = "reservation")
 @Data
 @SuperBuilder
 @NoArgsConstructor
@@ -39,10 +39,10 @@ public class Reservation extends DbObject {
     private CamperPlace camperPlace;
 
     @ManyToOne
-    @JoinColumn(name = "user_id")
+    @JoinColumn(name = "guest_id")
     @Lazy
-    @JsonBackReference("user-reservations")
-    private User user;
+    @JsonBackReference("guest-reservations")
+    private Guest guest;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "status")

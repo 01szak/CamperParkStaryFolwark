@@ -15,35 +15,35 @@ public class Mapper {
     }
 
     public static DTO toDTO(DbObject dbObject) {
-        if (dbObject instanceof User) {
-            return toUserDTO((User) dbObject);
+        if (dbObject instanceof Guest) {
+            return toUserDTO((Guest) dbObject);
         } else if (dbObject instanceof Reservation) {
             return toReservationDTO((Reservation) dbObject);
         } else if (dbObject instanceof CamperPlace) {
             return toCamperPlaceDTO((CamperPlace) dbObject);
-        } else if (dbObject instanceof Employee) {
-            return toEmployeeDTO((Employee) dbObject);
+        } else if (dbObject instanceof User) {
+            return toEmployeeDTO((User) dbObject);
         } else  {
             throw new WrongClassException("No mapper for this class!", dbObject.getClass(), dbObject.toString());
         }
     }
 
-    public static DTO toEmployeeDTO(Employee employee) {
-        return EmployeeDTO.builder()
-                .username(employee.getUsername())
-                .email(employee.getEmail())
-                .role(employee.getEmployeeRole().getAuthority())
+    public static DTO toEmployeeDTO(User user) {
+        return UserDTO.builder()
+                .username(user.getUsername())
+                .email(user.getEmail())
+                .role(user.getEmployeeRole().getAuthority())
                 .build();
     }
 
-    public static UserDTO toUserDTO(User user) {
-        return UserDTO.builder()
-                .id(user.getId())
-                .firstName(user.getFirstName())
-                .lastName(user.getLastName())
-                .email(user.getEmail())
-                .phoneNumber(user.getPhoneNumber())
-                .carRegistration(user.getCarRegistration())
+    public static GuestDTO toUserDTO(Guest guest) {
+        return GuestDTO.builder()
+                .id(guest.getId())
+                .firstName(guest.getFirstName())
+                .lastName(guest.getLastName())
+                .email(guest.getEmail())
+                .phoneNumber(guest.getPhoneNumber())
+                .carRegistration(guest.getCarRegistration())
                 .build();
     }
 
@@ -53,7 +53,7 @@ public class Mapper {
                 .checkin(reservation.getCheckin().format(formatter))
                 .checkout(reservation.getCheckout().format(formatter))
                 .camperPlaceIndex(reservation.getCamperPlace().getIndex())
-                .user(toUserDTO(reservation.getUser()))
+                .user(toUserDTO(reservation.getGuest()))
                 .reservationStatus(String.valueOf(reservation.getReservationStatus()))
                 .paid(reservation.getPaid())
                 .build();
@@ -65,9 +65,17 @@ public class Mapper {
                 .index(camperPlace.getIndex())
                 .price(camperPlace.getPrice().doubleValue())
                 .isOccupied(camperPlace.getIsOccupied())
-                .type(camperPlace.getType())
+                .camperPlaceType(camperPlace.getCamperPlaceType())
                 .reservations(camperPlace.getReservations().stream().map(r -> toReservationDTO(r)).toList())
                 .build();
+    }
+    public static CamperPlace_DTO toCamperPlace_DTO(CamperPlace camperPlace) {
+        return new CamperPlace_DTO(
+                camperPlace.getId(),
+                camperPlace.getIndex(),
+                camperPlace.getCamperPlaceType().toString(),
+                camperPlace.getPrice()
+        );
     }
 
     public static ReservationMetadataDTO toReservationMetadataDTO(ReservationReservedCheckinCheckoutDTO reservationMetadata) {

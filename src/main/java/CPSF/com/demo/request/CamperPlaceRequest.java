@@ -1,7 +1,7 @@
 package CPSF.com.demo.request;
 
-import CPSF.com.demo.enums.Type;
+import CPSF.com.demo.enums.CamperPlaceType;
 
-public record CamperPlaceRequest(Type type, double price) {
+public record CamperPlaceRequest(CamperPlaceType camperPlaceType, double price) {
 
 }

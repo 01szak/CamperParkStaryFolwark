@@ -20,7 +20,7 @@ public interface ReservationRepository extends CRUDRepository<Reservation> {
 
         @Query("""
 
-                SELECT r FROM Reservation r WHERE CONCAT(r.user.firstName, ' ', r.user.lastName) LIKE %:fullName%
+                SELECT r FROM Reservation r WHERE CONCAT(r.guest.firstName, ' ', r.guest.lastName) LIKE %:fullName%
        """)
         Page<Reservation> findAllByUserFullName(Pageable pageable ,@Param("fullName") String fullName);
 

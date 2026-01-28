@@ -1,11 +1,11 @@
 package CPSF.com.demo.request;
 
-import CPSF.com.demo.entity.User;
+import CPSF.com.demo.entity.Guest;
 
 public record ReservationRequest(
         String checkin,
         String checkout,
-        User user,
+        Guest guest,
         String camperPlaceIndex,
         Boolean paid
 ) {

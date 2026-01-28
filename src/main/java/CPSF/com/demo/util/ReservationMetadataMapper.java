@@ -3,7 +3,7 @@ package CPSF.com.demo.util;
 import CPSF.com.demo.DTO.PaidReservationsDTO;
 import CPSF.com.demo.DTO.ReservationMetadataDTO;
 import CPSF.com.demo.DTO.ReservationReservedCheckinCheckoutDTO;
-import CPSF.com.demo.DTO.UserPerReservationDTO;
+import CPSF.com.demo.DTO.GuestPerReservationDTO;
 import CPSF.com.demo.entity.*;
 import CPSF.com.demo.service.CamperPlaceService;
 import lombok.AllArgsConstructor;
@@ -53,11 +53,11 @@ public class ReservationMetadataMapper {
 	}
 
 	public Map<String, Map<String,List<String>>> getUserPerReservation() {
-		UserPerReservationDTO metadataMap = new UserPerReservationDTO();
+		GuestPerReservationDTO metadataMap = new GuestPerReservationDTO();
 		List<CamperPlace> camperPlaces = camperPlaceService.findAll().toList();
 
 		for (CamperPlace cp: camperPlaces) {
-				metadataMap.setUserPerReservation(assignUserPerReservation(cp));
+				metadataMap.setGuestPerReservation(assignUserPerReservation(cp));
 				metadataMap.addCamperPlaceToUserPerReservation(cp.getIndex());
 		}
 
@@ -71,7 +71,7 @@ public class ReservationMetadataMapper {
 			dates.set(0, dates.get(0) + " in");
 			dates.set(dates.size() - 1, dates.get(dates.size() - 1) + " out");
 					userPerReservation.put(
-					r.getUser().toString(), dates
+					r.getGuest().toString(), dates
 			);
 		}
 

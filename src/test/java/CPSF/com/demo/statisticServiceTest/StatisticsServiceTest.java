@@ -4,7 +4,7 @@ import CPSF.com.demo.DTO.StatisticsDTO;
 import CPSF.com.demo.entity.CamperPlace;
 import CPSF.com.demo.entity.Reservation;
 import CPSF.com.demo.entity.Statistics;
-import CPSF.com.demo.enums.Type;
+import CPSF.com.demo.enums.CamperPlaceType;
 import CPSF.com.demo.service.CamperPlaceService;
 import CPSF.com.demo.service.implementation.ReservationServiceImpl;
 import CPSF.com.demo.service.implementation.StatisticsServiceImpl;
@@ -13,9 +13,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
-import org.springframework.data.domain.PageRequest;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -50,7 +48,7 @@ public class StatisticsServiceTest {
 
 
 	private  CamperPlace mockCamperPlace
-			= CamperPlace.builder().index("1").isOccupied(true).price(BigDecimal.valueOf(100)).type(Type.STANDARD).build();
+			= CamperPlace.builder().index("1").isOccupied(true).price(BigDecimal.valueOf(100)).camperPlaceType(CamperPlaceType.STANDARD).build();
 	private  Reservation mockReservation
 			=  Reservation.builder().checkin(mockCheckin).checkout(mockCheckout).paid(false).camperPlace(mockCamperPlace).build();
 

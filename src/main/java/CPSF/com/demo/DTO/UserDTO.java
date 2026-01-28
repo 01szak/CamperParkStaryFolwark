@@ -1,35 +1,16 @@
 package CPSF.com.demo.DTO;
 
-import CPSF.com.demo.entity.Reservation;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.Getter;
+import lombok.Setter;
 
-import java.util.List;
-
-
-@Data
+@Getter
+@Setter
 @Builder
-@NoArgsConstructor
 @AllArgsConstructor
 public class UserDTO extends DTO {
-    private int id;
-    private String firstName;
-    private String lastName;
+    private String username;
     private String email;
-    private String phoneNumber;
-    private List<Reservation> reservations;
-    private String carRegistration;
-    private String country;
-    private String city;
-    private String streetAddress;
-
-    @Override
-    public String toString() {
-        return "UserDto{" +
-                "firstName='" + firstName + '\'' +
-                ", lastName='" + lastName + '\'' +
-                '}';
-    }
+    private String role;
 }

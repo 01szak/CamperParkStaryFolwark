@@ -3,16 +3,13 @@ package CPSF.com.demo.controller;
 import CPSF.com.demo.DTO.PaidReservationsDTO;
 import CPSF.com.demo.DTO.ReservationDTO;
 import CPSF.com.demo.DTO.ReservationMetadataDTO;
-import CPSF.com.demo.repository.ReservationRepository;
 import CPSF.com.demo.request.ReservationRequest;
 import CPSF.com.demo.util.ReservationMetadataMapper;
 import CPSF.com.demo.service.implementation.ReservationServiceImpl;
-import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -32,7 +29,7 @@ public class ReservationController {
 
     @PostMapping
     public ResponseEntity<?> createReservation(@RequestBody ReservationRequest request) {
-        reservationService.create(request.checkin(), request.checkout(), request.camperPlaceIndex(), request.user());
+        reservationService.create(request.checkin(), request.checkout(), request.camperPlaceIndex(), request.guest());
         return ResponseEntity.status(HttpStatus.CREATED).body(Map.of("success","Rezeracja została dodana"));
     }
 

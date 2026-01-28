@@ -1,8 +1,8 @@
 package CPSF.com.demo.controller;
 
-import CPSF.com.demo.DTO.UserDTO;
+import CPSF.com.demo.DTO.GuestDTO;
 import CPSF.com.demo.request.UserRequest;
-import CPSF.com.demo.service.implementation.UserServiceImpl;
+import CPSF.com.demo.service.implementation.GuestServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -16,18 +16,18 @@ import java.util.Map;
 @RequestMapping("/user")
 public class UserController {
 
-    private final UserServiceImpl userService;
+    private final GuestServiceImpl userService;
 
     @Autowired
-    public UserController(UserServiceImpl theUserService) {
+    public UserController(GuestServiceImpl theUserService) {
         userService = theUserService;
     }
 
 
     @GetMapping
-    public Page<UserDTO> findAll(Pageable pageable,
-                                 @RequestParam(required = false) String by,
-                                 @RequestParam(required = false) String value)
+    public Page<GuestDTO> findAll(Pageable pageable,
+                                  @RequestParam(required = false) String by,
+                                  @RequestParam(required = false) String value)
             throws NoSuchFieldException, InstantiationException, IllegalAccessException {
         if (by != null && value != null) {
             return userService.findDTOBy(pageable, by, value);
@@ -48,7 +48,7 @@ public class UserController {
     }
 
     @GetMapping("/{id}")
-    public UserDTO getUserById(@PathVariable int id){
+    public GuestDTO getUserById(@PathVariable int id){
         return userService.findDTOById(id);
     }
 
