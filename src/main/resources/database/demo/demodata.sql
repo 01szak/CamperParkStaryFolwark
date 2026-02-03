@@ -4,8 +4,8 @@
 -- Demo Users
 INSERT INTO app_user (id, login, username, email, password, role, created_at, updated_at)
 VALUES
-    (1, 'capitan', 'capitan', 'capitan@example.com', 'capitan', 'ADMIN', NOW(), NOW()),
-    (2, 'deckhand', 'deckhand', 'deckhand@example.com', 'deckhand', 'EMPLOYEE', NOW(), NOW());
+    (1, 'capitan', 'capitan', 'capitan@example.com', 'cpsf', 'ADMIN', NOW(), NOW()),
+    (2, 'deckhand', 'deckhand', 'deckhand@example.com', 'cpsf', 'EMPLOYEE', NOW(), NOW());
 
 -- Demo Guests
 INSERT INTO guest (id, firstname, lastname, email, phone_number, car_registration, created_at, updated_at)
@@ -15,12 +15,12 @@ VALUES
     (3, 'Marek', 'Kowalski', 'marek@example.com', '555444333', 'WA55555', NOW(), NOW());
 
 -- Demo Camper Places
-INSERT INTO camper_place (id, number, is_occupied, type, price, created_at, updated_at)
+INSERT INTO camper_place (id, number, type, price, created_at, updated_at)
 VALUES
-    (1, '1', FALSE, 'STANDARD', 150.00, NOW(), NOW()),
-    (2, '2', TRUE, 'VIP', 190.00, NOW(), NOW()),
-    (3, '3', FALSE, 'STANDARD', 150.00, NOW(), NOW()),
-    (4, '4', TRUE, 'PREMIUM', 170.00, NOW(), NOW());
+    (1, '1', 'STANDARD', 150.00, NOW(), NOW()),
+    (2, '2', 'VIP', 190.00, NOW(), NOW()),
+    (3, '3', 'STANDARD', 150.00, NOW(), NOW()),
+    (4, '4', 'PLUS', 170.00, NOW(), NOW());
 
 -- Demo Reservations
 INSERT INTO reservation (id, checkin, checkout, camper_place_id, guest_id, status, is_paid, price, created_at, updated_at)

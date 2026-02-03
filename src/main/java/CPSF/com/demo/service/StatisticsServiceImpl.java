@@ -1,15 +1,13 @@
-package CPSF.com.demo.service.implementation;
+package CPSF.com.demo.service;
 
 import CPSF.com.demo.DTO.StatisticsDTO;
 import CPSF.com.demo.entity.CamperPlace;
 import CPSF.com.demo.entity.Reservation;
 import CPSF.com.demo.entity.Statistics;
-import CPSF.com.demo.service.CamperPlaceService;
-import CPSF.com.demo.service.ReservationService;
-import CPSF.com.demo.service.StatisticsService;
 import CPSF.com.demo.util.ReservationCalculator;
 import lombok.RequiredArgsConstructor;
 import org.jetbrains.annotations.VisibleForTesting;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
@@ -19,9 +17,13 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class StatisticsServiceImpl implements StatisticsService {
 
-    private final ReservationService reservationService;
-    private final CamperPlaceService camperPlaceService;
-    private final ReservationCalculator reservationCalculator;
+    @Autowired
+    private ReservationService reservationService;
+
+    @Autowired
+    private CamperPlaceService camperPlaceService;
+
+    private ReservationCalculator reservationCalculator;
 
     public List<StatisticsDTO> getStatisticsDTOWithRevenue(int month, int year) {
         return getStatistics(month, year).stream().map(s ->

@@ -3,15 +3,16 @@
 import CPSF.com.demo.DTO.CamperPlaceDTO;
 import CPSF.com.demo.DTO.CamperPlace_DTO;
 import CPSF.com.demo.enums.CamperPlaceType;
-import CPSF.com.demo.request.CamperPlaceRequest;
 import CPSF.com.demo.service.CamperPlaceService;
 import CPSF.com.demo.util.Mapper;
+import jakarta.validation.Valid;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.math.BigDecimal;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/camperPlace")
@@ -26,7 +27,7 @@ public class CamperPlaceController {
     }
 
     @GetMapping
-    public List<CamperPlaceDTO> findAllCamperPlacesDTO() {
+    public List<CamperPlace_DTO> findAllCamperPlacesDTO() {
         return camperPlaceService.findAllDTO().toList();
     }
 
@@ -35,10 +36,17 @@ public class CamperPlaceController {
         return camperPlaceService.findAll().map(Mapper::toCamperPlace_DTO).stream().toList();
     }
 
-    @PostMapping("/create")
-    public void createCamperPlace(@RequestBody CamperPlaceRequest request) {
-        camperPlaceService.create(request.camperPlaceType(), BigDecimal.valueOf(request.price()));
+    @PatchMapping
+    public ResponseEntity<Map<String,String>> update(@RequestBody @Valid CamperPlace_DTO[] camperPlaceDto) {
+        var camperPlaces = Arrays.stream(camperPlaceDto).map(Mapper::toCamperPlace).toList();
+        camperPlaceService.update(camperPlaces);
+        return ResponseEntity.status(HttpStatus.CREATED).body(Map.of("success","Parcele zostały zmienione"));
     }
+//
+//    @PostMapping("/create")
+//    public void createCamperPlace(@RequestBody @Valid CamperPlace_DTO camperPlaceDto) {
+//        camperPlaceService.create(camperPlaceDto.type(), camperPlaceDto.price());
+//    }
 
     @GetMapping("/type")
     public List<CamperPlaceTypeDTO> getTypes() {
@@ -50,4 +58,4 @@ public class CamperPlaceController {
     public void deleteCamperPlace(@PathVariable String index) {
         camperPlaceService.deleteByIndex(index);
     }
-    }
+}

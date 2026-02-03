@@ -1,35 +1,15 @@
 package CPSF.com.demo.DTO;
 
-import CPSF.com.demo.entity.Reservation;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import jakarta.annotation.Nullable;
+import jakarta.validation.constraints.Email;
 
-import java.util.List;
-
-
-@Data
-@Builder
-@NoArgsConstructor
-@AllArgsConstructor
-public class GuestDTO extends DTO {
-    private int id;
-    private String firstName;
-    private String lastName;
-    private String email;
-    private String phoneNumber;
-    private List<Reservation> reservations;
-    private String carRegistration;
-    private String country;
-    private String city;
-    private String streetAddress;
-
-    @Override
-    public String toString() {
-        return "GuestDto{" +
-                "firstName='" + firstName + '\'' +
-                ", lastName='" + lastName + '\'' +
-                '}';
-    }
-}
+public record GuestDTO (
+     @Nullable String firstName,
+     @Nullable String lastName,
+     @Nullable @Email String email,
+     @Nullable String phoneNumber,
+     @Nullable String carRegistration,
+     @Nullable String country,
+     @Nullable String city,
+     @Nullable String streetAddress
+) {}

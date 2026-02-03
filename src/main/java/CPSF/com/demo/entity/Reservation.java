@@ -5,6 +5,7 @@ import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Positive;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
 import org.springframework.context.annotation.Lazy;
@@ -16,7 +17,8 @@ import static CPSF.com.demo.enums.ReservationStatus.*;
 
 @Entity
 @Table(name = "reservation")
-@Data
+@Getter
+@Setter
 @SuperBuilder
 @NoArgsConstructor
 @EqualsAndHashCode(callSuper = true)
@@ -52,6 +54,8 @@ public class Reservation extends DbObject {
     @Column(name = "is_paid")
     private Boolean paid = false;
 
+    @NotNull
+    @Positive
     @Column(name = "price")
     private BigDecimal price;
 

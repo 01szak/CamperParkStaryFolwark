@@ -1,14 +1,10 @@
-package CPSF.com.demo.service.implementation;
+package CPSF.com.demo.service;
 
-import CPSF.com.demo.DTO.DTO;
 import CPSF.com.demo.entity.DbObject;
 import CPSF.com.demo.repository.CRUDRepository;
-import CPSF.com.demo.service.CRUDService;
-import CPSF.com.demo.util.Mapper;
 import CPSF.com.demo.exception.ClientInputException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.*;
-import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.stereotype.Service;
 
 import java.lang.reflect.Field;
@@ -20,18 +16,14 @@ import java.util.List;
 
 
 @Service
-public abstract class CRUDServiceImpl<T extends DbObject, D extends DTO> implements CRUDService<T, D> {
+public abstract class CRUDServiceImpl<T extends DbObject> implements CRUDService<T> {
 
-    private final CRUDRepository<T> repository;
+    @Autowired
+    private CRUDRepository<T> repository;
 
     private final Sort UPDATED_AT_DESC = Sort.by(
             Sort.Direction.DESC,"updatedAt"
     );
-
-    @Autowired
-    protected CRUDServiceImpl(CRUDRepository<T> repository) {
-        this.repository = repository;
-    }
 
     @Override
     public void create(T t){
@@ -49,23 +41,11 @@ public abstract class CRUDServiceImpl<T extends DbObject, D extends DTO> impleme
         return repository.findAll(pageable);
     }
 
-    @Override
-    @EntityGraph()
-    public Page<T> findAll(){
-        return findAll(Pageable.unpaged(UPDATED_AT_DESC));
-    };
-
-    @Override
-    @EntityGraph()
-    public Page<D> findAllDTO(Pageable pageable){
-        return (Page<D>) findAll(pageable).map(Mapper::toDTO);
-    }
-
-    @Override
-    @EntityGraph()
-    public Page<D> findAllDTO(){
-        return findAllDTO(Pageable.unpaged(UPDATED_AT_DESC));
-    };
+//    @Override
+//    @EntityGraph()
+//    public Page<T> findAll(){
+//        return findAll(Pageable.unpaged(UPDATED_AT_DESC));
+//    };
 
     @Override
     public T findById(int id){
@@ -77,10 +57,10 @@ public abstract class CRUDServiceImpl<T extends DbObject, D extends DTO> impleme
         repository.save(t);
     };
 
-    @Override
-    public void delete(T t){
-        repository.delete(t);
-    };
+//    @Override
+//    public void delete(T t){
+//        repository.delete(t);
+//    };
 
     @Override
     public void delete(int id){
@@ -98,7 +78,7 @@ public abstract class CRUDServiceImpl<T extends DbObject, D extends DTO> impleme
 
         //set the value of chosen field to the selected value
         field.setAccessible(true);
-
+//         TODO: TO JEST KOMPLETNIE Z DUPY XDDDD
         if (field.getType().equals(LocalDate.class)) {
             LocalDate ldValue = LocalDate.parse(value);
             field.set(t, ldValue);
@@ -142,14 +122,6 @@ public abstract class CRUDServiceImpl<T extends DbObject, D extends DTO> impleme
                 .withIgnoreNullValues()
                 .withIgnorePaths(ignoredFields.stream().map(Field::getName).toArray(String[]::new));
     }
-
-    @Override
-    public Page<D> findDTOBy(Pageable pageable, String fieldName, String value)
-            throws NoSuchFieldException, InstantiationException, IllegalAccessException {
-
-        return findBy(pageable, fieldName, value).map(entity -> (D) Mapper.toDTO(entity));
-    }
-
 
     @SuppressWarnings("unchecked")
     private Class<T> getClassForDbObject() {

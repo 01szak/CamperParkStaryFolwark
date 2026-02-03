@@ -3,7 +3,12 @@ package CPSF.com.demo.entity;
 import CPSF.com.demo.enums.CamperPlaceType;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
-import lombok.*;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Positive;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 import lombok.experimental.SuperBuilder;
 
 import java.math.BigDecimal;
@@ -14,25 +19,26 @@ import java.util.List;
 @Table(name = "camper_place")
 @Getter
 @Setter
-@Data
 @SuperBuilder
 @EqualsAndHashCode(callSuper = true)
 @NoArgsConstructor
 public class CamperPlace extends DbObject {
 
     @Column(name = "number")
-    @NonNull
+    @NotNull
     private String index;
 
-    @Column(name = "is_occupied")
-    @NonNull
-    private Boolean isOccupied;
+//    @Column(name = "is_occupied")
+//    @NonNull
+//    private Boolean isOccupied;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "type")
-    @NonNull
+    @NotNull
     private CamperPlaceType camperPlaceType;
 
+    @Positive
+    @NotNull
     @Column(name = "price")
     private BigDecimal price;
 

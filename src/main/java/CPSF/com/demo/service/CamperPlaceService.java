@@ -1,28 +1,54 @@
 package CPSF.com.demo.service;
 
-import CPSF.com.demo.DTO.CamperPlaceDTO;
 import CPSF.com.demo.entity.CamperPlace;
+import CPSF.com.demo.entity.Reservation;
 import CPSF.com.demo.enums.CamperPlaceType;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
+import CPSF.com.demo.repository.CamperPlaceRepository;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.util.*;
+import java.util.stream.Stream;
 
-public interface CamperPlaceService extends CRUDService<CamperPlace, CamperPlaceDTO>  {
+@Service
+public class CamperPlaceService extends CRUDServiceImpl<CamperPlace> {
 
-    CamperPlace findByIndex(String index);
+    @Autowired
+    private CamperPlaceRepository camperPlaceRepository;
 
-    Page<CamperPlace> findAll();
+    public void create(CamperPlaceType camperPlaceType, BigDecimal price) {
+        if (Stream.of(CamperPlaceType.values()).noneMatch(camperPlaceType::equals)) {
+            throw new IllegalArgumentException("Invalid type");
+        }
 
-    boolean checkIsCamperPlaceOccupied(CamperPlace camperPlace, LocalDate checkin, LocalDate checkout, int reservationId);
+        if (price.intValue() <= 0) {
+            throw new IllegalArgumentException("Price must be positive");
+        }
 
-    void create(CamperPlaceType camperPlaceType, BigDecimal price);
+        create(CamperPlace.builder()
+                .camperPlaceType(camperPlaceType)
+                .price(price)
+                .createdAt(new Date())
+                .build()
+        );
+    }
 
-    void deleteByIndex(String index);
+    public CamperPlace findByIndex(String index) {
+        return camperPlaceRepository.findByIndex(index);
+    }
 
-    Page<CamperPlaceDTO> findAllDTO();
+    public boolean checkIsCamperPlaceOccupied(
+            CamperPlace camperPlace, LocalDate checkin, LocalDate checkout, int reservationId) {
+        for (Reservation res : camperPlace.getReservations()) {
+            if (res.getId() == reservationId) continue;
 
-    Page<CamperPlaceDTO> findAllDTO(Pageable pageable);
+            if (!res.getCheckout().isBefore(checkin.plusDays(1)) && !res.getCheckin().isAfter(checkout.minusDays(1))) {
+                return true;
+            }
+        }
+        return false;
+    }
 }
 

@@ -32,12 +32,13 @@ CREATE TABLE IF NOT EXISTS camper_place (
     id INT AUTO_INCREMENT PRIMARY KEY,
 
     number VARCHAR(50) NOT NULL,
-    is_occupied BOOLEAN NOT NULL,
     type VARCHAR(50) NOT NULL,
-    price DECIMAL(10,2),
+    price DECIMAL(10,2) NOT NULL,
 
     created_at DATETIME,
     updated_at DATETIME,
+
+    CHECK (price > 0),
 
     UNIQUE KEY ux_camper_places_number (number)
     ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
@@ -54,10 +55,12 @@ CREATE TABLE IF NOT EXISTS reservation (
 
     status VARCHAR(50) NOT NULL,
     is_paid BOOLEAN DEFAULT FALSE,
-    price DECIMAL(10,2),
+    price DECIMAL(10,2) NOT NULL,
 
     created_at DATETIME,
     updated_at DATETIME,
+
+    CHECK ( price > 0),
 
     CONSTRAINT fk_reservations_camper_place
     FOREIGN KEY (camper_place_id)

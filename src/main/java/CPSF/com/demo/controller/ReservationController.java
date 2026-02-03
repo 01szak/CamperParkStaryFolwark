@@ -3,9 +3,9 @@ package CPSF.com.demo.controller;
 import CPSF.com.demo.DTO.PaidReservationsDTO;
 import CPSF.com.demo.DTO.ReservationDTO;
 import CPSF.com.demo.DTO.ReservationMetadataDTO;
-import CPSF.com.demo.request.ReservationRequest;
+import CPSF.com.demo.DTO.Reservation_DTO;
 import CPSF.com.demo.util.ReservationMetadataMapper;
-import CPSF.com.demo.service.implementation.ReservationServiceImpl;
+import CPSF.com.demo.service.ReservationService;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
@@ -20,21 +20,21 @@ import java.util.Map;
 public class ReservationController {
 
     private final ReservationMetadataMapper reservationMetadataMapper;
-    private final ReservationServiceImpl reservationService;
+    private final ReservationService reservationService;
 
-    public ReservationController(ReservationMetadataMapper reservationMetadataMapper, ReservationServiceImpl reservationService) {
+    public ReservationController(ReservationMetadataMapper reservationMetadataMapper, ReservationService reservationService) {
         this.reservationMetadataMapper = reservationMetadataMapper;
         this.reservationService = reservationService;
     }
 
     @PostMapping
-    public ResponseEntity<?> createReservation(@RequestBody ReservationRequest request) {
-        reservationService.create(request.checkin(), request.checkout(), request.camperPlaceIndex(), request.guest());
+    public ResponseEntity<?> createReservation(@RequestBody Reservation_DTO reservationDto) {
+        reservationService.create(reservationDto.checkin(), reservationDto.checkout(), reservationDto.camperPlaceIndex(), reservationDto.guest());
         return ResponseEntity.status(HttpStatus.CREATED).body(Map.of("success","Rezeracja została dodana"));
     }
 
     @PatchMapping("/{id}")
-    public ResponseEntity<?> updateReservation(@PathVariable int id, @RequestBody ReservationRequest request) {
+    public ResponseEntity<?> updateReservation(@PathVariable int id, @RequestBody Reservation_DTO request) {
         reservationService.update(id, request);
         return ResponseEntity.status(HttpStatus.CREATED).body(Map.of("success","Rezeracja została zmieniona"));
     }

@@ -2,6 +2,7 @@ package CPSF.com.demo.entity;
 
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Email;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
 
@@ -11,7 +12,6 @@ import java.util.List;
 @Table(name = "guest")
 @Getter
 @Setter
-@Data
 @SuperBuilder
 @NoArgsConstructor
 @EqualsAndHashCode(callSuper = true)
@@ -23,6 +23,7 @@ public class Guest extends DbObject  {
     @Column(name = "lastname")
     private String lastName;
 
+    @Email
     @Column(name = "email")
     private String email;
 

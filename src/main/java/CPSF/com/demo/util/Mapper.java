@@ -3,6 +3,7 @@ package CPSF.com.demo.util;
 import CPSF.com.demo.DTO.*;
 import CPSF.com.demo.entity.*;
 
+import CPSF.com.demo.enums.CamperPlaceType;
 import org.hibernate.WrongClassException;
 
 import java.time.format.DateTimeFormatter;
@@ -64,7 +65,6 @@ public class Mapper {
                 .id(camperPlace.getId())
                 .index(camperPlace.getIndex())
                 .price(camperPlace.getPrice().doubleValue())
-                .isOccupied(camperPlace.getIsOccupied())
                 .camperPlaceType(camperPlace.getCamperPlaceType())
                 .reservations(camperPlace.getReservations().stream().map(r -> toReservationDTO(r)).toList())
                 .build();
@@ -76,6 +76,16 @@ public class Mapper {
                 camperPlace.getCamperPlaceType().toString(),
                 camperPlace.getPrice()
         );
+    }
+
+    public static CamperPlace toCamperPlace(CamperPlace_DTO camperPlace) {
+        return CamperPlace.builder()
+                .id(camperPlace.id())
+                .camperPlaceType(CamperPlaceType.valueOf(camperPlace.type().toUpperCase()))
+                .index(camperPlace.index())
+                .price(camperPlace.price())
+//                .isOccupied()
+                .build();
     }
 
     public static ReservationMetadataDTO toReservationMetadataDTO(ReservationReservedCheckinCheckoutDTO reservationMetadata) {

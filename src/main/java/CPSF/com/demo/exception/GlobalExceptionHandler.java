@@ -1,8 +1,10 @@
 package CPSF.com.demo.exception;
 
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.method.annotation.HandlerMethodValidationException;
 
 import java.sql.SQLIntegrityConstraintViolationException;
 
@@ -11,13 +13,13 @@ import java.sql.SQLIntegrityConstraintViolationException;
 public class GlobalExceptionHandler {
 
     @ExceptionHandler(ClientInputException.class)
-    public ResponseEntity<String> handleValidationException(ClientInputException exception) {
-        return ResponseEntity.badRequest().body(exception.getMessage());
+    public ResponseEntity<String> handleValidationException(ClientInputException ex) {
+        return ResponseEntity.badRequest().body(ex.getMessage());
     }
 
-    @ExceptionHandler(SQLIntegrityConstraintViolationException.class)
-    public ResponseEntity<String> handleValidationException(RuntimeException exception) {
-        return ResponseEntity.badRequest().body(exception.getMessage());
+    @ExceptionHandler(HandlerMethodValidationException.class)
+    public ResponseEntity<String> handleMethodArgumentNotValidException(HandlerMethodValidationException ex) {
+        return ResponseEntity.badRequest().body("Podano nieprawidłowe wartości");
     }
 
 }
