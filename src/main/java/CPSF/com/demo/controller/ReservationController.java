@@ -1,11 +1,12 @@
 package CPSF.com.demo.controller;
 
 import CPSF.com.demo.DTO.PaidReservationsDTO;
-import CPSF.com.demo.DTO.ReservationDTO;
 import CPSF.com.demo.DTO.ReservationMetadataDTO;
 import CPSF.com.demo.DTO.Reservation_DTO;
+import CPSF.com.demo.util.DtoMapper;
 import CPSF.com.demo.util.ReservationMetadataMapper;
 import CPSF.com.demo.service.ReservationService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
@@ -19,41 +20,40 @@ import java.util.Map;
 @RequestMapping("/reservation")
 public class ReservationController {
 
-    private final ReservationMetadataMapper reservationMetadataMapper;
-    private final ReservationService reservationService;
+    @Autowired
+    private ReservationMetadataMapper reservationMetadataMapper;
 
-    public ReservationController(ReservationMetadataMapper reservationMetadataMapper, ReservationService reservationService) {
-        this.reservationMetadataMapper = reservationMetadataMapper;
-        this.reservationService = reservationService;
-    }
+    @Autowired
+    private ReservationService reservationService;
 
-    @PostMapping
-    public ResponseEntity<?> createReservation(@RequestBody Reservation_DTO reservationDto) {
-        reservationService.create(reservationDto.checkin(), reservationDto.checkout(), reservationDto.camperPlaceIndex(), reservationDto.guest());
-        return ResponseEntity.status(HttpStatus.CREATED).body(Map.of("success","Rezeracja została dodana"));
-    }
+//    @PostMapping
+//    public ResponseEntity<?> create(@RequestBody Reservation_DTO reservationDto) {
+//        reservationService.create(reservationDto.checkin(), reservationDto.checkout(), reservationDto.camperPlaceIndex(), reservationDto.guest());
+//        return ResponseEntity.status(HttpStatus.CREATED).body(Map.of("success","Rezeracja została dodana"));
+//    }
 
     @PatchMapping("/{id}")
-    public ResponseEntity<?> updateReservation(@PathVariable int id, @RequestBody Reservation_DTO request) {
+    public ResponseEntity<?> update(@PathVariable int id, @RequestBody Reservation_DTO request) {
         reservationService.update(id, request);
         return ResponseEntity.status(HttpStatus.CREATED).body(Map.of("success","Rezeracja została zmieniona"));
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<?> deleteReservation(@PathVariable int id) {
+    public ResponseEntity<?> delete(@PathVariable int id) {
         reservationService.delete(id);
         return ResponseEntity.status(HttpStatus.OK).body(Map.of("success","Rezeracja została usunięta"));
     }
 
+//        TODO to refactor
     @GetMapping
-    public Page<ReservationDTO> findAll(Pageable pageable,
+    public Page<Reservation_DTO> findAll(Pageable pageable,
                                         @RequestParam(required = false) String by,
                                         @RequestParam(required = false) String value)
             throws NoSuchFieldException, InstantiationException, IllegalAccessException {
         if (by != null && value != null) {
-            return reservationService.findDTOBy(pageable, by, value);
+            return reservationService.findBy(pageable, by, value).map(DtoMapper::getReservationDto);
         }
-        return reservationService.findAllDTO(pageable);
+        return reservationService.findAll(pageable).map(DtoMapper::getReservationDto);
     }
 
     @GetMapping({"/getReservationMetadata"})

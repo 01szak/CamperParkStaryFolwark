@@ -1,9 +1,8 @@
 package CPSF.com.demo.service;
 
-import CPSF.com.demo.DTO.ReservationDTO;
 import CPSF.com.demo.DTO.ReservationMetadataDTO;
 import CPSF.com.demo.DTO.Reservation_DTO;
-import CPSF.com.demo.util.Mapper;
+import CPSF.com.demo.util.DtoMapper;
 import CPSF.com.demo.util.ReservationCalculator;
 import CPSF.com.demo.util.ReservationMetadataMapper;
 import CPSF.com.demo.entity.*;
@@ -40,6 +39,7 @@ public class ReservationService extends CRUDServiceImpl<Reservation> {
     @Autowired
     private ReservationCalculator calculator;
 
+//    TODO refactor
     @Transactional
     public void create(String checkin, String checkout, String camperPlaceIndex, Guest guest) {
         CamperPlace camperPlace = camperPlaceService.findByIndex(camperPlaceIndex);
@@ -70,15 +70,7 @@ public class ReservationService extends CRUDServiceImpl<Reservation> {
 
         super.create(toCreate.build());
     }
-
-    @Override
-    @Transactional
-    public void delete(int id) {
-        Reservation reservation = findById(id);
-        super.delete(reservation);
-    }
-
-    @Override
+//TODO refactor
     @Transactional
     public void update(int id, Reservation_DTO reservationDto) {
 
@@ -106,7 +98,7 @@ public class ReservationService extends CRUDServiceImpl<Reservation> {
         Guest guest = reservationToUpdate.getGuest();
 
         if (!guest.equals(reservationDto.guest())) {
-            guestService.update(reservationDto.guest());
+            guestService.update(guestService.findById(reservationDto.guest().id()));
         }
 
         reservationToUpdate.setUpdatedAt(new Date());
@@ -118,51 +110,43 @@ public class ReservationService extends CRUDServiceImpl<Reservation> {
         super.update(reservationToUpdate);
     }
 
-    public Page<ReservationDTO> findDTOBy(Pageable pageable, String fieldName, String value)
+    public Page<Reservation_DTO> findDTOBy(Pageable pageable, String fieldName, String value)
             throws InstantiationException, IllegalAccessException, NoSuchFieldException {
         if (fieldName.equals("camperPlaceIndex")) {
-            return reservationRepository.findAllByCamperPlace_Index(pageable, value).map(Mapper::toReservationDTO);
+            return reservationRepository.findAllByCamperPlace_Index(pageable, value).map(DtoMapper::getReservationDto);
         } else if (fieldName.equals("stringUser")) {
-            return reservationRepository.findAllByUserFullName(pageable, value).map(Mapper::toReservationDTO);
+            return reservationRepository.findAllByUserFullName(pageable, value).map(DtoMapper::getReservationDto);
         }
-        return super.findDTOBy(pageable, fieldName, value);
+        return super.findBy(pageable, fieldName, value).map(DtoMapper::getReservationDto);
     }
 
-    @Override
     public List<Reservation> findByCamperPlaceIdIfPaid(int id) {
         return reservationRepository.findByCamperPlace_IdIfPaid(id);
     }
 
-    @Override
     public List<Reservation> findByYearAndCamperPlaceIdIfPaid(int year, int id) {
         return reservationRepository.findAllByYearAndCamperPlaceIdIfPaid(year, id);
     }
 
-    @Override
     public  List<Reservation> findByMonthYearAndCamperPlaceIdIfPaid(int month, int year, int camperPlaceId) {
         return reservationRepository.findAllByMonthYearAndCamperPlaceIdIfPaid(month, year, camperPlaceId);
     }
 
-    @Override
     public List<Reservation> findByCamperPlaceIdIfStatusNotComing(int id) {
         return reservationRepository.findAllByCamperPlaceIdIfStatusNotComing(id);
     }
 
-    @Override
     public List<Reservation> findByYearAndCamperPlaceIdIfStatusNotComing(int year, int id) {
         return reservationRepository.findAllByYearAndCamperPlace_IdIfStatusNotComing(year, id);
     }
 
-    @Override
     public List<Reservation> findByMonthYearAndCamperPlaceIdIfStatusNotComing(int month, int year, int id) {
         return reservationRepository.findAllByMonthYearAndCamperPlace_IdIfStatusNotComing(month, year, id);
     }
 
-    @Override
     public Map<String, ReservationMetadataDTO> getReservationMetadataDTO() {
         return reservationMetadataMapper.getReservationMetaDataDTO();
     }
-
 
     private void ensureDataIsCorrect(String checkin, String checkout, CamperPlace camperPlace, Guest guest) {
 

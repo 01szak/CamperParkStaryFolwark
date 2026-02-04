@@ -1,7 +1,7 @@
 package CPSF.com.demo.service;
 
 import CPSF.com.demo.DTO.GuestDTO;
-import CPSF.com.demo.util.Mapper;
+import CPSF.com.demo.util.DtoMapper;
 import CPSF.com.demo.entity.Guest;
 import CPSF.com.demo.repository.GuestRepository;
 import lombok.NoArgsConstructor;
@@ -41,9 +41,9 @@ public class GuestService extends CRUDServiceImpl<Guest> {
     public Page<CPSF.com.demo.DTO.GuestDTO> findDTOBy(Pageable pageable, String by, String value)
             throws InstantiationException, IllegalAccessException, NoSuchFieldException {
             if (by.equals("fullName")) {
-                return guestRepository.findAllByFullName(pageable, value).map(Mapper::toUserDTO);
+                return guestRepository.findAllByFullName(pageable, value).map(DtoMapper::getGuestDTO);
             }
-            return super.findDTOBy(pageable, by, value);
+            return findBy(pageable, by, value).map(DtoMapper::getGuestDTO);
     }
 
     @Transactional

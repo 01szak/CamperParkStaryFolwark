@@ -1,8 +1,7 @@
 package CPSF.com.demo.service;
 
 import CPSF.com.demo.entity.User;
-import CPSF.com.demo.repository.
-        UserRepository;
+import CPSF.com.demo.repository.UserRepository;
 import lombok.NoArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;

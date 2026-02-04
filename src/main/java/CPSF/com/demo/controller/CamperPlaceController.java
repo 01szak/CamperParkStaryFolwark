@@ -1,15 +1,17 @@
     package CPSF.com.demo.controller;
 
-import CPSF.com.demo.DTO.CamperPlaceDTO;
 import CPSF.com.demo.DTO.CamperPlace_DTO;
+import CPSF.com.demo.entity.CamperPlace;
 import CPSF.com.demo.enums.CamperPlaceType;
 import CPSF.com.demo.service.CamperPlaceService;
-import CPSF.com.demo.util.Mapper;
+import CPSF.com.demo.util.DtoMapper;
 import jakarta.validation.Valid;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
@@ -18,29 +20,36 @@ import java.util.Map;
 @RequestMapping("/camperPlace")
 public class CamperPlaceController {
 
-    private final CamperPlaceService camperPlaceService;
+    @Autowired
+    private CamperPlaceService camperPlaceService;
 
     public record CamperPlaceTypeDTO(String name){}
 
-    public CamperPlaceController(CamperPlaceService camperPlaceService) {
-        this.camperPlaceService = camperPlaceService;
-    }
-
     @GetMapping
     public List<CamperPlace_DTO> findAllCamperPlacesDTO() {
-        return camperPlaceService.findAllDTO().toList();
+        return camperPlaceService.findAll().map(DtoMapper::getCamperPlaceDto).stream().toList();
     }
 
     @GetMapping("v2")
     public List<CamperPlace_DTO> getCamperPlaces() {
-        return camperPlaceService.findAll().map(Mapper::toCamperPlace_DTO).stream().toList();
+        return camperPlaceService.findAll().map(DtoMapper::getCamperPlaceDto).stream().toList();
     }
 
     @PatchMapping
-    public ResponseEntity<Map<String,String>> update(@RequestBody @Valid CamperPlace_DTO[] camperPlaceDto) {
-        var camperPlaces = Arrays.stream(camperPlaceDto).map(Mapper::toCamperPlace).toList();
-        camperPlaceService.update(camperPlaces);
-        return ResponseEntity.status(HttpStatus.CREATED).body(Map.of("success","Parcele zostały zmienione"));
+    public ResponseEntity<Map<String, String>> update(@RequestBody @Valid List<CamperPlace_DTO> camperPlaceDto) {
+        var cp = new ArrayList<CamperPlace>();
+
+        camperPlaceDto.forEach(dto -> {
+            var c = camperPlaceService.findById(dto.id());
+            c.setCamperPlaceType(CamperPlaceType.valueOf(dto.type()));
+            c.setIndex(dto.index());
+            c.setPrice(dto.price());
+            cp.add(c);
+        });
+
+        camperPlaceService.update(cp);
+
+        return ResponseEntity.status(HttpStatus.OK).body(Map.of("success","Parcele zostały zmienione"));
     }
 //
 //    @PostMapping("/create")
@@ -54,8 +63,8 @@ public class CamperPlaceController {
                 new CamperPlaceTypeDTO(t.toString())).toList();
     }
 
-    @DeleteMapping("/deleteCamperPlace/{index}")
-    public void deleteCamperPlace(@PathVariable String index) {
-        camperPlaceService.deleteByIndex(index);
-    }
+//    @DeleteMapping("/deleteCamperPlace/{index}")
+//    public void deleteCamperPlace(@PathVariable String index) {
+//        camperPlaceService.deleteByIndex(index);
+//    }
 }

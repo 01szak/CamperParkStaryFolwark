@@ -125,7 +125,7 @@ public class ReservationMetadataMapper {
 		reservationMetadata.addCheckin(checkin);
 		reservationMetadata.addCheckout(checkout);
 
-		return Mapper.toReservationMetadataDTO(reservationMetadata);
+		return DtoMapper.toReservationMetadataDTO(reservationMetadata);
 	}
 
 	private List<String> mapReservationDatesToString(Reservation r) {
