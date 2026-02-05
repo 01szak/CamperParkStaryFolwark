@@ -5,9 +5,9 @@
 //import CPSF.com.demo.entity.Reservation;
 //import CPSF.com.demo.entity.Statistics;
 //import CPSF.com.demo.enums.CamperPlaceType;
-//import CPSF.com.demo.service.CamperPlaceService;
+//import CPSF.com.demo.service.core.CamperPlaceService;
 //import CPSF.com.demo.service.implementation.ReservationServiceImpl;
-//import CPSF.com.demo.service.StatisticsServiceImpl;
+//import CPSF.com.demo.service.core.StatisticsServiceImpl;
 //import CPSF.com.demo.util.ReservationCalculator;
 //import lombok.extern.slf4j.Slf4j;
 //import org.junit.jupiter.api.BeforeEach;

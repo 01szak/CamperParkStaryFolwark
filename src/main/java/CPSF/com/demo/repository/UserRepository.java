@@ -1,6 +1,6 @@
 package CPSF.com.demo.repository;
 
-import CPSF.com.demo.entity.User;
+import CPSF.com.demo.model.entity.User;
 
 import java.util.List;
 

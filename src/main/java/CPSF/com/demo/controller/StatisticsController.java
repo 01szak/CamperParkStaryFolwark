@@ -1,7 +1,7 @@
 package CPSF.com.demo.controller;
 
-import CPSF.com.demo.DTO.StatisticsDTO;
-import CPSF.com.demo.service.StatisticsServiceImpl;
+import CPSF.com.demo.model.dto.StatisticsDTO;
+import CPSF.com.demo.service.core.StatisticsServiceImpl;
 import lombok.AllArgsConstructor;
 
 import org.springframework.web.bind.annotation.*;

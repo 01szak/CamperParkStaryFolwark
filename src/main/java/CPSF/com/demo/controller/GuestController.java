@@ -1,9 +1,8 @@
 package CPSF.com.demo.controller;
 
-import CPSF.com.demo.DTO.GuestDTO;
-import CPSF.com.demo.entity.Guest;
-import CPSF.com.demo.service.GuestService;
-import CPSF.com.demo.util.DtoMapper;
+import CPSF.com.demo.model.dto.GuestDTO;
+import CPSF.com.demo.service.core.GuestService;
+import CPSF.com.demo.service.util.DtoMapper;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -24,41 +23,23 @@ public class GuestController {
     @GetMapping
     public Page<GuestDTO> findAll(Pageable pageable,
                                   @RequestParam(required = false) String by,
-                                  @RequestParam(required = false) String value)
-            throws NoSuchFieldException, InstantiationException, IllegalAccessException {
+                                  @RequestParam(required = false) String value) {
         if (by != null && value != null) {
             return guestService.findBy(pageable, by, value).map(DtoMapper::getGuestDTO);
         }
-
+//        TODO Do not return all data!!
         return guestService.findAll(pageable).map(DtoMapper::getGuestDTO);
     }
 
     @PatchMapping
     public ResponseEntity<Map<String, String>> update(@RequestBody @Valid GuestDTO guestDTO){
-        var g = guestService.findById(guestDTO.id());
-        g.setFirstName(guestDTO.firstName());
-        g.setLastName(guestDTO.lastName());
-        g.setEmail(guestDTO.email());
-        g.setPhoneNumber(guestDTO.phoneNumber());
-        g.setCarRegistration(guestDTO.carRegistration());
-
-        guestService.update(g);
-
+        guestService.update(DtoMapper.getGuest(guestDTO));
         return ResponseEntity.status(HttpStatus.OK).body(Map.of("success","Gość został zmieniony"));
     }
 
     @PostMapping
     public ResponseEntity<Map<String, String>> create(@RequestBody @Valid GuestDTO guestDTO) {
-        var g = Guest.builder()
-                .firstName(guestDTO.firstName())
-                .lastName(guestDTO.lastName())
-                .email(guestDTO.email())
-                .carRegistration(guestDTO.carRegistration())
-                .phoneNumber(guestDTO.phoneNumber())
-                .build();
-
-        guestService.create(g);
-
+        guestService.create(DtoMapper.getGuest(guestDTO));
         return ResponseEntity.status(HttpStatus.CREATED).body(Map.of("success","Gość został utworzony"));
     }
 

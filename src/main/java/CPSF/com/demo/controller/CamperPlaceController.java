@@ -1,10 +1,10 @@
     package CPSF.com.demo.controller;
 
-import CPSF.com.demo.DTO.CamperPlace_DTO;
-import CPSF.com.demo.entity.CamperPlace;
-import CPSF.com.demo.enums.CamperPlaceType;
-import CPSF.com.demo.service.CamperPlaceService;
-import CPSF.com.demo.util.DtoMapper;
+import CPSF.com.demo.model.dto.CamperPlace_DTO;
+import CPSF.com.demo.model.entity.CamperPlace;
+import CPSF.com.demo.model.entity.CamperPlace.CamperPlaceType;
+import CPSF.com.demo.service.core.CamperPlaceService;
+import CPSF.com.demo.service.util.DtoMapper;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
