@@ -1,5 +1,7 @@
 -- liquibase formatted sql
--- changeset kacper:002
+-- changeset 01szak:reservation_mig
+
+-- rollback DELETE FROM reservation WHERE id IN (SELECT id FROM reservations);
 
 INSERT INTO reservation (
     id, checkin, checkout, camper_place_id, guest_id,

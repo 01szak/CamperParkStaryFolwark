@@ -35,8 +35,15 @@ public class CamperPlaceService extends CRUDServiceImpl<CamperPlace> {
         );
     }
 
-    public boolean checkIsCamperPlaceOccupied(CamperPlace camperPlace, LocalDate checkin, LocalDate checkout) {
-        for (Reservation res : camperPlace.getReservations()) {
+    public boolean checkIsCamperPlaceOccupied(CamperPlace camperPlace, LocalDate checkin, LocalDate checkout, Integer reservationIdToExclude) {
+        var reservations = Optional.ofNullable(reservationIdToExclude)
+                .map(id -> camperPlace.getReservations().stream()
+                                        .filter(r -> !r.getId().equals(id))
+                        .toList()
+                )
+                .orElse(camperPlace.getReservations());
+
+        for (Reservation res : reservations) {
             if (!res.getCheckout().isBefore(checkin.plusDays(1))
                     && !res.getCheckin().isAfter(checkout.minusDays(1))) {
                 return true;
@@ -44,5 +51,6 @@ public class CamperPlaceService extends CRUDServiceImpl<CamperPlace> {
         }
         return false;
     }
+
 }
 

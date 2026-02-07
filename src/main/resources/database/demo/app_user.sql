@@ -1,5 +1,5 @@
 -- liquibase formatted sql
--- changeset app_user_demo:1
+-- changeset 01szak:app_user_demo
 
 INSERT INTO app_user (id, login, username, email, password, role, created_at, updated_at)
 VALUES                                                                                  -- cpsf

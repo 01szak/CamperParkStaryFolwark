@@ -101,10 +101,14 @@ public class ReservationService extends CRUDServiceImpl<Reservation> {
         super.update(r);
     }
 
-    private void validateDates(LocalDate checkout, LocalDate checkin, CamperPlace camperPlace) {
+    private void validateDates(LocalDate checkout, LocalDate checkin, CamperPlace camperPlace, Integer reservationId) {
         checkClientInput(checkout.isBefore(checkin), "Data wyjazdu nie może być przed datą wjazdu");
-        checkClientInput(camperPlaceService.checkIsCamperPlaceOccupied(camperPlace, checkin, checkout),
+        checkClientInput(camperPlaceService.checkIsCamperPlaceOccupied(camperPlace, checkin, checkout, reservationId),
                 "Parcela jest już zajęta!");
+    }
+
+    private void validateDates(LocalDate checkout, LocalDate checkin, CamperPlace camperPlace) {
+        validateDates(checkout, checkin, camperPlace, null);
     }
 
     public Page<Reservation_DTO> findDTOBy(Pageable pageable, String fieldName, String value)

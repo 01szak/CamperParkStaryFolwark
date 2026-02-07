@@ -1,5 +1,5 @@
 -- liquibase formatted sql
--- changeset guest_demo:1
+-- changeset 01szak:guest_demo
 
 
 INSERT INTO guest (id, firstname, lastname, email, phone_number, car_registration, created_at, updated_at)

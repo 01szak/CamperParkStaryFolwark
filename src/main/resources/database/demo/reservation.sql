@@ -1,6 +1,5 @@
 -- liquibase formatted sql
--- changeset reservation:1
-
+-- changeset 01szak:reservation_demo
 
 INSERT INTO reservation (id, checkin, checkout, camper_place_id, guest_id, status, is_paid, price, created_at, updated_at)
 VALUES
