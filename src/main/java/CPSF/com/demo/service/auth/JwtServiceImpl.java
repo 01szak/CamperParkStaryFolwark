@@ -24,15 +24,15 @@ public class JwtServiceImpl implements JwtService {
 
     @Override
     public String generateToken(Authentication authentication) {
-        UserDetails user = (UserDetails) authentication.getPrincipal();
-        String login = user.getUsername();
+        var login = authentication.getName();
+//        String login = user.getUsername();
 
-        String scope = authentication.getAuthorities().stream()
+        var scope = authentication.getAuthorities().stream()
                 .map(GrantedAuthority::getAuthority)
                 .collect(Collectors.joining(" "));
 
-        JwtClaimsSet claims = JwtClaimsSet.builder()
-                .issuer(login)
+        var claims = JwtClaimsSet.builder()
+                .subject(login)
                 .issuedAt(Instant.now())
                 .expiresAt(Instant.now().plusMillis(EXPIRATION_TIME))
                 .claim("scope", scope)

@@ -1,5 +1,6 @@
 package CPSF.com.demo.service.core;
 
+import CPSF.com.demo.exception.ClientInputException;
 import CPSF.com.demo.model.dto.GuestDTO;
 import CPSF.com.demo.model.entity.Guest;
 import CPSF.com.demo.repository.GuestRepository;
@@ -11,6 +12,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Date;
+import java.util.stream.Stream;
 
 import static CPSF.com.demo.exception.ClientInputException.checkClientInput;
 
@@ -22,13 +24,14 @@ public class GuestService extends CRUDServiceImpl<Guest> {
     private GuestRepository guestRepository;
 
     public Guest create(GuestDTO guestDTO) {
+        checkIsEmpty(guestDTO);
+
         return super.create(Guest.builder()
                 .firstname(guestDTO.firstName())
                 .lastname(guestDTO.lastName())
-                .email(guestDTO.email().isBlank() ? null : guestDTO.email())
+                .email(mapBlankToNull(guestDTO.email()))
                 .carRegistration(guestDTO.carRegistration())
                 .phoneNumber(guestDTO.phoneNumber())
-                .createdAt(new Date())
                 .build()
         );
     }
@@ -50,12 +53,28 @@ public class GuestService extends CRUDServiceImpl<Guest> {
 
         guest.setFirstname(guestDTO.firstName());
         guest.setLastname(guestDTO.lastName());
-        guest.setEmail(guestDTO.email());
+        guest.setEmail(mapBlankToNull(guestDTO.email()));
         guest.setPhoneNumber(guestDTO.phoneNumber());
         guest.setCarRegistration(guestDTO.carRegistration());
 
         return super.update(guest);
     }
 
+    private String mapBlankToNull(String email) {
+        return email == null || email.isBlank() ? null : email;
+    }
+
+    private void checkIsEmpty(GuestDTO guestDTO) {
+        var guestIsEmpty = Stream.of(
+                guestDTO.firstName(),
+                guestDTO.lastName(),
+                guestDTO.phoneNumber(),
+                guestDTO.email(),
+                guestDTO.carRegistration()
+        ).allMatch(v -> v == null || v.isBlank());
+        if (guestIsEmpty) {
+            throw new ClientInputException("Utwórz lub podaj istniejącego gościa");
+        }
+    }
 }
 

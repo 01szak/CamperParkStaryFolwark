@@ -26,11 +26,6 @@ public class CamperPlaceController {
     public record CamperPlaceTypeDTO(String name){}
 
     @GetMapping
-    public List<CamperPlace_DTO> findAllCamperPlacesDTO() {
-        return camperPlaceService.findAll().map(DtoMapper::getCamperPlaceDto).stream().toList();
-    }
-
-    @GetMapping("v2")
     public List<CamperPlace_DTO> getCamperPlaces() {
         return camperPlaceService.findAll().map(DtoMapper::getCamperPlaceDto).stream().toList();
     }

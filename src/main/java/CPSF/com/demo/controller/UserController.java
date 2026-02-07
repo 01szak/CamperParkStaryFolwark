@@ -18,12 +18,12 @@ public class UserController {
     @Autowired
     private UserService userService;
 
-
     @GetMapping
     public UserDTO getEmployee() {
-            Authentication a = SecurityContextHolder.getContext().getAuthentication();
-            Jwt jwt = (Jwt) a.getPrincipal();
-            String username = jwt.getClaimAsString("iss");
+            var a = SecurityContextHolder.getContext().getAuthentication();
+            var jwt = (Jwt) a.getPrincipal();
+            var username = jwt.getClaimAsString("sub");
+
             return userService.findBy("login", username)
                     .map(DtoMapper::getUserDTO)
                     .stream()

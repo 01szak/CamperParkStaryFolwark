@@ -37,6 +37,8 @@ public class ReservationService extends CRUDServiceImpl<Reservation> {
     @Autowired
     private ReservationMetadataMapper reservationMetadataMapper;
 
+    private static final ReservationCalculator calculator = new ReservationCalculator();
+
     public void create(Reservation_DTO reservationDto) {
         var camperPlace = camperPlaceService.findBy("index", reservationDto.camperPlaceIndex()).toList().get(0);
         var checkin = LocalDate.parse(reservationDto.checkin());
@@ -52,7 +54,6 @@ public class ReservationService extends CRUDServiceImpl<Reservation> {
             guest = guestService.update(reservationDto.guest());
         }
 
-        var calculator = new ReservationCalculator();
         var r = Reservation.builder()
                 .checkin(checkin)
                 .checkout(checkout)
@@ -85,12 +86,14 @@ public class ReservationService extends CRUDServiceImpl<Reservation> {
             r.setCheckin(checkin);
             r.setCheckout(checkout);
             r.setCamperPlace(camperPlace);
+            r.setPrice(calculator.calculateFinalReservationCost(checkin, checkout, camperPlace.getPrice()));
         }
 
         var guest = guestService.update(reservationDto.guest());
 
         r.setGuest(guest);
         r.setPaid(reservationDto.paid());
+
 
         super.update(r);
     }

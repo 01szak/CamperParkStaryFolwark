@@ -18,7 +18,7 @@ import java.util.Map;
 public class GuestController {
 
     @Autowired
-    public GuestService guestService;
+    private GuestService guestService;
 
     @GetMapping
     public Page<GuestDTO> findAll(Pageable pageable,
