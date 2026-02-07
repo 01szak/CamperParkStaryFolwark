@@ -87,6 +87,9 @@ public class ReservationService extends CRUDServiceImpl<Reservation> {
             r.setCheckout(checkout);
             r.setCamperPlace(camperPlace);
             r.setPrice(calculator.calculateFinalReservationCost(checkin, checkout, camperPlace.getPrice()));
+            if (isActive(checkin, checkout)) {
+                r.setReservationStatus(ACTIVE);
+            }
         }
 
         var guest = guestService.update(reservationDto.guest());

@@ -33,13 +33,13 @@ public class GuestController {
 
     @PatchMapping
     public ResponseEntity<Map<String, String>> update(@RequestBody @Valid GuestDTO guestDTO){
-        guestService.update(DtoMapper.getGuest(guestDTO));
+        guestService.update(guestDTO);
         return ResponseEntity.status(HttpStatus.OK).body(Map.of("success","Gość został zmieniony"));
     }
 
     @PostMapping
     public ResponseEntity<Map<String, String>> create(@RequestBody @Valid GuestDTO guestDTO) {
-        guestService.create(DtoMapper.getGuest(guestDTO));
+        guestService.create(guestDTO);
         return ResponseEntity.status(HttpStatus.CREATED).body(Map.of("success","Gość został utworzony"));
     }
 
