@@ -4,6 +4,8 @@
 -- precondition-sql-check expectedResult:0 SELECT COUNT(*) FROM camper_place
 -- preconditions onFail:MARK_RAN
 
-INSERT INTO camper_place (number, type, price, created_at, updated_at)
-SELECT number, type, price, created_at, updated_at
+INSERT INTO camper_place (id, number, type, price, created_at, updated_at)
+SELECT id, number, type, price, created_at, updated_at
 FROM camper_places;
+
+-- rollback DELETE FROM camper_place;

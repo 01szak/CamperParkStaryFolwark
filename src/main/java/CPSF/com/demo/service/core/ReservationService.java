@@ -82,7 +82,7 @@ public class ReservationService extends CRUDServiceImpl<Reservation> {
 
     //it is checked because of the constraints and reservations overlapping
         if (datesOrCpChanged) {
-            validateDates(checkout, checkin, camperPlace);
+            validateDates(checkout, checkin, camperPlace, r.getId());
             r.setCheckin(checkin);
             r.setCheckout(checkout);
             r.setCamperPlace(camperPlace);
@@ -103,7 +103,7 @@ public class ReservationService extends CRUDServiceImpl<Reservation> {
 
     private void validateDates(LocalDate checkout, LocalDate checkin, CamperPlace camperPlace, Integer reservationId) {
         checkClientInput(checkout.isBefore(checkin), "Data wyjazdu nie może być przed datą wjazdu");
-        checkClientInput(camperPlaceService.checkIsCamperPlaceOccupied(camperPlace, checkin, checkout, reservationId),
+        checkClientInput(camperPlaceService.isCamperPlaceOccupied(camperPlace, checkin, checkout, reservationId),
                 "Parcela jest już zajęta!");
     }
 

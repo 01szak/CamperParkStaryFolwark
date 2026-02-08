@@ -35,10 +35,10 @@ public class CamperPlaceService extends CRUDServiceImpl<CamperPlace> {
         );
     }
 
-    public boolean checkIsCamperPlaceOccupied(CamperPlace camperPlace, LocalDate checkin, LocalDate checkout, Integer reservationIdToExclude) {
+    public boolean isCamperPlaceOccupied(CamperPlace camperPlace, LocalDate checkin, LocalDate checkout, Integer reservationIdToExclude) {
         var reservations = Optional.ofNullable(reservationIdToExclude)
                 .map(id -> camperPlace.getReservations().stream()
-                                        .filter(r -> !r.getId().equals(id))
+                        .filter(r -> !r.getId().equals(id))
                         .toList()
                 )
                 .orElse(camperPlace.getReservations());

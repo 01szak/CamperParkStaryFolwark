@@ -1,5 +1,5 @@
 -- liquibase formatted sql
--- changeset 01szak:camper_place_demo
+-- changeset 01szak:camper_place_demo context:dev
 
 INSERT INTO camper_place (id, number, type, price, created_at, updated_at)
 VALUES
