@@ -20,6 +20,8 @@ import static CPSF.com.demo.exception.ClientInputException.checkClientInput;
 @NoArgsConstructor
 public class GuestService extends CRUDServiceImpl<Guest> {
 
+    private static final String BY_FULL_NAME = "fullName";
+
     @Autowired
     private GuestRepository guestRepository;
 
@@ -38,7 +40,7 @@ public class GuestService extends CRUDServiceImpl<Guest> {
 
     @Override
     public Page<Guest> findBy(Pageable pageable, String by, String value) {
-            if ("fullName".equals(by)) {
+            if (BY_FULL_NAME.equals(by)) {
                 return guestRepository.findAllByFullName(pageable, value);
             }
             return super.findBy(pageable, by, value);
@@ -49,7 +51,7 @@ public class GuestService extends CRUDServiceImpl<Guest> {
             return create(guestDTO);
         }
 
-        Guest guest = findById(guestDTO.id());
+        var guest = findById(guestDTO.id());
 
         guest.setFirstname(guestDTO.firstName());
         guest.setLastname(guestDTO.lastName());
@@ -72,6 +74,7 @@ public class GuestService extends CRUDServiceImpl<Guest> {
                 guestDTO.email(),
                 guestDTO.carRegistration()
         ).allMatch(v -> v == null || v.isBlank());
+
         if (guestIsEmpty) {
             throw new ClientInputException("Utwórz lub podaj istniejącego gościa");
         }

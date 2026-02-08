@@ -18,7 +18,12 @@ public class UserService extends CRUDServiceImpl<User> implements UserDetailsSer
 
     @Override
     public UserDetails loadUserByUsername(String login) throws UsernameNotFoundException {
-        return userRepository.getUsersByLogin(login).get(0);
+        var user =  userRepository.getUsersByLogin(login);
+
+        if (user.isEmpty()) {
+            throw new UsernameNotFoundException("Użytkownik z podanymi danymi nie istnieje");
+        }
+        return user.get(0);
     }
 
 }

@@ -25,6 +25,9 @@ import static CPSF.com.demo.model.entity.Reservation.ReservationStatus.ACTIVE;
 @NoArgsConstructor
 public class ReservationService extends CRUDServiceImpl<Reservation> {
 
+    private static final String BY_CP_INDEX = "camperPlaceIndex";
+    private static final String BY_GUEST_FULL_NAME = "stringUser";
+
     @Autowired
     private ReservationRepository reservationRepository;
 
@@ -97,28 +100,22 @@ public class ReservationService extends CRUDServiceImpl<Reservation> {
         r.setGuest(guest);
         r.setPaid(reservationDto.paid());
 
-
         super.update(r);
     }
 
-    private void validateDates(LocalDate checkout, LocalDate checkin, CamperPlace camperPlace, Integer reservationId) {
-        checkClientInput(checkout.isBefore(checkin), "Data wyjazdu nie może być przed datą wjazdu");
-        checkClientInput(camperPlaceService.isCamperPlaceOccupied(camperPlace, checkin, checkout, reservationId),
-                "Parcela jest już zajęta!");
-    }
-
-    private void validateDates(LocalDate checkout, LocalDate checkin, CamperPlace camperPlace) {
-        validateDates(checkout, checkin, camperPlace, null);
-    }
-
-    public Page<Reservation_DTO> findDTOBy(Pageable pageable, String fieldName, String value)
-            throws InstantiationException, IllegalAccessException, NoSuchFieldException {
-        if (fieldName.equals("camperPlaceIndex")) {
-            return reservationRepository.findAllByCamperPlace_Index(pageable, value).map(DtoMapper::getReservationDto);
-        } else if (fieldName.equals("stringUser")) {
-            return reservationRepository.findAllByUserFullName(pageable, value).map(DtoMapper::getReservationDto);
+    @Override
+    public Page<Reservation> findBy(Pageable pageable, String fieldName, String value) {
+        switch (fieldName) {
+            case BY_CP_INDEX -> {
+                return reservationRepository.findAllByCamperPlace_Index(pageable, value);
+            }
+            case BY_GUEST_FULL_NAME -> {
+                return reservationRepository.findAllByUserFullName(pageable, value);
+            }
+            default -> {
+                return super.findBy(pageable, fieldName, value);
+            }
         }
-        return super.findBy(pageable, fieldName, value).map(DtoMapper::getReservationDto);
     }
 
     public List<Reservation> findByCamperPlaceIdIfPaid(int id) {
@@ -152,6 +149,16 @@ public class ReservationService extends CRUDServiceImpl<Reservation> {
     private boolean isActive(LocalDate checkin, LocalDate checkout) {
         LocalDate currentDate = LocalDate.now();
         return checkin.isBefore(currentDate.plusDays(1)) && checkout.isAfter(currentDate.minusDays(1));
+    }
+
+    private void validateDates(LocalDate checkout, LocalDate checkin, CamperPlace camperPlace, Integer reservationId) {
+        checkClientInput(checkout.isBefore(checkin), "Data wyjazdu nie może być przed datą wjazdu");
+        checkClientInput(camperPlaceService.isCamperPlaceOccupied(camperPlace, checkin, checkout, reservationId),
+                "Parcela jest już zajęta!");
+    }
+
+    private void validateDates(LocalDate checkout, LocalDate checkin, CamperPlace camperPlace) {
+        validateDates(checkout, checkin, camperPlace, null);
     }
 
 }
