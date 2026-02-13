@@ -6,6 +6,7 @@
 
 ALTER TABLE users MODIFY email VARCHAR(150) NULL;
 UPDATE users SET email = NULL WHERE email = '';
+-- Intentional one-way cleanup: nullify invalid emails from pre-validation era
 UPDATE users SET email = NULL WHERE email NOT LIKE '%@%';
 
 

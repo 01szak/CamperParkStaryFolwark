@@ -80,8 +80,8 @@ public class DtoMapper {
     public static Guest getGuest(@Valid GuestDTO guestDTO) {
         return Guest.builder()
                 .id(guestDTO.id())
-                .firstname(guestDTO.firstName())
-                .lastname(guestDTO.lastName())
+                .firstname(guestDTO.firstname())
+                .lastname(guestDTO.lastname())
                 .email(guestDTO.email())
                 .carRegistration(guestDTO.carRegistration())
                 .phoneNumber(guestDTO.phoneNumber())

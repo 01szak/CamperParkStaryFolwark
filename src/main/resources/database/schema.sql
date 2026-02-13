@@ -1,5 +1,5 @@
 -- liquibase formatted sql
--- changeset schema:1
+-- changeset 01szak:schema
 CREATE TABLE IF NOT EXISTS app_user (
     id BIGINT AUTO_INCREMENT PRIMARY KEY,
 

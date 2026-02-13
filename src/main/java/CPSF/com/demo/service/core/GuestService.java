@@ -9,12 +9,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Date;
 import java.util.stream.Stream;
-
-import static CPSF.com.demo.exception.ClientInputException.checkClientInput;
 
 @Service
 @NoArgsConstructor
@@ -29,8 +25,8 @@ public class GuestService extends CRUDServiceImpl<Guest> {
         checkIsEmpty(guestDTO);
 
         return super.create(Guest.builder()
-                .firstname(guestDTO.firstName())
-                .lastname(guestDTO.lastName())
+                .firstname(guestDTO.firstname())
+                .lastname(guestDTO.lastname())
                 .email(mapBlankToNull(guestDTO.email()))
                 .carRegistration(guestDTO.carRegistration())
                 .phoneNumber(guestDTO.phoneNumber())
@@ -53,8 +49,8 @@ public class GuestService extends CRUDServiceImpl<Guest> {
 
         var guest = findById(guestDTO.id());
 
-        guest.setFirstname(guestDTO.firstName());
-        guest.setLastname(guestDTO.lastName());
+        guest.setFirstname(guestDTO.firstname());
+        guest.setLastname(guestDTO.lastname());
         guest.setEmail(mapBlankToNull(guestDTO.email()));
         guest.setPhoneNumber(guestDTO.phoneNumber());
         guest.setCarRegistration(guestDTO.carRegistration());
@@ -68,8 +64,8 @@ public class GuestService extends CRUDServiceImpl<Guest> {
 
     private void checkIsEmpty(GuestDTO guestDTO) {
         var guestIsEmpty = Stream.of(
-                guestDTO.firstName(),
-                guestDTO.lastName(),
+                guestDTO.firstname(),
+                guestDTO.lastname(),
                 guestDTO.phoneNumber(),
                 guestDTO.email(),
                 guestDTO.carRegistration()
