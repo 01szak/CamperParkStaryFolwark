@@ -65,13 +65,6 @@ public class SecurityConfig {
     }
 
     @Bean
-    public AuthenticationProvider authenticationProvider() {
-        var authenticationProvider = new DaoAuthenticationProvider(userService);
-        authenticationProvider.setPasswordEncoder(passwordEncoder());
-        return authenticationProvider;
-    }
-
-    @Bean
     JwtDecoder decoder() {
         return NimbusJwtDecoder.withPublicKey(this.rsaConfig.publicKey()).build();
     }
