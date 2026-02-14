@@ -14,20 +14,6 @@ public class DtoMapper {
 
     public static final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd.MM.yyyy");
 
-//    public static Record mapToDto(DbObject dbObject) {
-//        if (dbObject instanceof Guest g) {
-//            return getGuestDTO(g);
-//        } else if (dbObject instanceof Reservation r) {
-//            return getReservationDto(r);
-//        } else if (dbObject instanceof CamperPlace c) {
-//            return getCamperPlaceDto(c);
-//        } else if (dbObject instanceof User u) {
-//            return getUserDTO(u);
-//        } else  {
-//            throw new WrongClassException("No mapper for this class!", dbObject.getClass(), dbObject.toString());
-//        }
-//    }
-
     public static UserDTO getUserDTO(User u) {
         return new UserDTO(
                 u.getUsername(),
@@ -49,8 +35,8 @@ public class DtoMapper {
     public static Reservation_DTO getReservationDto(Reservation r) {
         return new Reservation_DTO(
                 r.getId(),
-                r.getCheckin().toString(),
-                r.getCheckout().toString(),
+                formatter.format(r.getCheckin()),
+                formatter.format(r.getCheckout()),
                 getGuestDTO(r.getGuest()),
                 r.getCamperPlace().getIndex(),
                 r.getPaid(),
