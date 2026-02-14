@@ -1,60 +1,59 @@
 package CPSF.com.demo.controller;
 
-import CPSF.com.demo.DTO.PaidReservationsDTO;
-import CPSF.com.demo.DTO.ReservationDTO;
-import CPSF.com.demo.DTO.ReservationMetadataDTO;
-import CPSF.com.demo.repository.ReservationRepository;
-import CPSF.com.demo.request.ReservationRequest;
-import CPSF.com.demo.util.ReservationMetadataMapper;
-import CPSF.com.demo.service.implementation.ReservationServiceImpl;
-import lombok.RequiredArgsConstructor;
+import CPSF.com.demo.model.dto.PaidReservationsDTO;
+import CPSF.com.demo.model.dto.ReservationMetadataDTO;
+import CPSF.com.demo.model.dto.Reservation_DTO;
+import CPSF.com.demo.service.util.DtoMapper;
+import CPSF.com.demo.service.util.ReservationMetadataMapper;
+import CPSF.com.demo.service.core.ReservationService;
+import jakarta.validation.Valid;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.Map;
 
-@Transactional
 @RestController
-@RequestMapping("/reservations")
-@RequiredArgsConstructor
+@RequestMapping("/reservation")
 public class ReservationController {
 
-    private final ReservationMetadataMapper reservationMetadataMapper;
-    private final ReservationServiceImpl reservationService;
-    private final ReservationRepository repository;
+    @Autowired
+    private ReservationMetadataMapper reservationMetadataMapper;
+
+    @Autowired
+    private ReservationService reservationService;
 
     @PostMapping
-    public ResponseEntity<?> createReservation(@RequestBody ReservationRequest request) {
-        reservationService.create(request.checkin(), request.checkout(), request.camperPlaceIndex(), request.user());
+    public ResponseEntity<Map<String, String>> create(@RequestBody @Valid Reservation_DTO reservationDto) {
+        reservationService.create(reservationDto);
         return ResponseEntity.status(HttpStatus.CREATED).body(Map.of("success","Rezeracja została dodana"));
     }
 
-    @PatchMapping("/{id}")
-    public ResponseEntity<?> updateReservation(@PathVariable int id, @RequestBody ReservationRequest request) {
-        reservationService.update(id, request);
-        return ResponseEntity.status(HttpStatus.CREATED).body(Map.of("success","Rezeracja została zmieniona"));
+    @PatchMapping
+    public ResponseEntity<Map<String, String>> update(@RequestBody @Valid Reservation_DTO reservationDto) {
+        reservationService.update(reservationDto);
+        return ResponseEntity.status(HttpStatus.OK).body(Map.of("success","Rezeracja została zmieniona"));
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<?> deleteReservation(@PathVariable int id) {
+    public ResponseEntity<?> delete(@PathVariable int id) {
         reservationService.delete(id);
         return ResponseEntity.status(HttpStatus.OK).body(Map.of("success","Rezeracja została usunięta"));
     }
 
+//        TODO to refactor
     @GetMapping
-    public Page<ReservationDTO> findAll(Pageable pageable,
+    public Page<Reservation_DTO> findAll(Pageable pageable,
                                         @RequestParam(required = false) String by,
-                                        @RequestParam(required = false) String value)
-            throws NoSuchFieldException, InstantiationException, IllegalAccessException {
+                                        @RequestParam(required = false) String value) {
         if (by != null && value != null) {
-            return reservationService.findDTOBy(pageable, by, value);
+            return reservationService.findBy(pageable, by, value).map(DtoMapper::getReservationDto);
         }
-        return reservationService.findAllDTO(pageable);
+        return reservationService.findAll(pageable).map(DtoMapper::getReservationDto);
     }
 
     @GetMapping({"/getReservationMetadata"})

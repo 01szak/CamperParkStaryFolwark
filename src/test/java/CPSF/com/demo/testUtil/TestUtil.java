@@ -1,7 +1,7 @@
 package CPSF.com.demo.testUtil;
 
-import CPSF.com.demo.entity.CamperPlace;
-import CPSF.com.demo.entity.Reservation;
+import CPSF.com.demo.model.entity.CamperPlace;
+import CPSF.com.demo.model.entity.Reservation;
 
 import java.time.LocalDate;
 import java.util.ArrayList;

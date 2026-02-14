@@ -1,6 +1,6 @@
 package CPSF.com.demo.reservationCalculatorTest;
 
-import CPSF.com.demo.util.ReservationCalculator;
+import CPSF.com.demo.service.util.ReservationCalculator;
 import org.junit.jupiter.api.Test;
 
 import java.math.BigDecimal;

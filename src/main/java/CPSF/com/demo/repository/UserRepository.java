@@ -1,24 +1,12 @@
 package CPSF.com.demo.repository;
 
-import CPSF.com.demo.entity.User;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.jpa.repository.Query;
-import org.springframework.stereotype.Repository;
+import CPSF.com.demo.model.entity.User;
 
+import java.util.List;
 import java.util.Optional;
 
-
-@Repository
 public interface UserRepository extends CRUDRepository<User> {
 
-    Optional<User> findByEmail(String email);
+    Optional<User> findByLogin(String login);
 
-    @Query("""
-       SELECT u 
-       FROM User u 
-       WHERE CONCAT(u.firstName, ' ', u.lastName) 
-             LIKE %:fullName%
-       """)
-    Page<User> findAllByFullName(Pageable pageable, String fullName);
 }

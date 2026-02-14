@@ -1,7 +1,7 @@
 package CPSF.com.demo.repository;
 
-import CPSF.com.demo.entity.Reservation;
-import CPSF.com.demo.enums.ReservationStatus;
+import CPSF.com.demo.model.entity.Reservation;
+import CPSF.com.demo.model.entity.Reservation.ReservationStatus;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.Query;
@@ -20,7 +20,7 @@ public interface ReservationRepository extends CRUDRepository<Reservation> {
 
         @Query("""
 
-                SELECT r FROM Reservation r WHERE CONCAT(r.user.firstName, ' ', r.user.lastName) LIKE %:fullName%
+                SELECT r FROM Reservation r WHERE CONCAT(r.guest.firstname, ' ', r.guest.lastname) LIKE %:fullName%
        """)
         Page<Reservation> findAllByUserFullName(Pageable pageable ,@Param("fullName") String fullName);
 

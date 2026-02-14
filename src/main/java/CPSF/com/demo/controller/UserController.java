@@ -1,65 +1,33 @@
 package CPSF.com.demo.controller;
 
-import CPSF.com.demo.DTO.UserDTO;
-import CPSF.com.demo.request.UserRequest;
-import CPSF.com.demo.service.implementation.UserServiceImpl;
+import CPSF.com.demo.model.dto.UserDTO;
+import CPSF.com.demo.service.core.UserService;
+import CPSF.com.demo.service.util.DtoMapper;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
-
-import java.util.Map;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.oauth2.jwt.Jwt;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("/users")
+@RequestMapping("/user")
 public class UserController {
 
-    private final UserServiceImpl userService;
-
     @Autowired
-    public UserController(UserServiceImpl theUserService) {
-        userService = theUserService;
-    }
-
+    private UserService userService;
 
     @GetMapping
-    public Page<UserDTO> findAll(Pageable pageable,
-                                 @RequestParam(required = false) String by,
-                                 @RequestParam(required = false) String value)
-            throws NoSuchFieldException, InstantiationException, IllegalAccessException {
-        if (by != null && value != null) {
-            return userService.findDTOBy(pageable, by, value);
-        }
-        return userService.findAllDTO(pageable);
-    }
+    public UserDTO getEmployee() {
+            var a = SecurityContextHolder.getContext().getAuthentication();
+            var jwt = (Jwt) a.getPrincipal();
+            var username = jwt.getClaimAsString("sub");
 
-    @PatchMapping("/{id}")
-    public ResponseEntity<Map<String, String>> update(@PathVariable int id, @RequestBody UserRequest request){
-        userService.update(id,request);
-        return ResponseEntity.status(HttpStatus.CREATED).body(Map.of("success","Gość został zmieniony"));
-    }
-
-    @PostMapping
-    public ResponseEntity<Map<String, String>> create(@RequestBody UserRequest request) {
-        userService.create(request);
-        return ResponseEntity.status(HttpStatus.CREATED).body(Map.of("success","Gość został utworzony"));
-    }
-
-    @GetMapping("/{id}")
-    public UserDTO getUserById(@PathVariable int id){
-        return userService.findDTOById(id);
-    }
-
-    @DeleteMapping("/{id}")
-    public ResponseEntity<Map<String, String>> deleteUser(@PathVariable int id){
-         userService.delete(id);
-        return ResponseEntity.status(HttpStatus.CREATED).body(Map.of("success","Gość został usunięty"));
+            return userService.findBy("login", username)
+                    .map(DtoMapper::getUserDTO)
+                    .stream()
+                    .toList()
+                    .get(0);
     }
 }
-
-
-
-
-

@@ -1,5 +1,5 @@
 package CPSF.com.demo;
-import CPSF.com.demo.A_security.config.RsaConfig;
+import CPSF.com.demo.configuration.RsaConfig;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;

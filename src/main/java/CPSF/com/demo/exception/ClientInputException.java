@@ -13,5 +13,11 @@ public class ClientInputException extends RuntimeException {
     public String getMessage() {
         return super.getMessage();
     }
+
+    public static void checkClientInput(boolean condition, String errorMessage) {
+        if (condition) {
+            throw new ClientInputException(errorMessage);
+        }
+    }
 }
 
