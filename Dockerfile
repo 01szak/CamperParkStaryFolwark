@@ -1,4 +1,6 @@
 FROM eclipse-temurin:25-jdk
+ARG SPRING_PROFILE
+ENV SPRING_PROFILES_ACTIVE=${SPRING_PROFILE}
 
 RUN mkdir -p /var/log/camperparkstaryfolwark && \
     chmod -R 755 /var/log/camperparkstaryfolwark
