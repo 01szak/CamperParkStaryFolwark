@@ -1,4 +1,4 @@
-FROM openjdk:17-jdk-alpine
+FROM eclipse-temurin:25-jdk
 
 RUN mkdir -p /var/log/camperparkstaryfolwark && \
     chmod -R 755 /var/log/camperparkstaryfolwark
