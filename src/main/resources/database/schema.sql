@@ -12,7 +12,7 @@ CREATE TABLE IF NOT EXISTS app_user (
     created_at DATETIME,
     updated_at DATETIME,
 
-    CONSTRAINT  unique_email UNIQUE (email),
+    CONSTRAINT  unique_app_user_email UNIQUE (email),
 
     UNIQUE KEY ux_employees_login (login)
     ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
@@ -29,7 +29,7 @@ CREATE TABLE IF NOT EXISTS guest (
     created_at DATETIME,
     updated_at DATETIME,
 
-    CONSTRAINT  unique_email UNIQUE (email)
+    CONSTRAINT  unique_guest_email UNIQUE (email)
     ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 CREATE TABLE IF NOT EXISTS camper_place (
