@@ -27,7 +27,7 @@ public class CamperPlaceController {
 
     @GetMapping
     public List<CamperPlace_DTO> getCamperPlaces() {
-        return camperPlaceService.findAll().map(DtoMapper::getCamperPlaceDto).stream().toList();
+        return camperPlaceService.findAllOrderByIndex().stream().map(DtoMapper::getCamperPlaceDto).toList();
     }
 
     @PatchMapping

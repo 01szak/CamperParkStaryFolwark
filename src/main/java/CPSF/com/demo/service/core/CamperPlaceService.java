@@ -35,6 +35,10 @@ public class CamperPlaceService extends CRUDServiceImpl<CamperPlace> {
         );
     }
 
+    public List<CamperPlace> findAllOrderByIndex() {
+        return camperPlaceRepository.findAllOrderByIndex();
+    }
+
     public boolean isCamperPlaceOccupied(CamperPlace camperPlace, LocalDate checkin, LocalDate checkout, Integer reservationIdToExclude) {
         var reservations = Optional.ofNullable(reservationIdToExclude)
                 .map(id -> camperPlace.getReservations().stream()
