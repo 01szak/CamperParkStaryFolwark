@@ -4,7 +4,6 @@ import CPSF.com.demo.exception.ClientInputException;
 import CPSF.com.demo.model.dto.GuestDTO;
 import CPSF.com.demo.model.entity.Guest;
 import CPSF.com.demo.repository.GuestRepository;
-import lombok.NoArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -13,7 +12,6 @@ import org.springframework.stereotype.Service;
 import java.util.stream.Stream;
 
 @Service
-@NoArgsConstructor
 public class GuestService extends CRUDServiceImpl<Guest> {
 
     private static final String BY_FULL_NAME = "fullName";

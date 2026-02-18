@@ -23,19 +23,13 @@ import java.util.List;
 @NoArgsConstructor
 public class CamperPlace extends DbObject {
 
-    public enum CamperPlaceType {
-        STANDARD,
-        VIP,
-        PLUS,
-    }
-
     @Column(name = "number")
     @NotNull
     private String index;
 
-    @Enumerated(EnumType.STRING)
-    @Column(name = "type")
     @NotNull
+    @ManyToOne
+    @JoinColumn(name = "type_name")
     private CamperPlaceType camperPlaceType;
 
     @Positive

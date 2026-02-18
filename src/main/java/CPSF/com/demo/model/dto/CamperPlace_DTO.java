@@ -11,7 +11,7 @@ import java.util.List;
 public record CamperPlace_DTO(
         @NotNull int id,
         @NotBlank String index,
-        @NotBlank String type,
+        @NotBlank CamperPlaceTypeDTO type,
         @NotNull @Positive BigDecimal price,
         @Nullable List<Reservation_DTO> reservations
 ) {}

@@ -2,6 +2,7 @@ package CPSF.com.demo.service.util;
 
 import CPSF.com.demo.model.dto.*;
 import CPSF.com.demo.model.entity.CamperPlace;
+import CPSF.com.demo.model.entity.CamperPlaceType;
 import CPSF.com.demo.model.entity.Guest;
 import CPSF.com.demo.model.entity.Reservation;
 import CPSF.com.demo.model.entity.User;
@@ -26,7 +27,7 @@ public class DtoMapper {
         return new CamperPlace_DTO(
                 c.getId(),
                 c.getIndex(),
-                c.getCamperPlaceType().toString(),
+                getCamperPlaceTypeDTO(c.getCamperPlaceType()),
                 c.getPrice(),
                 c.getReservations().stream().map(DtoMapper::getReservationDto).toList()
         );
@@ -52,6 +53,14 @@ public class DtoMapper {
                 g.getEmail(),
                 g.getPhoneNumber(),
                 g.getCarRegistration()
+        );
+    }
+
+    public static CamperPlaceTypeDTO getCamperPlaceTypeDTO(CamperPlaceType cpt) {
+        return new CamperPlaceTypeDTO(
+            cpt.getId(),
+            cpt.getTypeName(),
+            cpt.getPrice()
         );
     }
 
