@@ -1,8 +1,8 @@
 -- liquibase formatted sql
 -- changeset 01szak:reservation_mig
-
+-- validCheckSum: ANY
 -- preconditions onFail:MARK_RAN
--- precondition-sql-check expectedResult:0 SELECT COUNT(*) FROM reservation
+-- precondition-sql-check expectedResult:1 SELECT COUNT(*) FROM information_schema.tables WHERE table_schema = DATABASE() AND table_name = 'reservations'
 
 INSERT INTO reservation (
     id, checkin, checkout, camper_place_id, guest_id,
