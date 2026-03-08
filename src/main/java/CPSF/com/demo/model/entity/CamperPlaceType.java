@@ -15,10 +15,10 @@ import java.math.BigDecimal;
 import java.util.List;
 
 @Entity
-@SuperBuilder
 @Getter
 @Setter
 @Table(name = "camper_place_type")
+@SuperBuilder
 @NoArgsConstructor
 public class CamperPlaceType extends DbObject{
 
@@ -31,12 +31,18 @@ public class CamperPlaceType extends DbObject{
     @Column(name = "price")
     private BigDecimal price;
 
-    @OneToMany
-    @Column(name = "camper_place_id")
+    @OneToMany(mappedBy = "camperPlaceType")
     List<CamperPlace> camperPlaces;
 
     public CamperPlaceType(String typeName, BigDecimal price) {
         this.typeName = typeName;
         this.price = price;
     }
+
+    public void setPrice(BigDecimal price) {
+        this.price = price;
+        var camperPlaces = getCamperPlaces();
+        camperPlaces.forEach(cp -> cp.setPrice(price));
+    }
+
 }

@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
+import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -21,6 +22,7 @@ import java.util.List;
 @SuperBuilder
 @EqualsAndHashCode(callSuper = true)
 @NoArgsConstructor
+@AllArgsConstructor
 public class CamperPlace extends DbObject {
 
     @Column(name = "number")
@@ -29,7 +31,7 @@ public class CamperPlace extends DbObject {
 
     @NotNull
     @ManyToOne
-    @JoinColumn(name = "type_name")
+    @JoinColumn(name = "camper_place_type_id", nullable = false)
     private CamperPlaceType camperPlaceType;
 
     @Positive
