@@ -4,7 +4,7 @@ import CPSF.com.demo.model.dto.CamperPlaceTypeDTO;
 import CPSF.com.demo.service.core.CamperPlaceTypeService;
 import CPSF.com.demo.service.util.DtoMapper;
 import jakarta.validation.Valid;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -18,10 +18,10 @@ import java.util.Map;
 
 @RestController
 @RequestMapping("/camperPlaceType")
+@RequiredArgsConstructor
 public class CamperPlaceTypeController {
 
-    @Autowired
-    private CamperPlaceTypeService camperPlaceTypeService;
+    private final CamperPlaceTypeService camperPlaceTypeService;
 
     @GetMapping
     public List<CamperPlaceTypeDTO> getTypes() {

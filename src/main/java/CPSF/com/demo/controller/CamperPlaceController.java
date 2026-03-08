@@ -1,29 +1,23 @@
     package CPSF.com.demo.controller;
 
 import CPSF.com.demo.model.dto.CamperPlace_DTO;
-import CPSF.com.demo.model.entity.CamperPlace;
 import CPSF.com.demo.service.core.CamperPlaceService;
-import CPSF.com.demo.service.core.CamperPlaceTypeService;
 import CPSF.com.demo.service.util.DtoMapper;
 import jakarta.validation.Valid;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
 @RestController
 @RequestMapping("/camperPlace")
+@RequiredArgsConstructor
 public class CamperPlaceController {
 
-    @Autowired
-    private CamperPlaceService camperPlaceService;
-
-    @Autowired
-    private CamperPlaceTypeService camperPlaceTypeService;
+    private final CamperPlaceService camperPlaceService;
 
     @GetMapping
     public List<CamperPlace_DTO> getCamperPlaces() {
@@ -31,22 +25,8 @@ public class CamperPlaceController {
     }
 
     @PatchMapping
-    public ResponseEntity<Map<String, String>> update(@RequestBody @Valid List<CamperPlace_DTO> camperPlaceDto) {
-        if (camperPlaceDto.stream().anyMatch(c -> c.type().id() == null)) {
-            throw new IllegalArgumentException("Invalid type");
-        }
-
-        var cp = new ArrayList<CamperPlace>();
-
-        camperPlaceDto.forEach(dto -> {
-            var c = camperPlaceService.findById(dto.id());
-            c.setCamperPlaceType(camperPlaceTypeService.findById(dto.type().id()));
-            c.setIndex(dto.index());
-            c.setPrice(dto.price());
-            cp.add(c);
-        });
-
-        camperPlaceService.update(cp);
+    public ResponseEntity<Map<String, String>> update(@RequestBody @Valid List<CamperPlace_DTO> camperPlaceDtos) {
+        camperPlaceService.updateCamperPlaces(camperPlaceDtos);
 
         return ResponseEntity.status(HttpStatus.OK).body(Map.of("success","Parcele zostały zmienione"));
     }

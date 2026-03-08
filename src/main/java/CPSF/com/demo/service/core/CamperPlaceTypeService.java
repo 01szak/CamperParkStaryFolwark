@@ -1,23 +1,25 @@
 package CPSF.com.demo.service.core;
 
 import CPSF.com.demo.model.dto.CamperPlaceTypeDTO;
-import CPSF.com.demo.model.entity.CamperPlace;
 import CPSF.com.demo.model.entity.CamperPlaceType;
-import org.springframework.beans.factory.annotation.Autowired;
+import CPSF.com.demo.repository.CRUDRepository;
+import CPSF.com.demo.repository.CamperPlaceTypeRepository;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
 
 @Service
+@RequiredArgsConstructor
 public class CamperPlaceTypeService extends CRUDServiceImpl<CamperPlaceType>{
 
-    @Autowired
-    private CamperPlaceService camperPlaceService;
+    private final CamperPlaceTypeRepository camperPlaceTypeRepository;
 
+    @Transactional
     public List<CamperPlaceType> createOrUpdate(List<CamperPlaceTypeDTO> camperPlaceTypeDTOs) {
         var cpTypesToUpdate = new ArrayList<CamperPlaceType>();
-        var cpsToUpdate = new ArrayList<CamperPlace>();
 
         for (var dto : camperPlaceTypeDTOs) {
             if (dto.id() == null) {
@@ -25,17 +27,11 @@ public class CamperPlaceTypeService extends CRUDServiceImpl<CamperPlaceType>{
             }
 
             var cpType = findById(dto.id());
-            var cpToModify = cpType.getCamperPlaces();
 
             cpType.setTypeName(dto.typeName());
             cpType.setPrice(dto.price());
             cpTypesToUpdate.add(cpType);
-
-            cpToModify.forEach(cp -> cp.setPrice(cpType.getPrice()));
-            cpsToUpdate.addAll(cpToModify);
         }
-
-        camperPlaceService.update(cpsToUpdate);
 
         return super.update(cpTypesToUpdate);
     }
@@ -44,4 +40,8 @@ public class CamperPlaceTypeService extends CRUDServiceImpl<CamperPlaceType>{
         return super.create(new CamperPlaceType(camperPlaceTypeDTO.typeName(), camperPlaceTypeDTO.price()));
     }
 
+    @Override
+    protected CRUDRepository<CamperPlaceType> getRepository() {
+        return camperPlaceTypeRepository;
+    }
 }

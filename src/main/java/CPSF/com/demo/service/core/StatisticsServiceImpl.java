@@ -17,11 +17,9 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class StatisticsServiceImpl implements StatisticsService {
 
-    @Autowired
-    private ReservationService reservationService;
+    private final ReservationService reservationService;
 
-    @Autowired
-    private CamperPlaceService camperPlaceService;
+    private final CamperPlaceService camperPlaceService;
 
     private ReservationCalculator reservationCalculator;
 

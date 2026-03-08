@@ -5,12 +5,11 @@ import CPSF.com.demo.model.dto.Reservation_DTO;
 import CPSF.com.demo.model.entity.CamperPlace;
 import CPSF.com.demo.model.entity.Guest;
 import CPSF.com.demo.model.entity.Reservation;
-import CPSF.com.demo.service.util.DtoMapper;
+import CPSF.com.demo.repository.CRUDRepository;
 import CPSF.com.demo.service.util.ReservationCalculator;
 import CPSF.com.demo.service.util.ReservationMetadataMapper;
 import CPSF.com.demo.repository.ReservationRepository;
-import lombok.NoArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -22,25 +21,18 @@ import static CPSF.com.demo.exception.ClientInputException.checkClientInput;
 import static CPSF.com.demo.model.entity.Reservation.ReservationStatus.ACTIVE;
 
 @Service
-@NoArgsConstructor
+@RequiredArgsConstructor
 public class ReservationService extends CRUDServiceImpl<Reservation> {
 
     private static final String BY_CP_INDEX = "camperPlaceIndex";
     private static final String BY_GUEST_FULL_NAME = "stringUser";
 
-    @Autowired
-    private ReservationRepository reservationRepository;
+    private final ReservationRepository reservationRepository;
+    private final GuestService guestService;
+    private final CamperPlaceService camperPlaceService;
+    private final ReservationMetadataMapper reservationMetadataMapper;
+    private final ReservationCalculator calculator;
 
-    @Autowired
-    private GuestService guestService;
-
-    @Autowired
-    private CamperPlaceService camperPlaceService;
-
-    @Autowired
-    private ReservationMetadataMapper reservationMetadataMapper;
-
-    private static final ReservationCalculator calculator = new ReservationCalculator();
 
     public void create(Reservation_DTO reservationDto) {
         var camperPlace = camperPlaceService.findBy("index", reservationDto.camperPlaceIndex()).toList().get(0);
@@ -153,12 +145,17 @@ public class ReservationService extends CRUDServiceImpl<Reservation> {
 
     private void validateDates(LocalDate checkout, LocalDate checkin, CamperPlace camperPlace, Integer reservationId) {
         checkClientInput(checkout.isBefore(checkin), "Data wyjazdu nie może być przed datą wjazdu");
-        checkClientInput(camperPlaceService.isCamperPlaceOccupied(camperPlace, checkin, checkout, reservationId),
+        checkClientInput(camperPlaceService.isOccupied(camperPlace, checkin, checkout, reservationId),
                 "Parcela jest już zajęta!");
     }
 
     private void validateDates(LocalDate checkout, LocalDate checkin, CamperPlace camperPlace) {
         validateDates(checkout, checkin, camperPlace, null);
+    }
+
+    @Override
+    protected CRUDRepository<Reservation> getRepository() {
+        return reservationRepository;
     }
 
 }

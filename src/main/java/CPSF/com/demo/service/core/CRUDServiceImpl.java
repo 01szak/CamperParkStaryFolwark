@@ -3,7 +3,6 @@ package CPSF.com.demo.service.core;
 import CPSF.com.demo.model.entity.DbObject;
 import CPSF.com.demo.repository.CRUDRepository;
 import CPSF.com.demo.exception.ClientInputException;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Example;
 import org.springframework.data.domain.ExampleMatcher;
 import org.springframework.data.domain.Page;
@@ -24,16 +23,13 @@ import java.util.List;
 @Service
 public abstract class CRUDServiceImpl<T extends DbObject> implements CRUDService<T> {
 
-    @Autowired
-    private CRUDRepository<T> repository;
-
-    private final Sort UPDATED_AT_DESC = Sort.by(
+    private static final Sort UPDATED_AT_DESC = Sort.by(
             Sort.Direction.DESC,"updatedAt"
     );
 
     @Override
     public T create(T t){
-        return repository.save(t);
+        return getRepository().save(t);
     }
 
     @Override
@@ -43,7 +39,7 @@ public abstract class CRUDServiceImpl<T extends DbObject> implements CRUDService
         if (sort.isEmpty()) {
             pageable = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(), UPDATED_AT_DESC);
         }
-        return repository.findAll(pageable);
+        return getRepository().findAll(pageable);
     }
 
     @Override
@@ -54,22 +50,22 @@ public abstract class CRUDServiceImpl<T extends DbObject> implements CRUDService
 
     @Override
     public T findById(int id){
-        return repository.findById(id).orElseThrow();
+        return getRepository().findById(id).orElseThrow();
     }
 
     @Override
     public T update(T t){
-        return repository.save(t);
+        return getRepository().save(t);
     }
 
     @Override
     public List<T> update(List<T> t){
-        return repository.saveAll(t);
+        return getRepository().saveAll(t);
     }
 
     @Override
     public void delete(int id){
-        repository.deleteById(id);
+        getRepository().deleteById(id);
     }
 
     public Page<T> findBy(String fieldName, String value) {
@@ -117,7 +113,7 @@ public abstract class CRUDServiceImpl<T extends DbObject> implements CRUDService
             //find by this example
             var example = Example.of(t, matcher);
 
-            return repository.findAll(example, pageable);
+            return getRepository().findAll(example, pageable);
         } catch (IllegalAccessException e) {
             throw new RuntimeException(e);
         } catch (NoSuchFieldException e) {
@@ -141,6 +137,8 @@ public abstract class CRUDServiceImpl<T extends DbObject> implements CRUDService
                         .map(Field::getName)
                         .toArray(String[]::new));
     }
+
+    protected abstract CRUDRepository<T> getRepository();
 
     @SuppressWarnings("unchecked")
     private Class<T> getClassForDbObject() {
