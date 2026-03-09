@@ -40,7 +40,7 @@ CREATE TABLE IF NOT EXISTS guest (
 CREATE TABLE IF NOT EXISTS camper_place (
     id BIGINT AUTO_INCREMENT PRIMARY KEY,
     number VARCHAR(50) NOT NULL,
-    price DECIMAL(10,2) NOT NULL,
+    price DECIMAL(10,2) NULL,
     created_at DATETIME,
     updated_at DATETIME,
     CHECK (price > 0),

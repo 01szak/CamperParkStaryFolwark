@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
@@ -29,8 +30,11 @@ public class CamperPlaceTypeController {
     }
 
     @PatchMapping
-    public ResponseEntity<Map<String, String>> createOrUpdate(@RequestBody @Valid List<CamperPlaceTypeDTO> camperPlaceTypeDTOs) {
-        camperPlaceTypeService.createOrUpdate(camperPlaceTypeDTOs);
+    public ResponseEntity<Map<String, String>> createOrUpdate(
+            @RequestBody @Valid List<CamperPlaceTypeDTO> camperPlaceTypeDTOs,
+            @RequestParam List<Integer> cpIdToOverride
+    ) {
+        camperPlaceTypeService.createOrUpdate(camperPlaceTypeDTOs, cpIdToOverride);
         return ResponseEntity.status(HttpStatus.OK).body(Map.of("success","Typy parcel zostały dodane / zmienione"));
     }
 }

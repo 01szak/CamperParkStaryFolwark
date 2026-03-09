@@ -64,8 +64,18 @@ public abstract class CRUDServiceImpl<T extends DbObject> implements CRUDService
     }
 
     @Override
-    public void delete(int id){
+    public void deleteById(int id){
         getRepository().deleteById(id);
+    }
+
+    @Override
+    public void delete(T t){
+        getRepository().delete(t);
+    }
+
+    @Override
+    public void deleteAll(List<T> t){
+        getRepository().deleteAll(t);
     }
 
     public Page<T> findBy(String fieldName, String value) {
@@ -114,11 +124,11 @@ public abstract class CRUDServiceImpl<T extends DbObject> implements CRUDService
             var example = Example.of(t, matcher);
 
             return getRepository().findAll(example, pageable);
-        } catch (IllegalAccessException e) {
-            throw new RuntimeException(e);
-        } catch (NoSuchFieldException e) {
-            throw new RuntimeException(e);
-        } catch (InstantiationException e) {
+        } catch (
+                IllegalAccessException
+                | NoSuchFieldException
+                | InstantiationException e
+        ) {
             throw new RuntimeException(e);
         }
     }

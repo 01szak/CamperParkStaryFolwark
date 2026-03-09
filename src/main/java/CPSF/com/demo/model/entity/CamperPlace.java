@@ -1,6 +1,7 @@
 package CPSF.com.demo.model.entity;
 
 import com.fasterxml.jackson.annotation.JsonManagedReference;
+import jakarta.annotation.Nullable;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
@@ -13,6 +14,7 @@ import lombok.experimental.SuperBuilder;
 
 import java.math.BigDecimal;
 import java.util.List;
+import java.util.Optional;
 
 
 @Entity
@@ -34,8 +36,15 @@ public class CamperPlace extends DbObject {
     @JoinColumn(name = "camper_place_type_id", nullable = false)
     private CamperPlaceType camperPlaceType;
 
+    public void setCamperPlaceType(CamperPlaceType type) {
+        this.camperPlaceType = type;
+        if (type != null && !type.getCamperPlaces().contains(this)) {
+            type.getCamperPlaces().add(this);
+        }
+    }
+
     @Positive
-    @NotNull
+    @Nullable
     @Column(name = "price")
     private BigDecimal price;
 
@@ -48,4 +57,11 @@ public class CamperPlace extends DbObject {
     @JsonManagedReference("camperPlaceIndex-reservations")
     private List<Reservation> reservations;
 
+    public BigDecimal getPrice() {
+        return price == null ? camperPlaceType.getPrice() : price;
+    }
+
+    public Optional<BigDecimal> getOverriddenPrice() {
+        return Optional.ofNullable(price);
+    }
 }

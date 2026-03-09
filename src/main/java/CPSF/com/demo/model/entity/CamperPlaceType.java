@@ -4,14 +4,17 @@ import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
+import jakarta.persistence.FetchType;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.experimental.SuperBuilder;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -20,7 +23,7 @@ import java.util.List;
 @Table(name = "camper_place_type")
 @SuperBuilder
 @NoArgsConstructor
-public class CamperPlaceType extends DbObject{
+public class CamperPlaceType extends DbObject {
 
     @Column(name = "type_name")
     @NotNull
@@ -31,18 +34,14 @@ public class CamperPlaceType extends DbObject{
     @Column(name = "price")
     private BigDecimal price;
 
-    @OneToMany(mappedBy = "camperPlaceType")
-    List<CamperPlace> camperPlaces;
+    @OneToMany(mappedBy = "camperPlaceType", fetch = FetchType.LAZY)
+    @Builder.Default
+    private List<CamperPlace> camperPlaces = new ArrayList<>();
 
     public CamperPlaceType(String typeName, BigDecimal price) {
         this.typeName = typeName;
         this.price = price;
-    }
-
-    public void setPrice(BigDecimal price) {
-        this.price = price;
-        var camperPlaces = getCamperPlaces();
-        camperPlaces.forEach(cp -> cp.setPrice(price));
+        this.camperPlaces = new ArrayList<>();
     }
 
 }

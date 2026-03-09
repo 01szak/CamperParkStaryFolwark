@@ -39,7 +39,7 @@ public class ReservationController {
 
     @DeleteMapping("/{id}")
     public ResponseEntity<?> delete(@PathVariable int id) {
-        reservationService.delete(id);
+        reservationService.deleteById(id);
         return ResponseEntity.status(HttpStatus.OK).body(Map.of("success","Rezeracja została usunięta"));
     }
 

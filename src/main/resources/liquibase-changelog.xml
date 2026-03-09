@@ -11,6 +11,7 @@
 
     <include file="database/mig/19-02-26/camper_place_type_mig.sql" relativeToChangelogFile="true" context="prod"/>
     <include file="database/mig/19-02-26/camper_place-type_to_camper_place_type_id.mig.sql" relativeToChangelogFile="true" context="prod"/>
+    <include file="database/mig/08-03-26/price_nullable_mig.sql" relativeToChangelogFile="true" context="prod"/>
 
     <include file="database/demo/app_user.sql" relativeToChangelogFile="true" context="dev"/>
     <include file="database/demo/guest.sql" relativeToChangelogFile="true" context="dev"/>

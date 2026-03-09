@@ -36,13 +36,18 @@ public class CamperPlaceService extends CRUDServiceImpl<CamperPlace> {
     }
 
     public List<CamperPlace> updateCamperPlaces(List<CamperPlace_DTO> camperPlaceDtos) {
-        if (camperPlaceDtos.stream().anyMatch(c -> c.type().id() == null)) {
-            throw new IllegalArgumentException("Invalid type");
-        }
         return camperPlaceDtos.stream()
                 .map(this::mapToCamperPlace)
-                .map(this::update)
+                .map(super::update)
                 .toList();
+    }
+
+    private @NonNull CamperPlace mapToCamperPlace(CamperPlace_DTO dto) {
+        var cp = findById(dto.id());
+        cp.setCamperPlaceType(camperPlaceTypeService.findById(dto.type().id()));
+        cp.setIndex(dto.index());
+        cp.setPrice(dto.price());
+        return cp;
     }
 
     public List<CamperPlace> findAllOrderByIndex() {
@@ -53,14 +58,6 @@ public class CamperPlaceService extends CRUDServiceImpl<CamperPlace> {
         return cp.getReservations().stream()
                 .filter(r -> !r.getId().equals(idToExclude))
                 .anyMatch(r -> checkin.isBefore(r.getCheckout()) && checkout.isAfter(r.getCheckin()));
-    }
-
-    private @NonNull CamperPlace mapToCamperPlace(CamperPlace_DTO dto) {
-        var cp = findById(dto.id());
-        cp.setCamperPlaceType(camperPlaceTypeService.findById(dto.type().id()));
-        cp.setIndex(dto.index());
-        cp.setPrice(dto.price());
-        return cp;
     }
 
     @Override

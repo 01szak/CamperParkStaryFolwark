@@ -50,7 +50,7 @@ public class GuestController {
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Map<String, String>> deleteGuest(@PathVariable int id){
-        guestService.delete(id);
+        guestService.deleteById(id);
         return ResponseEntity.status(HttpStatus.OK).body(Map.of("success","Gość został usunięty"));
     }
 }
