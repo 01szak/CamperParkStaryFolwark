@@ -32,7 +32,7 @@ public class CamperPlaceTypeController {
     @PatchMapping
     public ResponseEntity<Map<String, String>> createOrUpdate(
             @RequestBody @Valid List<CamperPlaceTypeDTO> camperPlaceTypeDTOs,
-            @RequestParam List<Integer> cpIdToOverride
+            @RequestParam(required = false) List<Integer> cpIdToOverride
     ) {
         camperPlaceTypeService.createOrUpdate(camperPlaceTypeDTOs, cpIdToOverride);
         return ResponseEntity.status(HttpStatus.OK).body(Map.of("success","Typy parcel zostały dodane / zmienione"));

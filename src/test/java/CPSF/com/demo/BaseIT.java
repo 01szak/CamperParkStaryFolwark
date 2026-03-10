@@ -3,6 +3,7 @@ package CPSF.com.demo;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -22,6 +23,7 @@ import java.util.Date;
 @Transactional
 public class BaseIT {
 
+    private static long eachTestStart;
     private static long testStart;
 
     @Container
@@ -37,23 +39,28 @@ public class BaseIT {
         registry.add("spring.datasource.password", MY_SQL_CONTAINER::getPassword);
     }
 
-    @BeforeEach
-    public void before() {
+    @BeforeAll
+    public static void beforeAll() {
         testStart = new Date().getTime();
-        System.out.println("\n-----------< TEST START >-----------");
-    }
-
-    @AfterEach
-    public void after() {
-        var testTime = (new Date().getTime() - testStart);
-        System.out.println("\n-----------< TEST END >-----------");
-        System.out.printf("TOOK: %s ms", testTime);
     }
 
     @AfterAll
     public static void afterAll() {
         var testTime = (new Date().getTime() - testStart);
         System.out.printf("\nTOOK OVERALL: %s ms\n", testTime);
+    }
+
+    @BeforeEach
+    public void before() {
+        eachTestStart = new Date().getTime();
+        System.out.println("\n-----------< TEST START >-----------");
+    }
+
+    @AfterEach
+    public void after() {
+        var testTime = (new Date().getTime() - eachTestStart);
+        System.out.println("\n-----------< TEST END >-----------");
+        System.out.printf("TOOK: %s ms", testTime);
     }
 
     @Test
