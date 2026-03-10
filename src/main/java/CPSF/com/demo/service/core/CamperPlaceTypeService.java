@@ -19,7 +19,10 @@ public class CamperPlaceTypeService extends CRUDServiceImpl<CamperPlaceType>{
 
     private final CamperPlaceTypeRepository camperPlaceTypeRepository;
 
-    public List<CamperPlaceType> createOrUpdate(List<CamperPlaceTypeDTO> camperPlaceTypeDTOs, List<Integer> cpIdToOverride) {
+    public List<CamperPlaceType> createOrUpdate(
+            List<CamperPlaceTypeDTO> camperPlaceTypeDTOs,
+            List<Integer> cpIdToOverride
+    ) {
         var cpTypesToUpdate = new ArrayList<CamperPlaceType>();
 
         for (var dto : camperPlaceTypeDTOs) {
@@ -31,7 +34,7 @@ public class CamperPlaceTypeService extends CRUDServiceImpl<CamperPlaceType>{
             var cpType = findById(dto.id());
             var cps = cpType.getCamperPlaces();
 
-            if (!cpIdToOverride.isEmpty() && !cps.isEmpty()) overrideSelectedCamperPlaces(cpIdToOverride, cps);
+            if (cpIdToOverride != null && !cps.isEmpty()) overrideSelectedCamperPlaces(cpIdToOverride, cps);
 
             cpType.setTypeName(dto.typeName());
             cpType.setPrice(dto.price());
