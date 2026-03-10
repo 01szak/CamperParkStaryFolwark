@@ -42,7 +42,7 @@ mvn spring-boot:run -Dspring-boot.run.profiles=dev
 
 ### Testing
 ```bash
-mvn test
+mvn verify
 ```
 
 ## API Docs
