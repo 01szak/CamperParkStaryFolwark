@@ -3,9 +3,9 @@ package CPSF.com.demo.service.core;
 import CPSF.com.demo.exception.ClientInputException;
 import CPSF.com.demo.model.dto.GuestDTO;
 import CPSF.com.demo.model.entity.Guest;
+import CPSF.com.demo.repository.CRUDRepository;
 import CPSF.com.demo.repository.GuestRepository;
-import lombok.NoArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -13,13 +13,12 @@ import org.springframework.stereotype.Service;
 import java.util.stream.Stream;
 
 @Service
-@NoArgsConstructor
+@RequiredArgsConstructor
 public class GuestService extends CRUDServiceImpl<Guest> {
 
     private static final String BY_FULL_NAME = "fullName";
 
-    @Autowired
-    private GuestRepository guestRepository;
+    private final GuestRepository guestRepository;
 
     public Guest create(GuestDTO guestDTO) {
         checkIsEmpty(guestDTO);
@@ -74,6 +73,11 @@ public class GuestService extends CRUDServiceImpl<Guest> {
         if (guestIsEmpty) {
             throw new ClientInputException("Utwórz lub podaj istniejącego gościa");
         }
+    }
+
+    @Override
+    protected CRUDRepository<Guest> getRepository() {
+        return guestRepository;
     }
 }
 

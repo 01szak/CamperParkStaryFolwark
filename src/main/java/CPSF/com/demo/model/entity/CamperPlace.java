@@ -1,9 +1,11 @@
 package CPSF.com.demo.model.entity;
 
 import com.fasterxml.jackson.annotation.JsonManagedReference;
+import jakarta.annotation.Nullable;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
+import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -12,6 +14,7 @@ import lombok.experimental.SuperBuilder;
 
 import java.math.BigDecimal;
 import java.util.List;
+import java.util.Optional;
 
 
 @Entity
@@ -21,25 +24,27 @@ import java.util.List;
 @SuperBuilder
 @EqualsAndHashCode(callSuper = true)
 @NoArgsConstructor
+@AllArgsConstructor
 public class CamperPlace extends DbObject {
-
-    public enum CamperPlaceType {
-        STANDARD,
-        VIP,
-        PLUS,
-    }
 
     @Column(name = "number")
     @NotNull
     private String index;
 
-    @Enumerated(EnumType.STRING)
-    @Column(name = "type")
     @NotNull
+    @ManyToOne
+    @JoinColumn(name = "camper_place_type_id", nullable = false)
     private CamperPlaceType camperPlaceType;
 
+    public void setCamperPlaceType(CamperPlaceType type) {
+        this.camperPlaceType = type;
+        if (type != null && !type.getCamperPlaces().contains(this)) {
+            type.getCamperPlaces().add(this);
+        }
+    }
+
     @Positive
-    @NotNull
+    @Nullable
     @Column(name = "price")
     private BigDecimal price;
 
@@ -52,4 +57,11 @@ public class CamperPlace extends DbObject {
     @JsonManagedReference("camperPlaceIndex-reservations")
     private List<Reservation> reservations;
 
+    public BigDecimal getPrice() {
+        return price == null ? camperPlaceType.getPrice() : price;
+    }
+
+    public Optional<BigDecimal> getOverriddenPrice() {
+        return Optional.ofNullable(price);
+    }
 }

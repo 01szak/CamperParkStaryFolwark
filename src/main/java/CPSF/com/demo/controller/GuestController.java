@@ -4,7 +4,7 @@ import CPSF.com.demo.model.dto.GuestDTO;
 import CPSF.com.demo.service.core.GuestService;
 import CPSF.com.demo.service.util.DtoMapper;
 import jakarta.validation.Valid;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
@@ -15,10 +15,10 @@ import java.util.Map;
 
 @RestController
 @RequestMapping("/guest")
+@RequiredArgsConstructor
 public class GuestController {
 
-    @Autowired
-    private GuestService guestService;
+    private final GuestService guestService;
 
     @GetMapping
     public Page<GuestDTO> findAll(Pageable pageable,
@@ -50,7 +50,7 @@ public class GuestController {
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Map<String, String>> deleteGuest(@PathVariable int id){
-        guestService.delete(id);
+        guestService.deleteById(id);
         return ResponseEntity.status(HttpStatus.OK).body(Map.of("success","Gość został usunięty"));
     }
 }

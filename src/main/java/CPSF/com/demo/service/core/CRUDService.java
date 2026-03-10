@@ -11,6 +11,10 @@ public interface CRUDService<T> {
 
     Page<T> findAll();
 
+    void delete(T t);
+
+    void deleteAll(List<T> t);
+
     Page<T> findBy(Pageable pageable, String fieldName, String value)
             throws InstantiationException, IllegalAccessException, NoSuchFieldException;
 
@@ -22,6 +26,6 @@ public interface CRUDService<T> {
 
     List<T> update(List<T> t);
 
-    void delete(int id);
+    void deleteById(int id);
 
 }

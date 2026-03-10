@@ -7,7 +7,7 @@ import CPSF.com.demo.service.util.DtoMapper;
 import CPSF.com.demo.service.util.ReservationMetadataMapper;
 import CPSF.com.demo.service.core.ReservationService;
 import jakarta.validation.Valid;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
@@ -19,13 +19,11 @@ import java.util.Map;
 
 @RestController
 @RequestMapping("/reservation")
+@RequiredArgsConstructor
 public class ReservationController {
 
-    @Autowired
-    private ReservationMetadataMapper reservationMetadataMapper;
-
-    @Autowired
-    private ReservationService reservationService;
+    private final ReservationMetadataMapper reservationMetadataMapper;
+    private final ReservationService reservationService;
 
     @PostMapping
     public ResponseEntity<Map<String, String>> create(@RequestBody @Valid Reservation_DTO reservationDto) {
@@ -41,7 +39,7 @@ public class ReservationController {
 
     @DeleteMapping("/{id}")
     public ResponseEntity<?> delete(@PathVariable int id) {
-        reservationService.delete(id);
+        reservationService.deleteById(id);
         return ResponseEntity.status(HttpStatus.OK).body(Map.of("success","Rezeracja została usunięta"));
     }
 

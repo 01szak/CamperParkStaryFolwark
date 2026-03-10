@@ -2,10 +2,11 @@ package CPSF.com.demo.service.util;
 
 import CPSF.com.demo.model.dto.*;
 import CPSF.com.demo.model.entity.CamperPlace;
+import CPSF.com.demo.model.entity.CamperPlaceType;
 import CPSF.com.demo.model.entity.Guest;
 import CPSF.com.demo.model.entity.Reservation;
 import CPSF.com.demo.model.entity.User;
-import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotNull;
 
 
 import java.time.format.DateTimeFormatter;
@@ -22,17 +23,17 @@ public class DtoMapper {
         );
     }
 
-    public static CamperPlace_DTO getCamperPlaceDto(CamperPlace c) {
+    public static CamperPlace_DTO getCamperPlaceDto(@NotNull CamperPlace c) {
         return new CamperPlace_DTO(
                 c.getId(),
                 c.getIndex(),
-                c.getCamperPlaceType().toString(),
+                getCamperPlaceTypeDTO(c.getCamperPlaceType()),
                 c.getPrice(),
                 c.getReservations().stream().map(DtoMapper::getReservationDto).toList()
         );
     }
 
-    public static Reservation_DTO getReservationDto(Reservation r) {
+    public static Reservation_DTO getReservationDto(@NotNull Reservation r) {
         return new Reservation_DTO(
                 r.getId(),
                 formatter.format(r.getCheckin()),
@@ -44,7 +45,7 @@ public class DtoMapper {
         );
     }
 
-    public static GuestDTO getGuestDTO(Guest g) {
+    public static GuestDTO getGuestDTO(@NotNull Guest g) {
         return new GuestDTO(
                 g.getId(),
                 g.getFirstname(),
@@ -55,7 +56,17 @@ public class DtoMapper {
         );
     }
 
-    public static ReservationMetadataDTO toReservationMetadataDTO(ReservationReservedCheckinCheckoutDTO reservationMetadata) {
+    public static CamperPlaceTypeDTO getCamperPlaceTypeDTO(@NotNull CamperPlaceType cpt) {
+        return new CamperPlaceTypeDTO(
+            cpt.getId(),
+            cpt.getTypeName(),
+            cpt.getPrice()
+        );
+    }
+
+    public static ReservationMetadataDTO toReservationMetadataDTO(
+            @NotNull ReservationReservedCheckinCheckoutDTO reservationMetadata
+    ) {
         return ReservationMetadataDTO.builder()
                 .reserved(reservationMetadata.getReserved())
                 .checkin(reservationMetadata.getCheckin())
@@ -63,7 +74,7 @@ public class DtoMapper {
                 .build();
     }
 
-    public static Guest getGuest(@Valid GuestDTO guestDTO) {
+    public static Guest getGuest(@NotNull GuestDTO guestDTO) {
         return Guest.builder()
                 .id(guestDTO.id())
                 .firstname(guestDTO.firstname())
