@@ -1,21 +1,52 @@
+# Camper Park Management Tool 🚐
 
-#  Camper Park Management Tool 🚐🏕️
-A simple reservation management tool for camper park administrators
+A backend application for managing reservations, guests, and pricing in a camper park.
 
+## Key Functionalities
 
-##  Project Overview
+### 1. Flexible Pricing Model
+- **Base Prices:** Defined globally per camper place type (Standard, VIP, etc.).
+- **Price Overrides:** Ability to set custom prices for specific camper places that take precedence over the base type price.
+- **Automatic Fallback:** System automatically uses the type's price if no specific override is defined.
 
-Camper Park Management Tool is a backend application designed to simplify the process of managing reservations for camper park administrators. The tool aims to provide a streamlined system for handling reservations and accessing relevant data.
+### 2. Modern Technical Foundation
+- **Clean DI:** Fully based on constructor injection with Lombok `@RequiredArgsConstructor`.
+- **Generic CRUD:** A base service implementation that handles standard database operations to keep the code DRY.
+- **JWT Security:** Authentication using RSA-signed JSON Web Tokens.
 
-⚠️ Note: This application is a work in progress and not yet ready for production use. Some features are still under development.
-## 🚀 Technologies Used
-The project leverages the following technologies and tools:
+### 3. Database Management
+- **Liquibase:** Version-controlled database schema.
+- **Context-based setup:**
+  - `prod` context: schema and migrations.
+  - `dev` context: automatic seeding of 50 guests and 100 sample reservations for testing.
 
-Java    
-Spring Boot   
-Hibernate   
-SQL     
-Liquibase    
-Lombok  
+## Tech Stack
+- **Core:** Java 25, Spring Boot 4
+- **Security:** Spring Security (OAuth2 Resource Server)
+- **Database:** MySQL 8.0, Hibernate
+- **Migrations:** Liquibase
+- **Testing:** JUnit 5, Testcontainers (MySQL)
 
+## Quick Start
 
+### Prerequisites
+- Docker
+- JDK 25
+- Maven
+
+### Running the app
+Use the `dev` profile to automatically create the schema and load demo data:
+```bash
+mvn spring-boot:run -Dspring-boot.run.profiles=dev
+```
+
+### Testing
+```bash
+mvn test
+```
+
+## API Docs
+Swagger UI is available at: `http://localhost:8080/swagger-ui.html`
+
+---
+*Status: Work in Progress.*
