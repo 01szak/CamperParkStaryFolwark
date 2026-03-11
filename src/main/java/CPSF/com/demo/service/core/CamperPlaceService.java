@@ -44,9 +44,10 @@ public class CamperPlaceService extends CRUDServiceImpl<CamperPlace> {
 
     private @NonNull CamperPlace mapToCamperPlace(CamperPlace_DTO dto) {
         var cp = findById(dto.id());
-        cp.setCamperPlaceType(camperPlaceTypeService.findById(dto.type().id()));
+        var cpt = camperPlaceTypeService.findById(dto.type().id());
+        cp.setCamperPlaceType(cpt);
         cp.setIndex(dto.index());
-        cp.setPrice(dto.price());
+        cp.setPrice(cpt.getPrice().compareTo(dto.price()) == 0 ? null : dto.price());
         return cp;
     }
 
