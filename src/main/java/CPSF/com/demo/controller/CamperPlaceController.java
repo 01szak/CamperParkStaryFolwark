@@ -24,6 +24,13 @@ public class CamperPlaceController {
         return camperPlaceService.findAllOrderByIndex().stream().map(DtoMapper::getCamperPlaceDto).toList();
     }
 
+    @GetMapping("{typeId}")
+    public List<CamperPlace_DTO> getCamperPlacesWithUniquePriceAndCamperTypeId(@PathVariable Integer typeId) {
+        return camperPlaceService.findCamperPlaceByPriceNotNullAndCamperPlaceType_Id(typeId).stream()
+                .map(DtoMapper::getCamperPlaceDto)
+                .toList();
+    }
+
     @PatchMapping
     public ResponseEntity<Map<String, String>> update(@RequestBody @Valid List<CamperPlace_DTO> camperPlaceDtos) {
         camperPlaceService.updateCamperPlaces(camperPlaceDtos);

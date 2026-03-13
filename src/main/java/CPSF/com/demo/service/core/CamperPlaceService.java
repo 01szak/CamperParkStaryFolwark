@@ -61,6 +61,11 @@ public class CamperPlaceService extends CRUDServiceImpl<CamperPlace> {
                 .anyMatch(r -> checkin.isBefore(r.getCheckout()) && checkout.isAfter(r.getCheckin()));
     }
 
+    public List<CamperPlace> findCamperPlaceByPriceNotNullAndCamperPlaceType_Id(Integer id) {
+        return camperPlaceRepository.findCamperPlaceByPriceNotNullAndCamperPlaceType_Id(id);
+    }
+
+
     @Override
     protected CRUDRepository<CamperPlace> getRepository() {
         return camperPlaceRepository;

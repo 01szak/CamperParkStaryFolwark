@@ -14,5 +14,7 @@ public interface CamperPlaceRepository extends CRUDRepository<CamperPlace> {
     """)
     List<CamperPlace> findAllOrderByIndex();
 
+    List<CamperPlace> findCamperPlaceByPriceNotNullAndCamperPlaceType_Id(Integer cptId);
+
 
 }
