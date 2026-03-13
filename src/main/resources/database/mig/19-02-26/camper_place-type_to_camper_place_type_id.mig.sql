@@ -10,4 +10,4 @@ UPDATE camper_place cp
 WHERE cp.camper_place_type_id IS NULL;
 
 ALTER TABLE camper_place
-DROP COLUMN IF EXISTS type;
+DROP COLUMN type;
