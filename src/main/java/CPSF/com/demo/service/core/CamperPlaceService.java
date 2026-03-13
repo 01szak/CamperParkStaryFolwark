@@ -44,9 +44,10 @@ public class CamperPlaceService extends CRUDServiceImpl<CamperPlace> {
 
     private @NonNull CamperPlace mapToCamperPlace(CamperPlace_DTO dto) {
         var cp = findById(dto.id());
-        cp.setCamperPlaceType(camperPlaceTypeService.findById(dto.type().id()));
+        var cpt = camperPlaceTypeService.findById(dto.type().id());
+        cp.setCamperPlaceType(cpt);
         cp.setIndex(dto.index());
-        cp.setPrice(dto.price());
+        cp.setPrice(cpt.getPrice().compareTo(dto.price()) == 0 ? null : dto.price());
         return cp;
     }
 
@@ -59,6 +60,11 @@ public class CamperPlaceService extends CRUDServiceImpl<CamperPlace> {
                 .filter(r -> !r.getId().equals(idToExclude))
                 .anyMatch(r -> checkin.isBefore(r.getCheckout()) && checkout.isAfter(r.getCheckin()));
     }
+
+    public List<CamperPlace> findCamperPlaceByPriceNotNullAndCamperPlaceType_Id(Integer id) {
+        return camperPlaceRepository.findCamperPlaceByPriceNotNullAndCamperPlaceType_Id(id);
+    }
+
 
     @Override
     protected CRUDRepository<CamperPlace> getRepository() {
