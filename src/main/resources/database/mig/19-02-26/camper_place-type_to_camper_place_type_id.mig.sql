@@ -5,13 +5,10 @@
 -- precondition-sql-check expectedResult:1 SELECT COUNT(*) FROM information_schema.columns WHERE table_schema = DATABASE() AND table_name = 'camper_place' AND column_name = 'type'
 
 UPDATE camper_place cp
-    JOIN camper_place_type cpt ON cp.type = cpt.type_name
-    SET cp.camper_place_type_id = cpt.id;
-
-UPDATE camper_place cp
-    JOIN camper_place_type cpt ON cp.camper_place_type_id = cpt.id
-    SET cp.price = NULL
-WHERE cp.price = cpt.price;
+    JOIN camper_place_type cpt
+ON cp.type = cpt.type_name AND (cp.price = cpt.price OR (cp.price IS NULL AND cpt.price IS NULL))
+    SET cp.camper_place_type_id = cpt.id
+WHERE cp.camper_place_type_id IS NULL;
 
 ALTER TABLE camper_place
-DROP COLUMN type;
+DROP COLUMN IF EXISTS type;

@@ -6,6 +6,7 @@
 
 INSERT INTO camper_place_type (type_name, price, created_at, updated_at)
 SELECT DISTINCT type, price, now(), now()
-FROM camper_place;
+FROM camper_place
+WHERE type NOT IN (SELECT type_name FROM camper_place_type);
 
 -- rollback DELETE FROM camper_place_type;
