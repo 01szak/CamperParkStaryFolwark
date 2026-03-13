@@ -9,10 +9,5 @@ UPDATE camper_place cp
     SET cp.camper_place_type_id = cpt.id
 WHERE cp.camper_place_type_id IS NULL;
 
-UPDATE camper_place cp
-    JOIN camper_place_type cpt ON cp.camper_place_type_id = cpt.id
-    SET cp.price = NULL
-WHERE cp.price = cpt.price;
-
 ALTER TABLE camper_place
 DROP COLUMN IF EXISTS type;
