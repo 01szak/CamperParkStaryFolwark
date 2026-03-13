@@ -4,9 +4,10 @@
 -- preconditions onFail:MARK_RAN
 -- precondition-sql-check expectedResult:1 SELECT COUNT(*) FROM information_schema.columns WHERE table_schema = DATABASE() AND table_name = 'camper_place' AND column_name = 'type'
 
-INSERT INTO camper_place_type (type_name, price, created_at, updated_at)
-SELECT DISTINCT type, price, now(), now()
+INSERT IGNORE INTO camper_place_type (type_name, price, created_at, updated_at)
+SELECT type, MIN(price), NOW(), NOW()
 FROM camper_place
-WHERE type NOT IN (SELECT type_name FROM camper_place_type);
+WHERE type IS NOT NULL
+GROUP BY type;
 
 -- rollback DELETE FROM camper_place_type;
