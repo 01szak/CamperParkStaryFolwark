@@ -2,6 +2,7 @@ package CPSF.com.demo.repository;
 
 import CPSF.com.demo.model.entity.Reservation;
 import CPSF.com.demo.model.entity.Reservation.ReservationStatus;
+import CPSF.com.demo.service.core.StatisticsService.StatisticsModel;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.Query;
@@ -55,4 +56,19 @@ public interface ReservationRepository extends CRUDRepository<Reservation> {
         SELECT r FROM Reservation r WHERE FUNCTION('YEAR', r.checkin) = :year AND FUNCTION('MONTH', r.checkin) = :month AND r.camperPlace.id = :camperPlaceId AND r.reservationStatus != 'COMING'
         """)
         List<Reservation> findAllByMonthYearAndCamperPlace_IdIfStatusNotComing(@Param("month") int month, @Param("year") int year, @Param("camperPlaceId") int camperPlaceId);
+
+        @Query("""
+            SELECT new CPSF.com.demo.service.core.StatisticsService$StatisticsModel$Revenue(
+                cp.index, 
+                count(r),
+                COALESCE(SUM(r.price), 0)
+            ) 
+            FROM CamperPlace cp 
+            LEFT JOIN cp.reservations r ON r.paid = :isPaid 
+            AND (:month = 0 OR FUNCTION('MONTH', r.checkin) = :month) 
+            AND (:year = 0 OR FUNCTION('YEAR', r.checkin) = :year)
+            GROUP BY cp.index
+        """)
+        List<StatisticsModel.Revenue> countRevenueOfAllCamperPlaces(@Param("isPaid") boolean isPaid, @Param("month") int month, @Param("year") int year);
+
 }
