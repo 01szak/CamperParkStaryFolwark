@@ -1,13 +1,32 @@
 package CPSF.com.demo.service.core;
 
-import CPSF.com.demo.model.dto.StatisticsDTO;
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
 import java.util.List;
 
-public interface StatisticsService {
+@Service
+@RequiredArgsConstructor
+public class StatisticsService {
 
-    List<StatisticsDTO> getStatisticsDTOWithRevenue(int month, int year);
+    private final ReservationService reservationService;
+    private final CamperPlaceService camperPlaceService;
 
-    List<StatisticsDTO> getStatisticsDTOWithReservationCount(int month, int year);
+
+    public static class StatisticsModel {
+        public record Revenue (String cpIndex, long count, BigDecimal revenue) {}
+    }
+
+    public List<List<StatisticsModel.Revenue>> getRevenue() {
+        return getRevenue(0, 0);
+    }
+
+    public List<List<StatisticsModel.Revenue>> getRevenue(int month, int year) {
+        return List.of(
+                reservationService.countRevenueOfAllCamperPlaces(true, month, year),
+                reservationService.countRevenueOfAllCamperPlaces(false, month, year)
+        );
+    }
 
 }

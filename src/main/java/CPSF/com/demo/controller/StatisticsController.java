@@ -1,7 +1,6 @@
 package CPSF.com.demo.controller;
 
-import CPSF.com.demo.model.dto.StatisticsDTO;
-import CPSF.com.demo.service.core.StatisticsServiceImpl;
+import CPSF.com.demo.service.core.StatisticsService;
 import lombok.AllArgsConstructor;
 
 import org.springframework.web.bind.annotation.*;
@@ -13,16 +12,10 @@ import java.util.List;
 @AllArgsConstructor
 public class StatisticsController {
 
-    private final StatisticsServiceImpl statisticsService;
+    private final StatisticsService statisticsService;
 
     @GetMapping("/revenue/{month}/{year}")
-    public List<StatisticsDTO> getRevenue(@PathVariable int month, @PathVariable int year) {
-        return statisticsService.getStatisticsDTOWithRevenue(month, year);
+    public List<List<StatisticsService.StatisticsModel.Revenue>> getRevenue(@PathVariable int month, @PathVariable int year) {
+        return statisticsService.getRevenue(month, year);
     }
-
-    @GetMapping("/reservationCount/{month}/{year}")
-    public List<StatisticsDTO> getReservationCount(@PathVariable int month, @PathVariable int year) {
-        return statisticsService.getStatisticsDTOWithReservationCount(month, year);
-    }
-
 }

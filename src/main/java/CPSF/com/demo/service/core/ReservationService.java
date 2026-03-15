@@ -13,6 +13,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import CPSF.com.demo.service.core.StatisticsService.StatisticsModel;
 
 import java.time.LocalDate;
 import java.util.*;
@@ -118,10 +119,6 @@ public class ReservationService extends CRUDServiceImpl<Reservation> {
         return reservationRepository.findAllByYearAndCamperPlaceIdIfPaid(year, id);
     }
 
-    public  List<Reservation> findByMonthYearAndCamperPlaceIdIfPaid(int month, int year, int camperPlaceId) {
-        return reservationRepository.findAllByMonthYearAndCamperPlaceIdIfPaid(month, year, camperPlaceId);
-    }
-
     public List<Reservation> findByCamperPlaceIdIfStatusNotComing(int id) {
         return reservationRepository.findAllByCamperPlaceIdIfStatusNotComing(id);
     }
@@ -136,6 +133,10 @@ public class ReservationService extends CRUDServiceImpl<Reservation> {
 
     public Map<String, ReservationMetadataDTO> getReservationMetadataDTO() {
         return reservationMetadataMapper.getReservationMetaDataDTO();
+    }
+
+    public List<StatisticsModel.Revenue> countRevenueOfAllCamperPlaces(boolean isPaid, int month, int year) {
+        return reservationRepository.countRevenueOfAllCamperPlaces(isPaid, month, year);
     }
 
     private boolean isActive(LocalDate checkin, LocalDate checkout) {
