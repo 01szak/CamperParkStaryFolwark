@@ -34,9 +34,9 @@ public class GuestService extends CRUDServiceImpl<Guest> {
     }
 
     @Override
-    public Page<Guest> findBy(Pageable pageable, String by, String value) {
+    public Page<Guest> findBy(Pageable pageable, String by, Object value) {
             if (BY_FULL_NAME.equals(by)) {
-                return guestRepository.findAllByFullName(pageable, value);
+                return guestRepository.findAllByFullName(pageable, value.toString());
             }
             return super.findBy(pageable, by, value);
     }
