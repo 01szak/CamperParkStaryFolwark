@@ -84,7 +84,7 @@ public abstract class CRUDServiceImpl<T extends DbObject> implements CRUDService
 
     @Override
     @SuppressWarnings({"rawtypes", "unchecked"})
-    public Page<T> findBy(Pageable pageable, String fieldName, String value) {
+    public Page<T> findBy(Pageable pageable, String fieldName, Object value) {
        if (pageable == null) {
            pageable = Pageable.unpaged(UPDATED_AT_DESC);
        }
@@ -93,36 +93,23 @@ public abstract class CRUDServiceImpl<T extends DbObject> implements CRUDService
             T t = getClassForDbObject().newInstance();
             var field = getClassForDbObject().getDeclaredField(fieldName);
             var matcher = getExampleMatcherWithIgnoreFields(field);
-
-            //set the value of chosen field to the selected value
-            field.setAccessible(true);
-            //         TODO: refactor this and handle exceptions
-            if (field.getType().equals(LocalDate.class)) {
-                var ldValue = LocalDate.parse(value);
-                field.set(t, ldValue);
-            } else if (field.getType().isEnum()) {
-                value = value.toUpperCase();
-                var enumType = (Class<? extends Enum>) field.getType();
-                var enumValue = Enum.valueOf(enumType, value);
-                field.set(t, enumValue);
-            } else if (field.getType().equals(Boolean.class)) {
-                boolean condition;
-                if (value.toLowerCase().equals("tak")) {
-                    condition = true;
-                }else if (value.toLowerCase().equals("nie")) {
-                    condition = false;
-                } else {
-                    throw new ClientInputException("Podano złą wartość");
-                }
-                field.set(t, condition);
-            }
-            else {
-                field.set(t, value);
-            }
-
             //find by this example
             var example = Example.of(t, matcher);
 
+            //set the value of chosen field to the selected value
+            field.setAccessible(true);
+            if (field.getType().equals(LocalDate.class)) {
+                var ldValue = LocalDate.parse(value.toString());
+                field.set(t, ldValue);
+            } else if (field.getType().isEnum()) {
+                var enumType = (Class<? extends Enum>) field.getType();
+                var enumValue = Enum.valueOf(enumType, value.toString());
+                field.set(t, enumValue);
+            } else if (field.getType().equals(Boolean.class)){
+                  field.set(t, Boolean.valueOf(value.toString()));
+            } else  {
+                field.set(t, value);
+            }
             return getRepository().findAll(example, pageable);
         } catch (
                 IllegalAccessException
@@ -134,15 +121,16 @@ public abstract class CRUDServiceImpl<T extends DbObject> implements CRUDService
     }
 
     private  ExampleMatcher getExampleMatcherWithIgnoreFields(Field field) {
-        Field[] allFields = getClassForDbObject().getDeclaredFields();
-        Field[] superClassFields = getClassForDbObject().getSuperclass().getDeclaredFields();
-        List<Field> ignoredFields = new ArrayList<>(Arrays.stream(allFields).toList());
+        var allFields = getClassForDbObject().getDeclaredFields();
+        var superClassFields = getClassForDbObject().getSuperclass().getDeclaredFields();
+        var ignoredFields = new ArrayList<>(Arrays.stream(allFields).toList());
         ignoredFields.addAll(Arrays.stream(superClassFields).toList());
 
         ignoredFields.removeIf(f -> f.equals(field));
 
         return ExampleMatcher.matching()
                 .withIgnoreNullValues()
+                .withStringMatcher(ExampleMatcher.StringMatcher.CONTAINING)
                 .withIgnorePaths(ignoredFields.stream()
                         .map(Field::getName)
                         .toArray(String[]::new));

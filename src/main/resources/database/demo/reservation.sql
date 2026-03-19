@@ -1,4 +1,5 @@
 -- liquibase formatted sql
+-- validCheckSum:ANY
 -- changeset 01szak:reservation_demo context:dev
 -- preconditions onFail:MARK_RAN
 -- precondition-sql-check expectedResult:0 SELECT COUNT(*) FROM reservation

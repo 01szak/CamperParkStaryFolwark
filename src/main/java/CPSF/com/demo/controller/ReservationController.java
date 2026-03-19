@@ -47,7 +47,7 @@ public class ReservationController {
     @GetMapping
     public Page<Reservation_DTO> findAll(Pageable pageable,
                                         @RequestParam(required = false) String by,
-                                        @RequestParam(required = false) String value) {
+                                        @RequestParam(required = false) Object value) {
         if (by != null && value != null) {
             return reservationService.findBy(pageable, by, value).map(DtoMapper::getReservationDto);
         }

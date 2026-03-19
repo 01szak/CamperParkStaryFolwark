@@ -97,13 +97,13 @@ public class ReservationService extends CRUDServiceImpl<Reservation> {
     }
 
     @Override
-    public Page<Reservation> findBy(Pageable pageable, String fieldName, String value) {
+    public Page<Reservation> findBy(Pageable pageable, String fieldName, Object value) {
         switch (fieldName) {
             case BY_CP_INDEX -> {
-                return reservationRepository.findAllByCamperPlace_Index(pageable, value);
+                return reservationRepository.findAllByCamperPlace_Index(pageable, value.toString());
             }
             case BY_GUEST_FULL_NAME -> {
-                return reservationRepository.findAllByUserFullName(pageable, value);
+                return reservationRepository.findAllByUserFullName(pageable, value.toString());
             }
             default -> {
                 return super.findBy(pageable, fieldName, value);
