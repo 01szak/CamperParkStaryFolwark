@@ -42,7 +42,7 @@ public class Reservation extends DbObject {
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "camper_place_id")
     @Lazy
-    @JsonBackReference("camperPlaceIndex-reservations")
+    @JsonBackReference("camperPlace-reservations")
     private CamperPlace camperPlace;
 
     @ManyToOne

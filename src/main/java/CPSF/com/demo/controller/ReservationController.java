@@ -14,6 +14,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Map;
 
@@ -72,6 +73,15 @@ public class ReservationController {
     @GetMapping("/getUserPerReservation")
     public Map<String, Map<String,List<String>>> getUserPerReservation() {
         return reservationMetadataMapper.getUserPerReservation();
+    }
+
+    @GetMapping("/{date}/{camperPlaceId}")
+    public Reservation_DTO getUserPerReservation(@PathVariable LocalDate date, @PathVariable Integer camperPlaceId) {
+        var r = reservationService.findByDateInBetweenAndCamperPlaceId(date, camperPlaceId);
+        if (r == null) {
+            return null;
+        }
+        return DtoMapper.getReservationDto(r);
     }
 
 }
