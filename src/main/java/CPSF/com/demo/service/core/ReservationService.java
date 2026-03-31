@@ -36,7 +36,7 @@ public class ReservationService extends CRUDServiceImpl<Reservation> {
 
 
     public void create(Reservation_DTO reservationDto) {
-        var camperPlace = camperPlaceService.findBy("index", reservationDto.camperPlaceIndex()).toList().get(0);
+        var camperPlace = camperPlaceService.findById(reservationDto.camperPlace().id());
         var checkin = LocalDate.parse(reservationDto.checkin());
         var checkout = LocalDate.parse(reservationDto.checkout());
 
@@ -66,7 +66,7 @@ public class ReservationService extends CRUDServiceImpl<Reservation> {
     }
 
     public void update(Reservation_DTO reservationDto) {
-        var camperPlace = camperPlaceService.findBy("index", reservationDto.camperPlaceIndex()).toList().get(0);
+        var camperPlace = camperPlaceService.findById(reservationDto.camperPlace().id());
         var checkin = LocalDate.parse(reservationDto.checkin());
         var checkout = LocalDate.parse(reservationDto.checkout());
 
@@ -74,7 +74,7 @@ public class ReservationService extends CRUDServiceImpl<Reservation> {
 
         var datesOrCpChanged = !r.getCheckin().equals(checkin)
                 ||  !r.getCheckout().equals(checkout)
-                || !r.getCamperPlace().getIndex().equals(reservationDto.camperPlaceIndex());
+                || !r.getCamperPlace().getIndex().equals(reservationDto.camperPlace());
 
     //it is checked because of the constraints and reservations overlapping
         if (datesOrCpChanged) {
@@ -159,5 +159,8 @@ public class ReservationService extends CRUDServiceImpl<Reservation> {
         return reservationRepository;
     }
 
+    public Reservation findByDateInBetweenAndCamperPlaceId(LocalDate date, Integer camperPlaceId) {
+        return reservationRepository.findByDateInBetweenAndCamperPlaceId(date, camperPlaceId);
+    }
 }
 

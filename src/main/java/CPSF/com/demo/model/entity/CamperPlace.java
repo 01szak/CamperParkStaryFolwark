@@ -54,7 +54,7 @@ public class CamperPlace extends DbObject {
             CascadeType.PERSIST,
             CascadeType.REFRESH,
     })
-    @JsonManagedReference("camperPlaceIndex-reservations")
+    @JsonManagedReference("camperPlace-reservations")
     private List<Reservation> reservations;
 
     public BigDecimal getPrice() {

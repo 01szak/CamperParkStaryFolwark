@@ -9,7 +9,7 @@ public record Reservation_DTO(
         @NotBlank String checkin,
         @NotBlank String checkout,
         @NotNull GuestDTO guest,
-        @NotBlank String camperPlaceIndex,
+        @NotNull CamperPlace_DTO camperPlace,
         @NotNull Boolean paid,
         @Nullable String reservationStatus
 ) {}

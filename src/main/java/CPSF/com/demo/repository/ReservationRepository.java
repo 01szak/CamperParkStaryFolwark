@@ -9,6 +9,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import java.time.LocalDate;
 import java.util.List;
 
 @Repository
@@ -16,12 +17,10 @@ public interface ReservationRepository extends CRUDRepository<Reservation> {
 
         List<Reservation> findByReservationStatusNot(ReservationStatus status);
 
-
         Page<Reservation> findAllByCamperPlace_Index(Pageable pageable, String index);
 
         @Query("""
-
-                SELECT r FROM Reservation r WHERE CONCAT(r.guest.firstname, ' ', r.guest.lastname) LIKE %:fullName%
+            SELECT r FROM Reservation r WHERE CONCAT(r.guest.firstname, ' ', r.guest.lastname) LIKE %:fullName%
        """)
         Page<Reservation> findAllByUserFullName(Pageable pageable ,@Param("fullName") String fullName);
 
@@ -37,23 +36,23 @@ public interface ReservationRepository extends CRUDRepository<Reservation> {
                 @Param("month") int month, @Param("year") int year, @Param("camperPlaceId") int camperPlaceId);
 
         @Query("""
-                SELECT r FROM Reservation r WHERE FUNCTION('YEAR', r.checkin) = :year AND r.camperPlace.id = :camperPlaceId AND r.paid = true
+            SELECT r FROM Reservation r WHERE FUNCTION('YEAR', r.checkin) = :year AND r.camperPlace.id = :camperPlaceId AND r.paid = true
         """)
         List<Reservation> findAllByYearAndCamperPlaceIdIfPaid(
                 @Param("year") int year, @Param("camperPlaceId") int camperPlaceId);
 
         @Query("""
-                SELECT r FROM Reservation r WHERE r.camperPlace.id = :camperPlaceId AND r.reservationStatus != 'COMING'
+            SELECT r FROM Reservation r WHERE r.camperPlace.id = :camperPlaceId AND r.reservationStatus != 'COMING'
         """)
         List<Reservation> findAllByCamperPlaceIdIfStatusNotComing(@Param("camperPlaceId") int camperPlaceId);
 
         @Query("""
-                SELECT r FROM Reservation r WHERE FUNCTION('YEAR', r.checkin) = :year AND r.camperPlace.id = :camperPlaceId AND r.reservationStatus != 'COMING'
+            SELECT r FROM Reservation r WHERE FUNCTION('YEAR', r.checkin) = :year AND r.camperPlace.id = :camperPlaceId AND r.reservationStatus != 'COMING'
         """)
         List<Reservation> findAllByYearAndCamperPlace_IdIfStatusNotComing(@Param("year") int year, @Param("camperPlaceId") int camperPlaceId);
 
         @Query("""
-        SELECT r FROM Reservation r WHERE FUNCTION('YEAR', r.checkin) = :year AND FUNCTION('MONTH', r.checkin) = :month AND r.camperPlace.id = :camperPlaceId AND r.reservationStatus != 'COMING'
+            SELECT r FROM Reservation r WHERE FUNCTION('YEAR', r.checkin) = :year AND FUNCTION('MONTH', r.checkin) = :month AND r.camperPlace.id = :camperPlaceId AND r.reservationStatus != 'COMING'
         """)
         List<Reservation> findAllByMonthYearAndCamperPlace_IdIfStatusNotComing(@Param("month") int month, @Param("year") int year, @Param("camperPlaceId") int camperPlaceId);
 
@@ -71,4 +70,10 @@ public interface ReservationRepository extends CRUDRepository<Reservation> {
         """)
         List<StatisticsModel.Revenue> countRevenueOfAllCamperPlaces(@Param("isPaid") boolean isPaid, @Param("month") int month, @Param("year") int year);
 
+        @Query("""
+            SELECT r FROM Reservation r
+            WHERE :date BETWEEN r.checkin AND r.checkout
+            AND r.camperPlace.id = :camperPlaceId
+        """)
+        Reservation findByDateInBetweenAndCamperPlaceId(@Param("date") LocalDate date, @Param("camperPlaceId") Integer camperPlaceId);
 }

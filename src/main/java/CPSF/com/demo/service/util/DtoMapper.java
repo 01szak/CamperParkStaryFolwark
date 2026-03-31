@@ -28,8 +28,7 @@ public class DtoMapper {
                 c.getId(),
                 c.getIndex(),
                 getCamperPlaceTypeDTO(c.getCamperPlaceType()),
-                c.getPrice(),
-                c.getReservations().stream().map(DtoMapper::getReservationDto).toList()
+                c.getPrice()
         );
     }
 
@@ -39,7 +38,7 @@ public class DtoMapper {
                 formatter.format(r.getCheckin()),
                 formatter.format(r.getCheckout()),
                 getGuestDTO(r.getGuest()),
-                r.getCamperPlace().getIndex(),
+                getCamperPlaceDto(r.getCamperPlace()),
                 r.getPaid(),
                 r.getReservationStatus().toString()
         );
