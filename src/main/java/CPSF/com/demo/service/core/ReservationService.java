@@ -37,8 +37,8 @@ public class ReservationService extends CRUDServiceImpl<Reservation> {
 
     public void create(Reservation_DTO reservationDto) {
         var camperPlace = camperPlaceService.findById(reservationDto.camperPlace().id());
-        var checkin = LocalDate.parse(reservationDto.checkin());
-        var checkout = LocalDate.parse(reservationDto.checkout());
+        var checkin = reservationDto.checkin();
+        var checkout = reservationDto.checkout();
 
         validateDates(checkout, checkin, camperPlace);
 
@@ -67,8 +67,8 @@ public class ReservationService extends CRUDServiceImpl<Reservation> {
 
     public void update(Reservation_DTO reservationDto) {
         var camperPlace = camperPlaceService.findById(reservationDto.camperPlace().id());
-        var checkin = LocalDate.parse(reservationDto.checkin());
-        var checkout = LocalDate.parse(reservationDto.checkout());
+        var checkin = reservationDto.checkin();
+        var checkout = reservationDto.checkout();
 
         var r = findById(reservationDto.id());
 

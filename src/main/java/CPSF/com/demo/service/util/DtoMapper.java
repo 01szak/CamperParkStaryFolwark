@@ -8,12 +8,7 @@ import CPSF.com.demo.model.entity.Reservation;
 import CPSF.com.demo.model.entity.User;
 import jakarta.validation.constraints.NotNull;
 
-
-import java.time.format.DateTimeFormatter;
-
 public class DtoMapper {
-
-    public static final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd.MM.yyyy");
 
     public static UserDTO getUserDTO(User u) {
         return new UserDTO(
@@ -35,8 +30,8 @@ public class DtoMapper {
     public static Reservation_DTO getReservationDto(@NotNull Reservation r) {
         return new Reservation_DTO(
                 r.getId(),
-                formatter.format(r.getCheckin()),
-                formatter.format(r.getCheckout()),
+                r.getCheckin(),
+                r.getCheckout(),
                 getGuestDTO(r.getGuest()),
                 getCamperPlaceDto(r.getCamperPlace()),
                 r.getPaid(),
