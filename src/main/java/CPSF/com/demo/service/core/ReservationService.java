@@ -37,8 +37,8 @@ public class ReservationService extends CRUDServiceImpl<Reservation> {
 
     public void create(Reservation_DTO reservationDto) {
         var camperPlace = camperPlaceService.findById(reservationDto.camperPlace().id());
-        var checkin = LocalDate.parse(reservationDto.checkin());
-        var checkout = LocalDate.parse(reservationDto.checkout());
+        var checkin = reservationDto.checkin();
+        var checkout = reservationDto.checkout();
 
         validateDates(checkout, checkin, camperPlace);
 
@@ -56,7 +56,7 @@ public class ReservationService extends CRUDServiceImpl<Reservation> {
                 .camperPlace(camperPlace)
                 .guest(guest)
                 .price(calculator.calculateFinalReservationCost(checkin, checkout, camperPlace.getPrice()))
-                .paid(false);
+                .paid(reservationDto.paid());
 
         if (isActive(checkin, checkout)) {
             r.reservationStatus(ACTIVE);
@@ -67,8 +67,8 @@ public class ReservationService extends CRUDServiceImpl<Reservation> {
 
     public void update(Reservation_DTO reservationDto) {
         var camperPlace = camperPlaceService.findById(reservationDto.camperPlace().id());
-        var checkin = LocalDate.parse(reservationDto.checkin());
-        var checkout = LocalDate.parse(reservationDto.checkout());
+        var checkin = reservationDto.checkin();
+        var checkout = reservationDto.checkout();
 
         var r = findById(reservationDto.id());
 
@@ -159,8 +159,12 @@ public class ReservationService extends CRUDServiceImpl<Reservation> {
         return reservationRepository;
     }
 
-    public Reservation findByDateInBetweenAndCamperPlaceId(LocalDate date, Integer camperPlaceId) {
-        return reservationRepository.findByDateInBetweenAndCamperPlaceId(date, camperPlaceId);
+    public List<Reservation> findByDateInBetweenAndCamperPlaceId(LocalDate date, Integer camperPlaceId) {
+        var reservations = reservationRepository.findByDateInBetweenAndCamperPlaceId(date, camperPlaceId);
+        if (reservations.size() > 2) {
+            throw new IllegalStateException("More then 2 reservations are booked on camper place at the same day, this can happen only if database has corrupted data ");
+        }
+        return reservations;
     }
 }
 

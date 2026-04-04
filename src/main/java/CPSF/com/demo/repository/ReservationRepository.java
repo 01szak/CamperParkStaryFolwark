@@ -75,5 +75,5 @@ public interface ReservationRepository extends CRUDRepository<Reservation> {
             WHERE :date BETWEEN r.checkin AND r.checkout
             AND r.camperPlace.id = :camperPlaceId
         """)
-        Reservation findByDateInBetweenAndCamperPlaceId(@Param("date") LocalDate date, @Param("camperPlaceId") Integer camperPlaceId);
+        List<Reservation> findByDateInBetweenAndCamperPlaceId(@Param("date") LocalDate date, @Param("camperPlaceId") Integer camperPlaceId);
 }

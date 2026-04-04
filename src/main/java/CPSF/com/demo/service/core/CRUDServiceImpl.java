@@ -2,7 +2,6 @@ package CPSF.com.demo.service.core;
 
 import CPSF.com.demo.model.entity.DbObject;
 import CPSF.com.demo.repository.CRUDRepository;
-import CPSF.com.demo.exception.ClientInputException;
 import org.springframework.data.domain.Example;
 import org.springframework.data.domain.ExampleMatcher;
 import org.springframework.data.domain.Page;
