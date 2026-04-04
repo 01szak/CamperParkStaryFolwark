@@ -76,12 +76,9 @@ public class ReservationController {
     }
 
     @GetMapping("/{date}/{camperPlaceId}")
-    public Reservation_DTO getUserPerReservation(@PathVariable LocalDate date, @PathVariable Integer camperPlaceId) {
-        var r = reservationService.findByDateInBetweenAndCamperPlaceId(date, camperPlaceId);
-        if (r == null) {
-            return null;
-        }
-        return DtoMapper.getReservationDto(r);
+    public List<Reservation_DTO> getUserPerReservation(@PathVariable LocalDate date, @PathVariable Integer camperPlaceId) {
+        var reservations = reservationService.findByDateInBetweenAndCamperPlaceId(date, camperPlaceId);
+        return reservations.stream().map(DtoMapper::getReservationDto).toList();
     }
 
 }

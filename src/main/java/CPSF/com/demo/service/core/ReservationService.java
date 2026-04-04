@@ -56,7 +56,7 @@ public class ReservationService extends CRUDServiceImpl<Reservation> {
                 .camperPlace(camperPlace)
                 .guest(guest)
                 .price(calculator.calculateFinalReservationCost(checkin, checkout, camperPlace.getPrice()))
-                .paid(false);
+                .paid(reservationDto.paid());
 
         if (isActive(checkin, checkout)) {
             r.reservationStatus(ACTIVE);
@@ -159,8 +159,12 @@ public class ReservationService extends CRUDServiceImpl<Reservation> {
         return reservationRepository;
     }
 
-    public Reservation findByDateInBetweenAndCamperPlaceId(LocalDate date, Integer camperPlaceId) {
-        return reservationRepository.findByDateInBetweenAndCamperPlaceId(date, camperPlaceId);
+    public List<Reservation> findByDateInBetweenAndCamperPlaceId(LocalDate date, Integer camperPlaceId) {
+        var reservations = reservationRepository.findByDateInBetweenAndCamperPlaceId(date, camperPlaceId);
+        if (reservations.size() > 2) {
+            throw new IllegalStateException("More then 2 reservations are booked on camper place at the same day, this can happen only if database has corrupted data ");
+        }
+        return reservations;
     }
 }
 
