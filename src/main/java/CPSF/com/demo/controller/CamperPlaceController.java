@@ -34,8 +34,13 @@ public class CamperPlaceController {
     @PatchMapping
     public ResponseEntity<Map<String, String>> update(@RequestBody @Valid List<CamperPlace_DTO> camperPlaceDtos) {
         camperPlaceService.updateCamperPlaces(camperPlaceDtos);
-
         return ResponseEntity.status(HttpStatus.OK).body(Map.of("success","Parcele zostały zmienione"));
+    }
+
+    @PostMapping
+    public ResponseEntity<Map<String, String>> create(@RequestBody @Valid CamperPlace_DTO camperPlaceDto) {
+        camperPlaceService.create(camperPlaceDto);
+        return ResponseEntity.status(HttpStatus.OK).body(Map.of("success","Parcela została dodana"));
     }
 
 }

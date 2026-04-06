@@ -6,11 +6,11 @@ import CPSF.com.demo.model.entity.CamperPlace;
 import CPSF.com.demo.repository.CRUDRepository;
 import CPSF.com.demo.repository.CamperPlaceRepository;
 import lombok.RequiredArgsConstructor;
+import org.apache.commons.lang3.NotImplementedException;
 import org.jspecify.annotations.NonNull;
 import org.jspecify.annotations.Nullable;
 import org.springframework.stereotype.Service;
 
-import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.*;
 
@@ -21,18 +21,24 @@ public class CamperPlaceService extends CRUDServiceImpl<CamperPlace> {
     private final CamperPlaceRepository camperPlaceRepository;
     private final CamperPlaceTypeService camperPlaceTypeService;
 
-    public void create(CamperPlaceTypeDTO camperPlaceTypeDTO, BigDecimal price) {
-        var camperPlaceType = camperPlaceTypeService.findById(camperPlaceTypeDTO.id());
+    public void create(CamperPlace_DTO camperPlaceDto) {
+        var camperPlaceType = camperPlaceTypeService.findById(camperPlaceDto.type().id());
 
         if (camperPlaceType == null) {
             throw new IllegalArgumentException("Invalid type");
         }
 
+        var cpIndex = camperPlaceDto.index() != null ? camperPlaceDto.index() : generateDefaultIndex();
+
         create(CamperPlace.builder()
+                .index(cpIndex)
                 .camperPlaceType(camperPlaceType)
-                .price(price)
                 .build()
         );
+    }
+
+    private String generateDefaultIndex() {
+        throw new NotImplementedException();
     }
 
     public List<CamperPlace> updateCamperPlaces(List<CamperPlace_DTO> camperPlaceDtos) {
