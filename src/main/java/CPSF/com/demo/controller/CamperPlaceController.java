@@ -4,6 +4,7 @@ import CPSF.com.demo.model.dto.CamperPlace_DTO;
 import CPSF.com.demo.service.core.CamperPlaceService;
 import CPSF.com.demo.service.util.DtoMapper;
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -41,6 +42,12 @@ public class CamperPlaceController {
     public ResponseEntity<Map<String, String>> create(@RequestBody @Valid CamperPlace_DTO camperPlaceDto) {
         camperPlaceService.create(camperPlaceDto);
         return ResponseEntity.status(HttpStatus.OK).body(Map.of("success","Parcela została dodana"));
+    }
+
+    @DeleteMapping("/{campPlaceId}")
+    public ResponseEntity<Map<String, String>> delete(@PathVariable @NotNull Integer campPlaceId) {
+        camperPlaceService.deleteById(campPlaceId);
+        return ResponseEntity.status(HttpStatus.OK).body(Map.of("success","Parcela została usunięta"));
     }
 
 }
