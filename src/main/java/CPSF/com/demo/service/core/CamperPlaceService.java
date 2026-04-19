@@ -1,6 +1,6 @@
 package CPSF.com.demo.service.core;
 
-import CPSF.com.demo.model.dto.CamperPlaceTypeDTO;
+import CPSF.com.demo.exception.ClientInputException;
 import CPSF.com.demo.model.dto.CamperPlace_DTO;
 import CPSF.com.demo.model.entity.CamperPlace;
 import CPSF.com.demo.repository.CRUDRepository;
@@ -8,9 +8,10 @@ import CPSF.com.demo.repository.CamperPlaceRepository;
 import lombok.RequiredArgsConstructor;
 import org.jspecify.annotations.NonNull;
 import org.jspecify.annotations.Nullable;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 
-import java.math.BigDecimal;
+import java.sql.SQLIntegrityConstraintViolationException;
 import java.time.LocalDate;
 import java.util.*;
 
@@ -18,28 +19,68 @@ import java.util.*;
 @RequiredArgsConstructor
 public class CamperPlaceService extends CRUDServiceImpl<CamperPlace> {
 
+    private static final int DUPLICATE_ENTRY = 1062;
+
     private final CamperPlaceRepository camperPlaceRepository;
     private final CamperPlaceTypeService camperPlaceTypeService;
 
-    public void create(CamperPlaceTypeDTO camperPlaceTypeDTO, BigDecimal price) {
-        var camperPlaceType = camperPlaceTypeService.findById(camperPlaceTypeDTO.id());
+    public void create(CamperPlace_DTO camperPlaceDto) {
+        var camperPlaceType = camperPlaceTypeService.findById(camperPlaceDto.type().id());
 
         if (camperPlaceType == null) {
             throw new IllegalArgumentException("Invalid type");
         }
+        var cpIndex = camperPlaceDto.index() != null ? camperPlaceDto.index() : generateNextIndex();
+        validateIndex(cpIndex);
 
-        create(CamperPlace.builder()
-                .camperPlaceType(camperPlaceType)
-                .price(price)
-                .build()
-        );
+        try {
+            create(CamperPlace.builder()
+                    .index(cpIndex)
+                    .camperPlaceType(camperPlaceType)
+                    .build()
+            );
+        } catch (DataIntegrityViolationException e) {
+            var cause =  e.getMostSpecificCause();
+            if (cause instanceof SQLIntegrityConstraintViolationException sqlEx && DUPLICATE_ENTRY == sqlEx.getErrorCode()) {
+                throw new ClientInputException("Parcela z podanym indexem już istnieje");
+            }
+            throw new IllegalStateException();
+        }
+    }
+
+    private void validateIndex(String cpIndex) {
+        if (cpIndex == null || cpIndex.isBlank()) {
+            throw new ClientInputException("Indedx nie może byc pusty");
+        }
+        var firstEl = String.valueOf(cpIndex.charAt(0));
+        try {
+            Integer.parseInt(firstEl);
+        } catch (NumberFormatException e) {
+            throw new ClientInputException("Index musi zaczynać sie od cyfry");
+        }
+    }
+
+    private String generateNextIndex() {
+        var maxIndex = camperPlaceRepository.getCamperplaceMaxIndex();
+        return String.valueOf(Integer.parseInt(maxIndex) + 1);
     }
 
     public List<CamperPlace> updateCamperPlaces(List<CamperPlace_DTO> camperPlaceDtos) {
-        return camperPlaceDtos.stream()
-                .map(this::mapToCamperPlace)
-                .map(super::update)
-                .toList();
+        try {
+            var cpToUpdate = new ArrayList<CamperPlace>();
+            camperPlaceDtos.forEach(dto -> {
+                validateIndex(dto.index());
+                var cp = mapToCamperPlace(dto);
+                cpToUpdate.add(cp);
+            });
+            return super.update(cpToUpdate);
+        } catch (DataIntegrityViolationException e) {
+            var cause =  e.getMostSpecificCause();
+            if (cause instanceof SQLIntegrityConstraintViolationException sqlEx && DUPLICATE_ENTRY == sqlEx.getErrorCode()) {
+                throw new ClientInputException("Parcela z podanym indexem już istnieje");
+            }
+            throw new IllegalStateException();
+        }
     }
 
     private @NonNull CamperPlace mapToCamperPlace(CamperPlace_DTO dto) {
@@ -64,7 +105,6 @@ public class CamperPlaceService extends CRUDServiceImpl<CamperPlace> {
     public List<CamperPlace> findCamperPlaceByPriceNotNullAndCamperPlaceType_Id(Integer id) {
         return camperPlaceRepository.findCamperPlaceByPriceNotNullAndCamperPlaceType_Id(id);
     }
-
 
     @Override
     protected CRUDRepository<CamperPlace> getRepository() {

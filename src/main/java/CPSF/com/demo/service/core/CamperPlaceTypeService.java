@@ -1,5 +1,6 @@
 package CPSF.com.demo.service.core;
 
+import CPSF.com.demo.exception.ClientInputException;
 import CPSF.com.demo.model.dto.CamperPlaceTypeDTO;
 import CPSF.com.demo.model.entity.CamperPlace;
 import CPSF.com.demo.model.entity.CamperPlaceType;
@@ -19,12 +20,12 @@ public class CamperPlaceTypeService extends CRUDServiceImpl<CamperPlaceType>{
 
     private final CamperPlaceTypeRepository camperPlaceTypeRepository;
 
-    public List<CamperPlaceType> createOrUpdate(
+    public List<CamperPlaceType> update(
             List<CamperPlaceTypeDTO> camperPlaceTypeDTOs,
             List<Integer> cpIdToOverride
     ) {
+        validatePayload(camperPlaceTypeDTOs);
         var cpTypesToUpdate = new ArrayList<CamperPlaceType>();
-
         for (var dto : camperPlaceTypeDTOs) {
             if (dto.id() == null) {
                 cpTypesToUpdate.add(create(dto));
@@ -44,14 +45,30 @@ public class CamperPlaceTypeService extends CRUDServiceImpl<CamperPlaceType>{
         return super.update(cpTypesToUpdate);
     }
 
+    private void validatePayload(List<CamperPlaceTypeDTO> camperPlaceTypeDTOs) {
+        var illegalCpt = camperPlaceTypeDTOs.stream().filter(c -> c.id() == null);
+        if (illegalCpt.count() > 0) {
+            throw new IllegalStateException("camperPlaceType with null id! " + illegalCpt);
+        }
+    }
+
     private void overrideSelectedCamperPlaces(List<Integer> cpIdToOverride, List<CamperPlace> cps) {
             cps.stream()
                     .filter(c -> cpIdToOverride.contains(c.getId()))
                     .forEach(c -> c.setPrice(null));
     }
 
-    private CamperPlaceType create(CamperPlaceTypeDTO camperPlaceTypeDTO) {
+    public CamperPlaceType create(CamperPlaceTypeDTO camperPlaceTypeDTO) {
         return super.create(new CamperPlaceType(camperPlaceTypeDTO.typeName(), camperPlaceTypeDTO.price()));
+    }
+
+    @Override
+    public void deleteById(int id) {
+        var cpType = super.findById(id);
+        if (!cpType.getCamperPlaces().isEmpty()) {
+            throw new ClientInputException("Nie można usunąć typu parceli do którego są przypisane parcele! Przypisz parcele do innego typu następnie spróbuj ponownie");
+        }
+        super.deleteById(id);
     }
 
     @Override

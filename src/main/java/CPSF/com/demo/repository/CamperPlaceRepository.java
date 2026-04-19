@@ -14,7 +14,11 @@ public interface CamperPlaceRepository extends CRUDRepository<CamperPlace> {
     """)
     List<CamperPlace> findAllOrderByIndex();
 
-    List<CamperPlace> findCamperPlaceByPriceNotNullAndCamperPlaceType_Id(Integer cptId);
+    @Query("""
+        select max(cast(c.index as integer)) i from CamperPlace c
+    """)
+    String getCamperplaceMaxIndex();
 
+    List<CamperPlace> findCamperPlaceByPriceNotNullAndCamperPlaceType_Id(Integer cptId);
 
 }
