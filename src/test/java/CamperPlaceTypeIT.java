@@ -68,7 +68,7 @@ public class CamperPlaceTypeIT extends BaseIT {
 
         // When
         var updateDto = new CamperPlaceTypeDTO(type.getId(), "Dynamic", new BigDecimal("60.00"));
-        var createdCamperPlaceType = camperPlaceTypeService.createOrUpdate(List.of(updateDto), List.of());
+        var createdCamperPlaceType = camperPlaceTypeService.update(List.of(updateDto), List.of());
 
         // Then
         assertThat(camperPlaceService.findById(placeWithFallback.getId()).getPrice()).isEqualByComparingTo("60.00");
@@ -92,7 +92,7 @@ public class CamperPlaceTypeIT extends BaseIT {
 
         // When
         var updateTypeDto = new CamperPlaceTypeDTO(type.getId(), "ClearTest", new BigDecimal("50.00"));
-        var updatedCamperPlaceType = camperPlaceTypeService.createOrUpdate(List.of(updateTypeDto), List.of(place.getId()));
+        var updatedCamperPlaceType = camperPlaceTypeService.update(List.of(updateTypeDto), List.of(place.getId()));
 
         // Then
         var updatedPlace = camperPlaceService.findById(place.getId());
@@ -114,7 +114,7 @@ public class CamperPlaceTypeIT extends BaseIT {
         );
 
         // When
-        var results = camperPlaceTypeService.createOrUpdate(dtos, List.of());
+        var results = camperPlaceTypeService.update(dtos, List.of());
 
         // Then
         assertThat(results).hasSize(2);
