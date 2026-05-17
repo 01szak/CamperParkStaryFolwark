@@ -2,6 +2,7 @@ package CPSF.com.demo.controller;
 
 import CPSF.com.demo.model.dto.GuestDTO;
 import CPSF.com.demo.service.core.GuestService;
+import CPSF.com.demo.service.core.SearchCriteria;
 import CPSF.com.demo.service.util.DtoMapper;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -21,14 +22,8 @@ public class GuestController {
     private final GuestService guestService;
 
     @GetMapping
-    public Page<GuestDTO> findAll(Pageable pageable,
-                                  @RequestParam(required = false) String by,
-                                  @RequestParam(required = false) String value) {
-        if (by != null && value != null) {
-            return guestService.findBy(pageable, by, value).map(DtoMapper::getGuestDTO);
-        }
-//        TODO Do not return all data!!
-        return guestService.findAll(pageable).map(DtoMapper::getGuestDTO);
+    public Page<GuestDTO> findBy(Pageable pageable, SearchCriteria searchCriteria) {
+        return guestService.findBy(pageable, searchCriteria).map(DtoMapper::getGuestDTO);
     }
 
     @PatchMapping

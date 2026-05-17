@@ -58,16 +58,6 @@ public class DtoMapper {
         );
     }
 
-    public static ReservationMetadataDTO toReservationMetadataDTO(
-            @NotNull ReservationReservedCheckinCheckoutDTO reservationMetadata
-    ) {
-        return ReservationMetadataDTO.builder()
-                .reserved(reservationMetadata.getReserved())
-                .checkin(reservationMetadata.getCheckin())
-                .checkout(reservationMetadata.getCheckout())
-                .build();
-    }
-
     public static Guest getGuest(@NotNull GuestDTO guestDTO) {
         return Guest.builder()
                 .id(guestDTO.id())

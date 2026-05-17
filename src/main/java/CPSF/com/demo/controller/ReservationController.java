@@ -1,10 +1,8 @@
 package CPSF.com.demo.controller;
 
-import CPSF.com.demo.model.dto.PaidReservationsDTO;
-import CPSF.com.demo.model.dto.ReservationMetadataDTO;
 import CPSF.com.demo.model.dto.Reservation_DTO;
+import CPSF.com.demo.service.core.SearchCriteria;
 import CPSF.com.demo.service.util.DtoMapper;
-import CPSF.com.demo.service.util.ReservationMetadataMapper;
 import CPSF.com.demo.service.core.ReservationService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -14,8 +12,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.time.LocalDate;
-import java.util.List;
 import java.util.Map;
 
 @RestController
@@ -23,7 +19,6 @@ import java.util.Map;
 @RequiredArgsConstructor
 public class ReservationController {
 
-    private final ReservationMetadataMapper reservationMetadataMapper;
     private final ReservationService reservationService;
 
     @PostMapping
@@ -44,46 +39,9 @@ public class ReservationController {
         return ResponseEntity.status(HttpStatus.OK).body(Map.of("success","Rezeracja została usunięta"));
     }
 
-//        TODO to refactor
     @GetMapping
-    public Page<Reservation_DTO> findAll(Pageable pageable,
-                                        @RequestParam(required = false) String by,
-                                        @RequestParam(required = false) Object value) {
-        if (by != null && value != null) {
-            return reservationService.findBy(pageable, by, value).map(DtoMapper::getReservationDto);
-        }
-        return reservationService.findAll(pageable).map(DtoMapper::getReservationDto);
-    }
-
-    @GetMapping({"/getReservationMetadata"})
-    public Map<String, ReservationMetadataDTO> getReservationMetadata() {
-        return reservationService.getReservationMetadataDTO();
-    }
-
-    @GetMapping("/getPaidReservations")
-    public Map<String, PaidReservationsDTO> getPaidReservations() {
-        return reservationMetadataMapper.getPaidReservations();
-    }
-
-    @GetMapping("/getUnPaidReservations")
-    public Map<String, PaidReservationsDTO> getUnPaidReservations() {
-        return reservationMetadataMapper.getUnPaidReservations();
-    }
-
-    @GetMapping("/getUserPerReservation")
-    public Map<String, Map<String,List<String>>> getUserPerReservation() {
-        return reservationMetadataMapper.getUserPerReservation();
-    }
-
-    @GetMapping("/{date}/{camperPlaceId}")
-    public List<Reservation_DTO> getUserPerReservation(@PathVariable LocalDate date, @PathVariable Integer camperPlaceId) {
-        var reservations = reservationService.findByDateInBetweenAndCamperPlaceId(date, camperPlaceId);
-        return reservations.stream().map(DtoMapper::getReservationDto).toList();
+    public Page<Reservation_DTO> findBy(Pageable pageable, SearchCriteria searchCriteria) {
+        return reservationService.findBy(pageable, searchCriteria).map(DtoMapper::getReservationDto);
     }
 
 }
-
-
-
-
-

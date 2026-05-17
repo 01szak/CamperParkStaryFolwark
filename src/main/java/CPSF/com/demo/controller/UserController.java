@@ -2,9 +2,11 @@ package CPSF.com.demo.controller;
 
 import CPSF.com.demo.exception.UserNotFoundException;
 import CPSF.com.demo.model.dto.UserDTO;
+import CPSF.com.demo.service.core.SearchCriteria;
 import CPSF.com.demo.service.core.UserService;
 import CPSF.com.demo.service.util.DtoMapper;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -22,7 +24,7 @@ public class UserController {
     public UserDTO getEmployee(@AuthenticationPrincipal Jwt jwt) {
         var username = jwt.getClaimAsString("sub");
 
-        return userService.findBy("login", username)
+        return userService.findBy(new SearchCriteria("login", SearchCriteria.Operation.EQUALS, username))
                 .map(DtoMapper::getUserDTO)
                 .stream()
                 .findFirst()
