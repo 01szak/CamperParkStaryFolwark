@@ -35,7 +35,7 @@ public class DtoMapper {
                 getGuestDTO(r.getGuest()),
                 getCamperPlaceDto(r.getCamperPlace()),
                 r.getPaid(),
-                r.getReservationStatus().toString()
+                r.getReservationStatus()
         );
     }
 
