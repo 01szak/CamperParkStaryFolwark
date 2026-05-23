@@ -19,6 +19,7 @@ public record GenericSpecification<S>(SearchCriteria searchCriteria) implements 
             CriteriaQuery<?> query,
             CriteriaBuilder criteriaBuilder
     ) {
+        if (searchCriteria.key() == null || searchCriteria.key().isEmpty()) return null;
         var key = (Expression) root.get(searchCriteria.key());
         var javaType = key.getJavaType();
 
