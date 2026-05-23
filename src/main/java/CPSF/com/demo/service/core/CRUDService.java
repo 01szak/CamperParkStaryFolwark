@@ -15,8 +15,6 @@ public interface CRUDService<T> {
 
     void deleteAll(List<T> t);
 
-    Page<T> findBy(Pageable pageable, String fieldName, Object value);
-
     T findById(int id);
 
     T create(T t);
@@ -27,4 +25,5 @@ public interface CRUDService<T> {
 
     void deleteById(int id);
 
+    Page<T> findBy(Pageable pageable, SearchCriteria...criteria);
 }

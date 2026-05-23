@@ -35,7 +35,7 @@ public class DtoMapper {
                 getGuestDTO(r.getGuest()),
                 getCamperPlaceDto(r.getCamperPlace()),
                 r.getPaid(),
-                r.getReservationStatus().toString()
+                r.getReservationStatus()
         );
     }
 
@@ -56,16 +56,6 @@ public class DtoMapper {
             cpt.getTypeName(),
             cpt.getPrice()
         );
-    }
-
-    public static ReservationMetadataDTO toReservationMetadataDTO(
-            @NotNull ReservationReservedCheckinCheckoutDTO reservationMetadata
-    ) {
-        return ReservationMetadataDTO.builder()
-                .reserved(reservationMetadata.getReserved())
-                .checkin(reservationMetadata.getCheckin())
-                .checkout(reservationMetadata.getCheckout())
-                .build();
     }
 
     public static Guest getGuest(@NotNull GuestDTO guestDTO) {

@@ -1,17 +1,13 @@
 package CPSF.com.demo.service.core;
 
-import CPSF.com.demo.model.dto.ReservationMetadataDTO;
 import CPSF.com.demo.model.dto.Reservation_DTO;
 import CPSF.com.demo.model.entity.CamperPlace;
 import CPSF.com.demo.model.entity.Guest;
 import CPSF.com.demo.model.entity.Reservation;
 import CPSF.com.demo.repository.CRUDRepository;
 import CPSF.com.demo.service.util.ReservationCalculator;
-import CPSF.com.demo.service.util.ReservationMetadataMapper;
 import CPSF.com.demo.repository.ReservationRepository;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import CPSF.com.demo.service.core.StatisticsService.StatisticsModel;
 
@@ -25,13 +21,9 @@ import static CPSF.com.demo.model.entity.Reservation.ReservationStatus.ACTIVE;
 @RequiredArgsConstructor
 public class ReservationService extends CRUDServiceImpl<Reservation> {
 
-    private static final String BY_CP_INDEX = "camperPlaceIndex";
-    private static final String BY_GUEST_FULL_NAME = "stringUser";
-
     private final ReservationRepository reservationRepository;
     private final GuestService guestService;
     private final CamperPlaceService camperPlaceService;
-    private final ReservationMetadataMapper reservationMetadataMapper;
     private final ReservationCalculator calculator;
 
 
@@ -96,44 +88,6 @@ public class ReservationService extends CRUDServiceImpl<Reservation> {
         super.update(r);
     }
 
-    @Override
-    public Page<Reservation> findBy(Pageable pageable, String fieldName, Object value) {
-        switch (fieldName) {
-            case BY_CP_INDEX -> {
-                return reservationRepository.findAllByCamperPlace_Index(pageable, value.toString());
-            }
-            case BY_GUEST_FULL_NAME -> {
-                return reservationRepository.findAllByUserFullName(pageable, value.toString());
-            }
-            default -> {
-                return super.findBy(pageable, fieldName, value);
-            }
-        }
-    }
-
-    public List<Reservation> findByCamperPlaceIdIfPaid(int id) {
-        return reservationRepository.findByCamperPlace_IdIfPaid(id);
-    }
-
-    public List<Reservation> findByYearAndCamperPlaceIdIfPaid(int year, int id) {
-        return reservationRepository.findAllByYearAndCamperPlaceIdIfPaid(year, id);
-    }
-
-    public List<Reservation> findByCamperPlaceIdIfStatusNotComing(int id) {
-        return reservationRepository.findAllByCamperPlaceIdIfStatusNotComing(id);
-    }
-
-    public List<Reservation> findByYearAndCamperPlaceIdIfStatusNotComing(int year, int id) {
-        return reservationRepository.findAllByYearAndCamperPlace_IdIfStatusNotComing(year, id);
-    }
-
-    public List<Reservation> findByMonthYearAndCamperPlaceIdIfStatusNotComing(int month, int year, int id) {
-        return reservationRepository.findAllByMonthYearAndCamperPlace_IdIfStatusNotComing(month, year, id);
-    }
-
-    public Map<String, ReservationMetadataDTO> getReservationMetadataDTO() {
-        return reservationMetadataMapper.getReservationMetaDataDTO();
-    }
 
     public List<StatisticsModel.Revenue> countRevenueOfAllCamperPlaces(boolean isPaid, int month, int year) {
         return reservationRepository.countRevenueOfAllCamperPlaces(isPaid, month, year);
@@ -159,12 +113,5 @@ public class ReservationService extends CRUDServiceImpl<Reservation> {
         return reservationRepository;
     }
 
-    public List<Reservation> findByDateInBetweenAndCamperPlaceId(LocalDate date, Integer camperPlaceId) {
-        var reservations = reservationRepository.findByDateInBetweenAndCamperPlaceId(date, camperPlaceId);
-        if (reservations.size() > 2) {
-            throw new IllegalStateException("More then 2 reservations are booked on camper place at the same day, this can happen only if database has corrupted data ");
-        }
-        return reservations;
-    }
 }
 
