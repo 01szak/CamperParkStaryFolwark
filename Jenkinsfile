@@ -36,7 +36,7 @@ pipeline {
         stage('Build Application') {
             steps {
             //using hardcoded profile forces spring to use application-prod.properties
-                sh "mvn clean package -DskipTests -Dspring.profiles.active=prod
+                sh "mvn clean package -DskipTests -Dspring.profiles.active=prod"
             }
         }
 
