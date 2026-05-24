@@ -1,18 +1,8 @@
 pipeline {
     agent any
 
-    environment {
-        APP_NAME       = "camper-park"
-        LOCAL_PATH     = "/var/www/backend/camper_park"
-        EXTERNAL_PORT  = "4500"
-        DB_NAME        = "camper_park"
-        SPRING_PROFILE = "${params.PROFILE}"
-    }
-
     parameters {
-        string(name: 'branch_name', defaultValue: 'main', description: 'branch name to deploy')
-        choice(name: 'env', choices: ['PROD', 'STAGE'], description: 'env type')
-        choice(name: 'PROFILE', choices: ['prod'], description: 'Wybierz środowisko')
+        choice(name: 'PROFILE', choices: ['stage', 'prod'], description: 'Wybierz środowisko do wdrożenia')
     }
 
     tools {
@@ -20,12 +10,23 @@ pipeline {
         jdk 'jdk25'
     }
 
+    environment {
+        APP_NAME       = "camper_park"
+        SPRING_PROFILE = "${params.PROFILE}"
+
+        EXTERNAL_PORT  = "${params.PROFILE == 'prod' ? '4500' : '4501'}"
+
+        LOCAL_PATH     = "/var/www/backend/camper_park_v2-${params.PROFILE}"
+        DB_NAME        = "camper_park_${params.PROFILE}"
+    }
+
     stages {
         stage('Initialize') {
             steps {
                 sh '''
-                    echo "PATH = ${PATH}"
-                    echo "M2_HOME = ${M2_HOME}"
+                    echo "Wybrane środowisko: ${SPRING_PROFILE}"
+                    echo "Port zewnętrzny: ${EXTERNAL_PORT}"
+                    echo "Ścieżka bazy danych: ${LOCAL_PATH}"
                     java --version
                     mvn --version
                 '''
@@ -34,27 +35,27 @@ pipeline {
 
         stage('Build Application') {
             steps {
-                sh "mvn clean package -DskipTests -Dspring.profiles.active=${params.PROFILE}"
+            //using hardcoded profile forces spring to use application-prod.properties
+                sh "mvn clean package -DskipTests -Dspring.profiles.active=prod
             }
         }
 
         stage('Deploy (Docker Compose)') {
             steps {
                 withCredentials([
-                    usernamePassword(credentialsId: 'camper_park_db', passwordVariable: 'DB_PASSWORD', usernameVariable: 'DB_USER'),
-                    string(credentialsId: 'prod-db-root-pass', variable: 'DB_ROOT_PASSWORD'),
-                    file(credentialsId: 'camper_park_RSA_private-key', variable: 'RSA_FILE'),
-                    file(credentialsId: 'camper_park-RSA-key', variable: 'RSA_PUB_FILE')
+                    usernamePassword(credentialsId: "camper_park_db_${SPRING_PROFILE}", passwordVariable: 'DB_PASSWORD', usernameVariable: 'DB_USER'),
+                    string(credentialsId: "${SPRING_PROFILE}-db-root-pass", variable: 'DB_ROOT_PASSWORD'),
+                    file(credentialsId: "${SPRING_PROFILE}-camper_park_RSA_private-key", variable: 'RSA_FILE'),
+                    file(credentialsId: "${SPRING_PROFILE}-camper_park-RSA-key", variable: 'RSA_PUB_FILE')
                 ]) {
                     sh '''
                         export RSA_PRIVATE_PATH=$RSA_FILE
                         export RSA_PUBLIC_PATH=$RSA_PUB_FILE
 
-                        echo "Zatrzymywanie starych kontenerów..."
-                        docker compose -f compose-prod.yaml down
+                        echo "Zarządzanie środowiskiem przez Docker Compose..."
 
-                        echo "Budowanie i uruchamianie nowych..."
-                        docker compose -f compose-prod.yaml up --build -d
+                        docker compose -p "camper-park-${SPRING_PROFILE}" -f compose-prod.yaml down
+                        docker compose -p "camper-park-${SPRING_PROFILE}" -f compose-prod.yaml up --build -d
                     '''
                 }
             }
@@ -63,15 +64,14 @@ pipeline {
 
     post {
         always {
-            // old images cleanup
             sh 'docker image prune -f || true'
             cleanWs()
         }
         success {
-            echo "✅ Aplikacja działa w środowisku ${params.PROFILE} na porcie ${EXTERNAL_PORT}."
+            echo "✅ Aplikacja działa w środowisku ${SPRING_PROFILE} na porcie ${EXTERNAL_PORT}."
         }
         failure {
-            echo "❌ Coś poszło nie tak... Sprawdź logi w Jenkinsie."
+            echo "❌ Wdrożenie nie powiodło się... Sprawdź logi w Jenkinsie."
         }
     }
 }
