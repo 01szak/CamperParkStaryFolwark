@@ -6,8 +6,6 @@ import CPSF.com.demo.model.entity.Guest;
 import CPSF.com.demo.repository.CRUDRepository;
 import CPSF.com.demo.repository.GuestRepository;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.stream.Stream;
@@ -15,8 +13,6 @@ import java.util.stream.Stream;
 @Service
 @RequiredArgsConstructor
 public class GuestService extends CRUDServiceImpl<Guest> {
-
-    private static final String BY_FULL_NAME = "fullName";
 
     private final GuestRepository guestRepository;
 
@@ -31,14 +27,6 @@ public class GuestService extends CRUDServiceImpl<Guest> {
                 .phoneNumber(guestDTO.phoneNumber())
                 .build()
         );
-    }
-
-    @Override
-    public Page<Guest> findBy(Pageable pageable, String by, Object value) {
-            if (BY_FULL_NAME.equals(by)) {
-                return guestRepository.findAllByFullName(pageable, value.toString());
-            }
-            return super.findBy(pageable, by, value);
     }
 
     public Guest update(GuestDTO guestDTO) {

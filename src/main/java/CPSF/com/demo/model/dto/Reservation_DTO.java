@@ -1,5 +1,6 @@
 package CPSF.com.demo.model.dto;
 
+import CPSF.com.demo.model.entity.Reservation;
 import jakarta.annotation.Nullable;
 import jakarta.validation.constraints.NotNull;
 
@@ -12,5 +13,5 @@ public record Reservation_DTO(
         @NotNull GuestDTO guest,
         @NotNull CamperPlace_DTO camperPlace,
         @NotNull Boolean paid,
-        @Nullable String reservationStatus
+        @Nullable Reservation.ReservationStatus reservationStatus
 ) {}

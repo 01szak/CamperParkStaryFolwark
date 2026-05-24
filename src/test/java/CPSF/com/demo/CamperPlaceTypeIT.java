@@ -5,6 +5,7 @@ import CPSF.com.demo.model.entity.CamperPlace;
 import CPSF.com.demo.model.entity.CamperPlaceType;
 import CPSF.com.demo.service.core.CamperPlaceService;
 import CPSF.com.demo.service.core.CamperPlaceTypeService;
+import CPSF.com.demo.service.core.SearchCriteria;
 import jakarta.annotation.Nullable;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -107,22 +108,21 @@ public class CamperPlaceTypeIT extends BaseIT {
     public void shouldHandleMassCreationAndUpdatingOfTypes() {
         // Given
         var existingType = camperPlaceTypeService.create(new CamperPlaceType("OldType", new BigDecimal("40.00")));
-        
-        var dtos = List.of(
-            new CamperPlaceTypeDTO(existingType.getId(), "UpdatedOldType", new BigDecimal("45.00")),
-            new CamperPlaceTypeDTO(null, "BrandNewType", new BigDecimal("100.00"))
-        );
+
+        var updated = new CamperPlaceTypeDTO(existingType.getId(), "UpdatedOldType", new BigDecimal("45.00"));
+        var newT = new CamperPlaceTypeDTO(null, "BrandNewType", new BigDecimal("100.00"));
 
         // When
-        var results = camperPlaceTypeService.update(dtos, List.of());
+        var updatedRes = camperPlaceTypeService.update(List.of(updated), List.of());
+        var createdRes = camperPlaceTypeService.create(newT);
 
         // Then
-        assertThat(results).hasSize(2);
-        assertThat(camperPlaceTypeService.findBy("typeName", "UpdatedOldType").getContent()).isNotEmpty();
-        assertThat(camperPlaceTypeService.findBy("typeName", "BrandNewType").getContent()).isNotEmpty();
+        assertThat(updatedRes).hasSize(1);
+        assertThat(camperPlaceTypeService.findBy(new SearchCriteria("typeName", SearchCriteria.Operation.EQUALS, "UpdatedOldType")).getContent()).isNotEmpty();
+        assertThat(camperPlaceTypeService.findBy(new SearchCriteria("typeName", SearchCriteria.Operation.EQUALS, "BrandNewType")).getContent()).isNotEmpty();
 
-        results.add(existingType);
-        cleanup(null, results);
+        cleanup(null, List.of(createdRes));
+        cleanup(null, updatedRes);
     }
 
     private void cleanup(@Nullable List<CamperPlace> cps, @Nullable List<CamperPlaceType> cpts) {
