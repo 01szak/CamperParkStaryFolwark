@@ -32,12 +32,6 @@ pipeline {
             }
         }
 
-        stage('Checkout') {
-            steps {
-                git branch: "${params.branch_name}", url: string(credentialsId: 'camper_park-url')
-            }
-        }
-
         stage('Build Application') {
             steps {
                 sh "mvn clean package -DskipTests -Dspring.profiles.active=${params.PROFILE}"
