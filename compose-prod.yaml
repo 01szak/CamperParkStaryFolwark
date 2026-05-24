@@ -27,7 +27,7 @@ services:
       db:
         condition: service_healthy
     ports:
-      - "${EXTERNAL_PORT}:8080"
+      - "${EXTERNAL_PORT}:8081"
     environment:
       SPRING_DATASOURCE_URL: jdbc:mysql://db:3306/${DB_NAME}
       SPRING_DATASOURCE_USERNAME: ${DB_USER}
@@ -36,7 +36,7 @@ services:
       RSA_PRIVATE_KEY: file:/var/rsa/private.pem
       RSA_PUBLIC_KEY: file:/var/rsa/public.pem
     volumes:
-      - /var/log/camperpark/${SPRING_PROFILE}:/var/log/camperpark
+      - "/var/log/camper_park/${SPRING_PROFILE}:/var/log/camper_park"
       - "${RSA_PRIVATE_PATH}:/var/rsa/private.pem:ro"
       - "${RSA_PUBLIC_PATH}:/var/rsa/public.pem:ro"
     networks:
