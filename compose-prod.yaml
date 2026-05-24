@@ -11,6 +11,8 @@ services:
       MYSQL_PASSWORD: ${DB_PASSWORD}
     volumes:
       - "${LOCAL_PATH}/db_data:/var/lib/mysql"
+      - "/home/kacper/database_backup/2026-05-24_12-00-01/2026-05-24_12-00-01-camper_park.sql:/docker-entrypoint-initdb.d/init.sql"
+
     networks:
       - camper_park-net
     healthcheck:
