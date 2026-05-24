@@ -41,3 +41,7 @@ services:
       - "${RSA_PUBLIC_PATH}:/var/rsa/public.pem:ro"
     networks:
       - camper_park-net
+
+networks:
+  camper_park-net:
+    driver: bridge
