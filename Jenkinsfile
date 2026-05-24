@@ -14,7 +14,7 @@ pipeline {
         APP_NAME       = "camper_park"
         SPRING_PROFILE = "${params.PROFILE}"
 
-        EXTERNAL_PORT  = "${params.PROFILE == 'prod' ? '4500' : '4501'}"
+        EXTERNAL_PORT  = "${params.PROFILE == 'prod' ? '2000' : '2001'}"
 
         LOCAL_PATH     = "/var/www/backend/camper_park_v2-${params.PROFILE}"
         DB_NAME        = "camper_park_${params.PROFILE}"
