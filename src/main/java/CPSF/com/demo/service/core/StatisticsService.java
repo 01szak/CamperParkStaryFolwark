@@ -17,7 +17,7 @@ public class StatisticsService {
 
     public static class StatisticsModel {
         public record Revenue (String cpIndex, long count, BigDecimal revenue) {}
-        public record CountryDistribution (Country country, long usersCount) {}
+        public record CountryDistribution (String countryIsoCode, long usersCount) {}
     }
 
     public List<StatisticsModel.CountryDistribution> getUserPerCountry() {

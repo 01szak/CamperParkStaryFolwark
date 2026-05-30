@@ -34,7 +34,7 @@ public class Guest extends DbObject  {
     private String carRegistration;
 
     @Column(name = "country")
-    private Country country;
+    private String country;
 
     @OneToMany(mappedBy = "guest", fetch = FetchType.LAZY,cascade = {
            CascadeType.DETACH,
