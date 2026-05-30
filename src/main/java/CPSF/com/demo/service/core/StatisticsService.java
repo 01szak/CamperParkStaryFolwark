@@ -1,5 +1,6 @@
 package CPSF.com.demo.service.core;
 
+import CPSF.com.demo.model.entity.Country;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -11,11 +12,20 @@ import java.util.List;
 public class StatisticsService {
 
     private final ReservationService reservationService;
-    private final CamperPlaceService camperPlaceService;
+    private final GuestService guestService;
 
 
     public static class StatisticsModel {
         public record Revenue (String cpIndex, long count, BigDecimal revenue) {}
+        public record CountryDistribution (Country country, long usersCount) {}
+    }
+
+    public List<StatisticsModel.CountryDistribution> getUserPerCountry() {
+        return getUserPerCountry(0, 0);
+    }
+
+    public List<StatisticsModel.CountryDistribution> getUserPerCountry(int month, int year) {
+        return guestService.getCountryDistribution(month, year);
     }
 
     public List<List<StatisticsModel.Revenue>> getRevenue() {

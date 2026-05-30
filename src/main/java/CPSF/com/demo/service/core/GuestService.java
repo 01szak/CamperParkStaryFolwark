@@ -5,9 +5,11 @@ import CPSF.com.demo.model.dto.GuestDTO;
 import CPSF.com.demo.model.entity.Guest;
 import CPSF.com.demo.repository.CRUDRepository;
 import CPSF.com.demo.repository.GuestRepository;
+import CPSF.com.demo.service.core.StatisticsService.StatisticsModel;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.stream.Stream;
 
 @Service
@@ -61,6 +63,10 @@ public class GuestService extends CRUDServiceImpl<Guest> {
         if (guestIsEmpty) {
             throw new ClientInputException("Utwórz lub podaj istniejącego gościa");
         }
+    }
+
+    public List<StatisticsModel.CountryDistribution> getCountryDistribution(int month, int year) {
+        return guestRepository.getCountryDistribution(month, year);
     }
 
     @Override
