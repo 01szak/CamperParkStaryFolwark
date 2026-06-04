@@ -27,6 +27,7 @@ public class GuestService extends CRUDServiceImpl<Guest> {
                 .email(mapBlankToNull(guestDTO.email()))
                 .carRegistration(guestDTO.carRegistration())
                 .phoneNumber(guestDTO.phoneNumber())
+                .country(guestDTO.country())
                 .build()
         );
     }
@@ -43,6 +44,7 @@ public class GuestService extends CRUDServiceImpl<Guest> {
         guest.setEmail(mapBlankToNull(guestDTO.email()));
         guest.setPhoneNumber(guestDTO.phoneNumber());
         guest.setCarRegistration(guestDTO.carRegistration());
+        guest.setCountry(guestDTO.country());
 
         return super.update(guest);
     }
