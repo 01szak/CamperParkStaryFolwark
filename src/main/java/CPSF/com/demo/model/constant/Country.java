@@ -37,7 +37,7 @@ public enum Country {
     POLAND("PL", "Polska", "+48"),
     PORTUGAL("PT", "Portugalia", "+351"),
     ROMANIA("RO", "Rumunia", "+40"),
-    SAN_MARINO("sM", "San Marino", "+378"),
+    SAN_MARINO("SM", "San Marino", "+378"),
     SERBIA("RS", "Serbia", "+381"),
     SLOVAKIA("SK", "Słowacja", "+421"),
     SLOVENIA("SI", "Słowenia", "+386"),
@@ -81,7 +81,7 @@ public enum Country {
     SAINT_LUCIA("LC", "Saint Lucia", "+1-758"),
     SAINT_VINCENT_AND_THE_GRENADINES("VC", "Saint Vincent i Grenadyny", "+1-784"),
     SURINAME("SR", "Surinam", "+597"),
-    TRINIDAD_AND_TOBAGO("tt", "Trynidad i Tobago", "+1-868"),
+    TRINIDAD_AND_TOBAGO("TT", "Trynidad i Tobago", "+1-868"),
     UNITED_STATES("US", "Stany Zjednoczone", "+1"),
     URUGUAY("UY", "Urugwaj", "+598"),
     VENEZUELA("VE", "Wenezuela", "+58");
