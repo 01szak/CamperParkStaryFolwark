@@ -1,6 +1,5 @@
 package CPSF.com.demo.service.core;
 
-import CPSF.com.demo.model.entity.Country;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -13,7 +12,6 @@ public class StatisticsService {
 
     private final ReservationService reservationService;
     private final GuestService guestService;
-
 
     public static class StatisticsModel {
         public record Revenue (String cpIndex, long count, BigDecimal revenue) {}

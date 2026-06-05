@@ -1,7 +1,7 @@
 package CPSF.com.demo.repository;
 
+import CPSF.com.demo.model.constant.ReservationStatus;
 import CPSF.com.demo.model.entity.Reservation;
-import CPSF.com.demo.model.entity.Reservation.ReservationStatus;
 import CPSF.com.demo.service.core.StatisticsService.StatisticsModel;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;

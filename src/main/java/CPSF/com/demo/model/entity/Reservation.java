@@ -1,5 +1,6 @@
 package CPSF.com.demo.model.entity;
 
+import CPSF.com.demo.model.constant.ReservationStatus;
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.persistence.*;
@@ -12,7 +13,7 @@ import org.springframework.context.annotation.Lazy;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 
-import static CPSF.com.demo.model.entity.Reservation.ReservationStatus.COMING;
+import static CPSF.com.demo.model.constant.ReservationStatus.COMING;
 
 @Entity
 @Table(name = "reservation")
@@ -22,12 +23,6 @@ import static CPSF.com.demo.model.entity.Reservation.ReservationStatus.COMING;
 @NoArgsConstructor
 @EqualsAndHashCode(callSuper = true)
 public class Reservation extends DbObject {
-
-    public enum ReservationStatus {
-        EXPIRED,
-        ACTIVE,
-        COMING
-    }
 
     @Column(name = "checkin")
     @JsonFormat(pattern = "yyyy-MM-dd")

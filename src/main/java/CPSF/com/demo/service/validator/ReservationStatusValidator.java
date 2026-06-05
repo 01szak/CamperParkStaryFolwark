@@ -1,7 +1,7 @@
 package CPSF.com.demo.service.validator;
 
+import CPSF.com.demo.model.constant.ReservationStatus;
 import CPSF.com.demo.model.entity.Reservation;
-import CPSF.com.demo.model.entity.Reservation.ReservationStatus;
 import CPSF.com.demo.repository.ReservationRepository;
 import CPSF.com.demo.service.util.ReservationCalculator;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -16,8 +16,8 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 
-import static CPSF.com.demo.model.entity.Reservation.ReservationStatus.ACTIVE;
-import static CPSF.com.demo.model.entity.Reservation.ReservationStatus.EXPIRED;
+import static CPSF.com.demo.model.constant.ReservationStatus.ACTIVE;
+import static CPSF.com.demo.model.constant.ReservationStatus.EXPIRED;
 
 @Service
 public class ReservationStatusValidator implements StatusValidator {

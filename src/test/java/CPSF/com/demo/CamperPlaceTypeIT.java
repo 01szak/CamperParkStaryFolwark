@@ -1,5 +1,6 @@
 package CPSF.com.demo;
 
+import CPSF.com.demo.model.constant.Operation;
 import CPSF.com.demo.model.dto.CamperPlaceTypeDTO;
 import CPSF.com.demo.model.entity.CamperPlace;
 import CPSF.com.demo.model.entity.CamperPlaceType;
@@ -22,7 +23,6 @@ public class CamperPlaceTypeIT extends BaseIT {
 
     @Autowired
     private CamperPlaceService camperPlaceService;
-
 
     @Test
     public void shouldFallbackToTypePriceWhenNoOverride() {
@@ -118,8 +118,8 @@ public class CamperPlaceTypeIT extends BaseIT {
 
         // Then
         assertThat(updatedRes).hasSize(1);
-        assertThat(camperPlaceTypeService.findBy(new SearchCriteria("typeName", SearchCriteria.Operation.EQUALS, "UpdatedOldType")).getContent()).isNotEmpty();
-        assertThat(camperPlaceTypeService.findBy(new SearchCriteria("typeName", SearchCriteria.Operation.EQUALS, "BrandNewType")).getContent()).isNotEmpty();
+        assertThat(camperPlaceTypeService.findBy(new SearchCriteria("typeName", Operation.EQUALS, "UpdatedOldType")).getContent()).isNotEmpty();
+        assertThat(camperPlaceTypeService.findBy(new SearchCriteria("typeName", Operation.EQUALS, "BrandNewType")).getContent()).isNotEmpty();
 
         cleanup(null, List.of(createdRes));
         cleanup(null, updatedRes);

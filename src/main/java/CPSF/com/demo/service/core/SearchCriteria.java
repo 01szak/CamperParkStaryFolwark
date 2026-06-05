@@ -1,5 +1,7 @@
 package CPSF.com.demo.service.core;
 
+import CPSF.com.demo.model.constant.Operation;
+
 public record SearchCriteria(
         String key,
         Operation operation,
@@ -8,14 +10,5 @@ public record SearchCriteria(
 ){
     public SearchCriteria(String key, Operation operation, String value) {
         this(key, operation, value, null);
-    }
-
-    public enum Operation {
-        EQUALS,
-        NOT_EQUALS,
-        LESS_THEN,
-        GREATER_THEN,
-        BETWEEN,
-        LIKE
     }
 }

@@ -19,7 +19,7 @@ public interface GuestRepository extends CRUDRepository<Guest> {
         ) 
         FROM (
             SELECT g.country c, count(*) cnt 
-                FROM Guest g JOIN Reservation r ON r.id = g.id 
+                FROM Guest g JOIN Reservation r ON r.guest.id = g.id 
                 WHERE
                     (:month <= 0 OR FUNCTION('MONTH', r.checkin) = :month)
                 AND

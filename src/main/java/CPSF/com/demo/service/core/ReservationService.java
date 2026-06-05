@@ -15,7 +15,7 @@ import java.time.LocalDate;
 import java.util.*;
 
 import static CPSF.com.demo.exception.ClientInputException.checkClientInput;
-import static CPSF.com.demo.model.entity.Reservation.ReservationStatus.ACTIVE;
+import static CPSF.com.demo.model.constant.ReservationStatus.ACTIVE;
 
 @Service
 @RequiredArgsConstructor

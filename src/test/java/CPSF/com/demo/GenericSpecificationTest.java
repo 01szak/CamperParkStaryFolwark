@@ -1,5 +1,6 @@
 package CPSF.com.demo;
 
+import CPSF.com.demo.model.constant.Operation;
 import CPSF.com.demo.service.core.GenericSpecification;
 import CPSF.com.demo.service.core.SearchCriteria;
 import jakarta.persistence.criteria.*;
@@ -35,7 +36,7 @@ class GenericSpecificationTest {
     @SuppressWarnings("unchecked")
     void shouldCreateEqualPredicateForString() {
         // given
-        var criteria = new SearchCriteria("name", SearchCriteria.Operation.EQUALS, "Kowalski");
+        var criteria = new SearchCriteria("name", Operation.EQUALS, "Kowalski");
         var spec = new GenericSpecification<>(criteria);
         when(path.getJavaType()).thenReturn((Class) String.class);
 
@@ -50,7 +51,7 @@ class GenericSpecificationTest {
     @SuppressWarnings("unchecked")
     void shouldCreateBetweenPredicateForLocalDate() {
         // given
-        var criteria = new SearchCriteria("checkin", SearchCriteria.Operation.BETWEEN, "2026-05-01", "2026-05-10");
+        var criteria = new SearchCriteria("checkin", Operation.BETWEEN, "2026-05-01", "2026-05-10");
         var spec = new GenericSpecification<>(criteria);
         when(path.getJavaType()).thenReturn((Class) LocalDate.class);
 
@@ -65,7 +66,7 @@ class GenericSpecificationTest {
     @SuppressWarnings("unchecked")
     void shouldCorrectyParseBigDecimal() {
         // given
-        var criteria = new SearchCriteria("price", SearchCriteria.Operation.GREATER_THEN, "150.50");
+        var criteria = new SearchCriteria("price", Operation.GREATER_THEN, "150.50");
         var spec = new GenericSpecification<>(criteria);
         when(path.getJavaType()).thenReturn((Class) BigDecimal.class);
 
@@ -80,7 +81,7 @@ class GenericSpecificationTest {
     @SuppressWarnings("unchecked")
     void shouldCreateLikePredicateWithWildcardsAndLowerCase() {
         // given
-        var criteria = new SearchCriteria("email", SearchCriteria.Operation.LIKE, "Test");
+        var criteria = new SearchCriteria("email", Operation.LIKE, "Test");
         var spec = new GenericSpecification<>(criteria);
         when(path.getJavaType()).thenReturn((Class) String.class);
         
