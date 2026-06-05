@@ -73,8 +73,8 @@
             <artifactId>spring-boot-starter-data-jpa</artifactId>
         </dependency>
         <dependency>
-            <groupId>mysql</groupId>
-            <artifactId>mysql-connector-java</artifactId>
+            <groupId>com.mysql</groupId>
+            <artifactId>mysql-connector-j</artifactId>
             <version>8.0.32</version>
         </dependency>
         <dependency>
@@ -87,14 +87,14 @@
         </dependency>
 
 
-        <!-- DOKUMENTACJA / OPENAPI -->
+        <!-- DOCS / OPENAPI -->
         <dependency>
             <groupId>org.springdoc</groupId>
             <artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>
             <version>2.8.0</version>
         </dependency>
 
-        <!-- TESTY -->
+        <!-- TESTS -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-test</artifactId>
@@ -116,7 +116,7 @@
             <scope>test</scope>
         </dependency>
 
-        <!-- INNE -->
+        <!-- OTHER -->
         <dependency>
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
@@ -124,7 +124,7 @@
         <dependency>
             <groupId>org.jetbrains</groupId>
             <artifactId>annotations</artifactId>
-            <version>RELEASE</version>
+            <version>24.1.0</version>
         </dependency>
     </dependencies>
 
@@ -191,7 +191,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-resources-plugin</artifactId>
-                <version>2.7</version>
+                <version>3.3.1</version>
                 <configuration>
                     <delimiters>
                         <delimiter>@</delimiter>
