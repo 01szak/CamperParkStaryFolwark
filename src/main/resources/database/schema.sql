@@ -101,3 +101,10 @@ ALTER TABLE camper_place
     FOREIGN KEY (camper_place_type_id)
         REFERENCES camper_place_type(id)
         ON DELETE RESTRICT;
+
+-- changeset 01szak:guest_country_col
+-- validCheckSum: ANY
+-- preconditions onFail:MARK_RAN
+-- precondition-sql-check expectedResult:0 SELECT COUNT(*) FROM information_schema.columns WHERE table_schema = DATABASE() AND table_name = 'guest' AND column_name = 'country'
+ALTER TABLE guest
+    ADD COLUMN country VARCHAR(2)

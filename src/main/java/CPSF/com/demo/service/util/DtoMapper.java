@@ -46,7 +46,8 @@ public class DtoMapper {
                 g.getLastname(),
                 g.getEmail(),
                 g.getPhoneNumber(),
-                g.getCarRegistration()
+                g.getCarRegistration(),
+                g.getCountry()
         );
     }
 
@@ -58,14 +59,4 @@ public class DtoMapper {
         );
     }
 
-    public static Guest getGuest(@NotNull GuestDTO guestDTO) {
-        return Guest.builder()
-                .id(guestDTO.id())
-                .firstname(guestDTO.firstname())
-                .lastname(guestDTO.lastname())
-                .email(guestDTO.email())
-                .carRegistration(guestDTO.carRegistration())
-                .phoneNumber(guestDTO.phoneNumber())
-                .build();
-    }
 }
