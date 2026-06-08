@@ -8,14 +8,20 @@ public class CountryIsoValidator implements ConstraintValidator<CountryIso, Stri
 
     @Override
     public boolean isValid(String value, ConstraintValidatorContext context) {
+        if (value == null) {
+            return true;
+        }
+
         if (value.length() != 2) {
             setCustomMessage(context, "Iso code should have exactly 2 letters");
             return false;
         }
+
         if (!value.matches("^[A-Z]+$")) {
             setCustomMessage(context, "Iso code should be upper case");
             return false;
         }
+
         if (!Country.getByIsoCode(value).isPresent()) {
             setCustomMessage(context, "Unknown Iso code");
             return false;
