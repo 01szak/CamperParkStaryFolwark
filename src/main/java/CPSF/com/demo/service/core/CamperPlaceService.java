@@ -24,7 +24,7 @@ public class CamperPlaceService extends CRUDServiceImpl<CamperPlace> {
     private final CamperPlaceRepository camperPlaceRepository;
     private final CamperPlaceTypeService camperPlaceTypeService;
 
-    public void create(CamperPlace_DTO camperPlaceDto) {
+    public CamperPlace create(CamperPlace_DTO camperPlaceDto) {
         var camperPlaceType = camperPlaceTypeService.findById(camperPlaceDto.type().id());
 
         if (camperPlaceType == null) {
@@ -34,7 +34,7 @@ public class CamperPlaceService extends CRUDServiceImpl<CamperPlace> {
         validateIndex(cpIndex);
 
         try {
-            create(CamperPlace.builder()
+            return create(CamperPlace.builder()
                     .index(cpIndex)
                     .camperPlaceType(camperPlaceType)
                     .build()
@@ -97,9 +97,12 @@ public class CamperPlaceService extends CRUDServiceImpl<CamperPlace> {
     }
 
     public boolean isOccupied(CamperPlace cp, LocalDate checkin, LocalDate checkout, @Nullable Integer idToExclude) {
-        return cp.getReservations().stream()
-                .filter(r -> !r.getId().equals(idToExclude))
-                .anyMatch(r -> checkin.isBefore(r.getCheckout()) && checkout.isAfter(r.getCheckin()));
+        var res = cp.getReservations();
+        return res != null ?
+                cp.getReservations().stream().findAny().stream()
+                        .filter(r -> !r.getId().equals(idToExclude))
+                        .anyMatch(r -> checkin.isBefore(r.getCheckout()) && checkout.isAfter(r.getCheckin()))
+                : false;
     }
 
     public List<CamperPlace> findCamperPlaceByPriceNotNullAndCamperPlaceType_Id(Integer id) {

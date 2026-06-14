@@ -18,15 +18,14 @@ public interface GuestRepository extends CRUDRepository<Guest> {
             cnt
         ) 
         FROM (
-            SELECT g.country c, count(*) cnt 
-                FROM Guest g JOIN Reservation r ON r.guest.id = g.id 
-                WHERE
+            SELECT g.country c, COUNT(DISTINCT(g.id)) cnt 
+                FROM Guest g 
+                JOIN Reservation r ON r.guest.id = g.id 
+                WHERE 
                     (:month <= 0 OR FUNCTION('MONTH', r.checkin) = :month)
-                AND
-                    (:year <= 0 OR FUNCTION('YEAR', r.checkin) = :year)
+                    AND (:year <= 0 OR FUNCTION('YEAR', r.checkin) = :year)
                 GROUP BY c
         )
-            
     """)
     List<StatisticsModel.CountryDistribution> getCountryDistribution(@Param("month") int month, @Param("year") int year);
 }
