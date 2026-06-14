@@ -27,7 +27,7 @@ public class ReservationService extends CRUDServiceImpl<Reservation> {
     private final ReservationCalculator calculator;
 
 
-    public void create(Reservation_DTO reservationDto) {
+    public Reservation create(Reservation_DTO reservationDto) {
         var camperPlace = camperPlaceService.findById(reservationDto.camperPlace().id());
         var checkin = reservationDto.checkin();
         var checkout = reservationDto.checkout();
@@ -54,7 +54,7 @@ public class ReservationService extends CRUDServiceImpl<Reservation> {
             r.reservationStatus(ACTIVE);
         }
 
-        super.create(r.build());
+       return super.create(r.build());
     }
 
     public void update(Reservation_DTO reservationDto) {
