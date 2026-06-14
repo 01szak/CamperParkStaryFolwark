@@ -99,7 +99,7 @@ public class CamperPlaceService extends CRUDServiceImpl<CamperPlace> {
     public boolean isOccupied(CamperPlace cp, LocalDate checkin, LocalDate checkout, @Nullable Integer idToExclude) {
         var res = cp.getReservations();
         return res != null ?
-                cp.getReservations().stream().findAny().stream()
+                cp.getReservations().stream()
                         .filter(r -> !r.getId().equals(idToExclude))
                         .anyMatch(r -> checkin.isBefore(r.getCheckout()) && checkout.isAfter(r.getCheckin()))
                 : false;
