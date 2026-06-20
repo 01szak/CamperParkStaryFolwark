@@ -5,26 +5,32 @@ import jakarta.persistence.criteria.CriteriaQuery;
 import jakarta.persistence.criteria.Expression;
 import jakarta.persistence.criteria.Predicate;
 import jakarta.persistence.criteria.Root;
+import jakarta.validation.constraints.NotNull;
+import org.jspecify.annotations.NonNull;
 import org.jspecify.annotations.Nullable;
 import org.springframework.data.jpa.domain.Specification;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.util.Optional;
 
-public record GenericSpecification<S>(SearchCriteria searchCriteria) implements Specification<S> {
+public record GenericSpecification<S>(@NotNull SearchCriteria searchCriteria) implements Specification<S> {
 
     @Override
     public @Nullable Predicate toPredicate(
-            Root<S> root,
-            CriteriaQuery<?> query,
-            CriteriaBuilder criteriaBuilder
+            @NonNull Root<S> root,
+            @NonNull CriteriaQuery<?> query,
+            @NonNull CriteriaBuilder criteriaBuilder
     ) {
-        if (searchCriteria.key() == null || searchCriteria.key().isEmpty()) return null;
-        var key = (Expression) root.get(searchCriteria.key());
-        var javaType = key.getJavaType();
-
-        Object value = parseValue(javaType, searchCriteria.value());
-        Object secondValue = searchCriteria.secondValue() != null ? parseValue(javaType, searchCriteria.secondValue()) : null;
+        final var optJoinObject = Optional.ofNullable(searchCriteria.joinObject());
+        final var key = (Expression) optJoinObject
+                .map(_ -> root.join(optJoinObject.get()).get(searchCriteria.key()))
+                .orElseGet(() -> root.get(searchCriteria.key()));
+        final var javaType = key.getJavaType();
+        final var value = parseValue(javaType, searchCriteria.value());
+        final var secondValue = Optional.ofNullable(searchCriteria.secondValue())
+                .map(_ -> parseValue(javaType, searchCriteria.secondValue()))
+                .orElse(null);
 
         switch (searchCriteria.operation()) {
             case EQUALS -> {
@@ -72,5 +78,4 @@ public record GenericSpecification<S>(SearchCriteria searchCriteria) implements 
             return value;
         }
     }
-
 }
