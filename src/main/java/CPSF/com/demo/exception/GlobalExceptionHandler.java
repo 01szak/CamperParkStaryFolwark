@@ -11,8 +11,8 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
-    @ExceptionHandler(ClientInputException.class)
-    public ResponseEntity<String> handleValidationException(ClientInputException ex) {
+    @ExceptionHandler(UserInputException.class)
+    public ResponseEntity<String> handleValidationException(UserInputException ex) {
         return ResponseEntity.badRequest().body(ex.getMessage());
     }
 
@@ -36,6 +36,11 @@ public class GlobalExceptionHandler {
                 });
 
         return ResponseEntity.badRequest().body(error.toString());
+    }
+
+    @ExceptionHandler(ClientSideException.class)
+    public ResponseEntity<String> handleClientSideException(ClientSideException ex) {
+        return ResponseEntity.badRequest().body(ex.getMessage());
     }
 
 }

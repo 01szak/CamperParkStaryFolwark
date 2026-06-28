@@ -14,7 +14,7 @@ import CPSF.com.demo.service.core.StatisticsService.StatisticsModel;
 import java.time.LocalDate;
 import java.util.*;
 
-import static CPSF.com.demo.exception.ClientInputException.checkClientInput;
+import static CPSF.com.demo.exception.UserInputException.checkClientInput;
 import static CPSF.com.demo.model.constant.ReservationStatus.ACTIVE;
 
 @Service
@@ -66,7 +66,7 @@ public class ReservationService extends CRUDServiceImpl<Reservation> {
 
         var datesOrCpChanged = !r.getCheckin().equals(checkin)
                 ||  !r.getCheckout().equals(checkout)
-                || !r.getCamperPlace().getIndex().equals(reservationDto.camperPlace());
+                || !r.getCamperPlace().getIndex().equals(reservationDto.camperPlace().index());
 
     //it is checked because of the constraints and reservations overlapping
         if (datesOrCpChanged) {

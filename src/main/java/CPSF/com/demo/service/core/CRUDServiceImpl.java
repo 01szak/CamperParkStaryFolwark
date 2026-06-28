@@ -10,6 +10,7 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.stereotype.Service;
 
+import java.util.Arrays;
 import java.util.List;
 
 
@@ -46,6 +47,15 @@ public abstract class CRUDServiceImpl<T extends DbObject> implements CRUDService
         if (pageable.getSort().isEmpty()) {
             pageable = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(), UPDATED_AT_DESC);
         }
+
+        if (
+                searchCriteria == null
+                || searchCriteria.length == 0
+                || Arrays.stream(searchCriteria).filter(sc -> sc.key().isEmpty()).count() > 0
+        ) {
+            return findAll(pageable);
+        }
+
         var specification = buildSpecification(searchCriteria);
         return getRepository().findAll(specification, pageable);
     }

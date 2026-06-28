@@ -4,8 +4,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
 @ResponseStatus(HttpStatus.BAD_REQUEST)
-public class ClientInputException extends RuntimeException {
-    public ClientInputException(String message) {
+public class UserInputException extends RuntimeException {
+
+    public UserInputException(String message) {
         super(message);
     }
 
@@ -16,7 +17,7 @@ public class ClientInputException extends RuntimeException {
 
     public static void checkClientInput(boolean condition, String errorMessage) {
         if (condition) {
-            throw new ClientInputException(errorMessage);
+            throw new UserInputException(errorMessage);
         }
     }
 }
