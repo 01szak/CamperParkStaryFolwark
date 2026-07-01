@@ -29,17 +29,6 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 public class StatisticsServiceIT extends BaseIT {
 
-    @Autowired
-    private ReservationService reservationService;
-    @Autowired
-    private GuestService guestService;
-    @Autowired
-    private CamperPlaceService camperPlaceService;
-    @Autowired
-    private CamperPlaceTypeService camperPlaceTypeService;
-    @Autowired
-    private StatisticsService statisticsService;
-
     @Test
     public void shouldReturnRevenueCorrectly() {
         //Given
@@ -52,7 +41,8 @@ public class StatisticsServiceIT extends BaseIT {
                     "test_cpt" + i,
                     cpPrice,
                     String.valueOf(i),
-                    "GUEST_DEMO" + i,
+                    "GUEST_FN_DEMO" + i,
+                    "GUEST_LN_DEMO" + i,
                     Country.PERU,
                     LocalDate.parse("2000-01-01"),
                     LocalDate.parse("2000-01-02"),
@@ -78,7 +68,8 @@ public class StatisticsServiceIT extends BaseIT {
         createReservationWithNewData("TYPE1",
                 BigDecimal.valueOf(123),
                 "1",
-                "GUEST1",
+                "GUEST_FN1",
+                "GUEST_LN1",
                 Country.POLAND,
                 LocalDate.parse("2030-01-01"),
                 LocalDate.parse("2030-01-05"),
@@ -88,7 +79,8 @@ public class StatisticsServiceIT extends BaseIT {
                 "TYPE2",
                 BigDecimal.valueOf(123),
                 "2",
-                "GUEST2",
+                "GUEST_FN2",
+                "GUEST_LN2",
                 Country.GERMANY,
                 LocalDate.parse("2030-01-01"),
                 LocalDate.parse("2030-01-05"),
@@ -101,45 +93,12 @@ public class StatisticsServiceIT extends BaseIT {
                 camperPlaceService.findBy(new SearchCriteria("index", Operation.EQUALS, "1")).stream().findFirst().get(),
                 LocalDate.parse("2030-01-06"),
                 LocalDate.parse("2030-01-08"),
-                guestService.findBy(new SearchCriteria("firstname", Operation.EQUALS, "GUEST1")).stream().findFirst().get(),
+                guestService.findBy(new SearchCriteria("firstname", Operation.EQUALS, "GUEST_FN1")).stream().findFirst().get(),
                 false
         );
         assertThat(statisticsService.getUserPerCountry(01, 2030).get(0).usersCount() == 1).isTrue()
                 .withFailMessage("if guest contains 2 reservations in given month distribution y's should be equal to number of guests (1)");
         assertThat(statisticsService.getUserPerCountry(01, 2030).get(1).usersCount() == 1).isTrue();
-    }
-
-    private Reservation createReservationWithNewData(String cpTypeName, BigDecimal cpTypePrice, String camperPlaceIndex, String guestFirstName, Country country, LocalDate checkin, LocalDate checkout, boolean paid) {
-        var cpType = createCpType(cpTypeName, cpTypePrice);
-        var cp = createCamperPlace(camperPlaceIndex, cpType);
-        var guest = createGuest(guestFirstName, country);
-        return createReservation(cp, checkin, checkout, guest, paid);
-    }
-
-    private Reservation createReservation(CamperPlace camperPlace, LocalDate checkin, LocalDate checkout, Guest guest1, boolean paid) {
-        return reservationService.create(
-                new Reservation_DTO(
-                        null,
-                        checkin,
-                        checkout,
-                        DtoMapper.getGuestDTO(guest1),
-                        DtoMapper.getCamperPlaceDto(camperPlace),
-                        paid,
-                        ReservationStatus.COMING
-                )
-        );
-    }
-
-    private Guest createGuest(String guestFirstName, Country country) {
-        return guestService.create(new GuestDTO(null, guestFirstName, null, null, null, null, country.getIsoCode()));
-    }
-
-    private CamperPlace createCamperPlace(String camperPlaceIndex, CamperPlaceType cpType) {
-        return camperPlaceService.create(new CamperPlace_DTO(null, camperPlaceIndex, DtoMapper.getCamperPlaceTypeDTO(cpType), null));
-    }
-
-    private CamperPlaceType createCpType(String typeName, BigDecimal cpTypePrice) {
-        return camperPlaceTypeService.create(new CamperPlaceTypeDTO(null, typeName, cpTypePrice));
     }
 
     private static void validateRevenues(

@@ -1,6 +1,6 @@
 package CPSF.com.demo.service.core;
 
-import CPSF.com.demo.exception.ClientInputException;
+import CPSF.com.demo.exception.UserInputException;
 import CPSF.com.demo.model.dto.CamperPlace_DTO;
 import CPSF.com.demo.model.entity.CamperPlace;
 import CPSF.com.demo.repository.CRUDRepository;
@@ -42,7 +42,7 @@ public class CamperPlaceService extends CRUDServiceImpl<CamperPlace> {
         } catch (DataIntegrityViolationException e) {
             var cause =  e.getMostSpecificCause();
             if (cause instanceof SQLIntegrityConstraintViolationException sqlEx && DUPLICATE_ENTRY == sqlEx.getErrorCode()) {
-                throw new ClientInputException("Parcela z podanym indexem już istnieje");
+                throw new UserInputException("Parcela z podanym indexem już istnieje");
             }
             throw new IllegalStateException();
         }
@@ -50,13 +50,13 @@ public class CamperPlaceService extends CRUDServiceImpl<CamperPlace> {
 
     private void validateIndex(String cpIndex) {
         if (cpIndex == null || cpIndex.isBlank()) {
-            throw new ClientInputException("Indedx nie może byc pusty");
+            throw new UserInputException("Indedx nie może byc pusty");
         }
         var firstEl = String.valueOf(cpIndex.charAt(0));
         try {
             Integer.parseInt(firstEl);
         } catch (NumberFormatException e) {
-            throw new ClientInputException("Index musi zaczynać sie od cyfry");
+            throw new UserInputException("Index musi zaczynać sie od cyfry");
         }
     }
 
@@ -77,7 +77,7 @@ public class CamperPlaceService extends CRUDServiceImpl<CamperPlace> {
         } catch (DataIntegrityViolationException e) {
             var cause =  e.getMostSpecificCause();
             if (cause instanceof SQLIntegrityConstraintViolationException sqlEx && DUPLICATE_ENTRY == sqlEx.getErrorCode()) {
-                throw new ClientInputException("Parcela z podanym indexem już istnieje");
+                throw new UserInputException("Parcela z podanym indexem już istnieje");
             }
             throw new IllegalStateException();
         }

@@ -1,6 +1,7 @@
 package CPSF.com.demo.controller;
 
 import CPSF.com.demo.model.dto.Reservation_DTO;
+import CPSF.com.demo.model.dto.SearchRequest;
 import CPSF.com.demo.service.core.SearchCriteria;
 import CPSF.com.demo.service.util.DtoMapper;
 import CPSF.com.demo.service.core.ReservationService;
@@ -39,9 +40,12 @@ public class ReservationController {
         return ResponseEntity.status(HttpStatus.OK).body(Map.of("success","Rezeracja została usunięta"));
     }
 
-    @GetMapping
-    public Page<Reservation_DTO> findBy(Pageable pageable, SearchCriteria searchCriteria) {
-        return reservationService.findBy(pageable, searchCriteria).map(DtoMapper::getReservationDto);
+    @PostMapping("/findBy")
+    public Page<Reservation_DTO> findBy(Pageable pageable, @RequestBody @Valid SearchRequest searchRequest) {
+        return reservationService.findBy(
+                pageable,
+                searchRequest.searchCriteria()
+        ).map(DtoMapper::getReservationDto);
     }
 
 }

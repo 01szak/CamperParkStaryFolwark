@@ -10,6 +10,7 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.stereotype.Service;
 
+import java.util.Arrays;
 import java.util.List;
 
 
@@ -35,6 +36,36 @@ public abstract class CRUDServiceImpl<T extends DbObject> implements CRUDService
 
             return spec;
         }
+    }
+
+    @Override
+    public Page<T> findBy(Pageable pageable, SearchCriteria ...searchCriteria) {
+        if (pageable == null) {
+            pageable = Pageable.unpaged(UPDATED_AT_DESC);
+        }
+
+        if (pageable.getSort().isEmpty()) {
+            pageable = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(), UPDATED_AT_DESC);
+        }
+
+        if (
+                searchCriteria == null
+                || searchCriteria.length == 0
+                || Arrays.stream(searchCriteria).filter(sc -> sc.key().isEmpty()).count() > 0
+        ) {
+            return findAll(pageable);
+        }
+
+        var specification = buildSpecification(searchCriteria);
+        return getRepository().findAll(specification, pageable);
+    }
+
+    private Specification<T> buildSpecification(SearchCriteria[] searchCriteria) {
+        return new SpecificationBuilder().build(searchCriteria);
+    }
+
+    public Page<T> findBy(SearchCriteria ...searchCriteria) {
+        return findBy(null, searchCriteria);
     }
 
     @Override
@@ -86,23 +117,6 @@ public abstract class CRUDServiceImpl<T extends DbObject> implements CRUDService
     @Override
     public void deleteAll(List<T> t){
         getRepository().deleteAll(t);
-    }
-
-    @Override
-    public Page<T> findBy(Pageable pageable, SearchCriteria ...searchCriteria) {
-        if (pageable == null) {
-           pageable = Pageable.unpaged(UPDATED_AT_DESC);
-        }
-        if (pageable.getSort().isEmpty()) {
-            pageable = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(), UPDATED_AT_DESC);
-        }
-
-       var specification = new SpecificationBuilder().build(searchCriteria);
-       return getRepository().findAll(specification, pageable);
-    }
-
-    public Page<T> findBy(SearchCriteria searchCriteria) {
-        return findBy(null, searchCriteria);
     }
 
     protected abstract CRUDRepository<T> getRepository();
