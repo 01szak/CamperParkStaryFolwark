@@ -80,6 +80,7 @@ public class BaseIT {
     public static void afterAll() {
         var testTime = (new Date().getTime() - testStart);
         System.out.printf("\nTOOK OVERALL: %s ms\n", testTime);
+        MY_SQL_CONTAINER.stop();
     }
 
     @BeforeEach

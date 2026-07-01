@@ -147,7 +147,7 @@ class GenericSpecificationIT extends BaseIT {
         assertThat(result.size()).isEqualTo(1);
 
         var actuallGuest = result.getFirst().getGuest();
-        assertThat(GUEST_FN.equals(actuallGuest.getFirstname()));
+        assertThat(GUEST_FN.equals(actuallGuest.getFirstname())).isTrue();
     }
 
     @Test

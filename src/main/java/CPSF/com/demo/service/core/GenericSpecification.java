@@ -55,6 +55,9 @@ public record GenericSpecification<S>(@NotNull SearchCriteria searchCriteria) im
                     return criteriaBuilder.greaterThan((Expression<? extends Comparable>) key, (Comparable) value);
                 }
                 case BETWEEN -> {
+                    if (secondValue == null) {
+                        throw new ClientSideException("second values cannot be null while using between operation");
+                    }
                     return criteriaBuilder.between(
                             (Expression<? extends Comparable>) key,
                             (Comparable) value,
