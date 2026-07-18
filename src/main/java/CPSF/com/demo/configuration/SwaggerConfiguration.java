@@ -14,10 +14,14 @@ public class SwaggerConfiguration {
     @Bean
     public OpenAPI customOpenApi() {
         return  new OpenAPI().
-                info(new Info().title("JavaInUse Authentication Service"))
-                .addSecurityItem(new SecurityRequirement().addList("JavaInUseSecurityScheme"))
-                .components(new Components().addSecuritySchemes("JavaInUseSecurityScheme",new SecurityScheme()
-                        .name("JavaInUseSecurityScheme").type(SecurityScheme.Type.HTTP).scheme("bearer").bearerFormat("JWT")));
+                info(new Info().title("Parceo api scheme"))
+                .addSecurityItem(new SecurityRequirement().addList("ParceoSecurityScheme"))
+                .components(new Components().addSecuritySchemes("", new SecurityScheme()
+                        .name("ParceoSecurityScheme")
+                        .type(SecurityScheme.Type.HTTP)
+                        .scheme("bearer")
+                        .bearerFormat("JWT"))
+                );
 
     }
 }

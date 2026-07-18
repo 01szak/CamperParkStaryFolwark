@@ -65,7 +65,7 @@ public class CamperPlaceService extends CRUDServiceImpl<CamperPlace> {
         return String.valueOf(Integer.parseInt(maxIndex) + 1);
     }
 
-    public List<CamperPlace> updateCamperPlaces(List<CamperPlace_DTO> camperPlaceDtos) {
+    public List<CamperPlace> updateAll(List<CamperPlace_DTO> camperPlaceDtos) {
         try {
             var cpToUpdate = new ArrayList<CamperPlace>();
             camperPlaceDtos.forEach(dto -> {
@@ -109,9 +109,14 @@ public class CamperPlaceService extends CRUDServiceImpl<CamperPlace> {
         return camperPlaceRepository.findCamperPlaceByPriceNotNullAndCamperPlaceType_Id(id);
     }
 
+    public List<LocalDate> getOccupiedDate(Integer cpId) {
+        return camperPlaceRepository.getOccupiedDates(cpId);
+    }
+
     @Override
     protected CRUDRepository<CamperPlace> getRepository() {
         return camperPlaceRepository;
     }
+
 }
 

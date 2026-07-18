@@ -10,6 +10,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Map;
 
@@ -32,9 +33,14 @@ public class CamperPlaceController {
                 .toList();
     }
 
+    @GetMapping("/occupancy/{cpId}")
+    public List<LocalDate> getOccupiedDate(@PathVariable Integer cpId) {
+        return camperPlaceService.getOccupiedDate(cpId);
+    }
+
     @PatchMapping
     public ResponseEntity<Map<String, String>> update(@RequestBody @Valid List<CamperPlace_DTO> camperPlaceDtos) {
-        camperPlaceService.updateCamperPlaces(camperPlaceDtos);
+        camperPlaceService.updateAll(camperPlaceDtos);
         return ResponseEntity.status(HttpStatus.OK).body(Map.of("success","Parcele zostały zmienione"));
     }
 
