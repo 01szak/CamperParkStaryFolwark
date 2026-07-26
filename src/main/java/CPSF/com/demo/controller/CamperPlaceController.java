@@ -2,7 +2,9 @@
 
 import CPSF.com.demo.model.dto.CamperPlace_DTO;
 import CPSF.com.demo.service.core.CamperPlaceService;
+import CPSF.com.demo.service.core.ReservationCalculatorService;
 import CPSF.com.demo.service.util.DtoMapper;
+import CPSF.com.demo.service.util.ReservationCalculator;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
@@ -10,6 +12,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Map;
@@ -36,6 +39,15 @@ public class CamperPlaceController {
     @GetMapping("/occupancy/{cpId}")
     public List<LocalDate> getOccupiedDate(@PathVariable Integer cpId) {
         return camperPlaceService.getOccupiedDate(cpId);
+    }
+
+    @GetMapping("/calcPrice/{cpId}/{checkin}/{checkout}")
+    public BigDecimal getCalculatedReservationPrice(
+            @PathVariable Integer cpId,
+            @PathVariable LocalDate checkin,
+            @PathVariable LocalDate checkout
+    ) {
+        return camperPlaceService.getCalculatedReservationPrice(cpId, checkin, checkout);
     }
 
     @PatchMapping

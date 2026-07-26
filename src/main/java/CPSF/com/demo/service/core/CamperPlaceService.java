@@ -11,6 +11,7 @@ import org.jspecify.annotations.Nullable;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
 import java.sql.SQLIntegrityConstraintViolationException;
 import java.time.LocalDate;
 import java.util.*;
@@ -23,6 +24,7 @@ public class CamperPlaceService extends CRUDServiceImpl<CamperPlace> {
 
     private final CamperPlaceRepository camperPlaceRepository;
     private final CamperPlaceTypeService camperPlaceTypeService;
+    private final ReservationCalculatorService reservationCalculatorService;
 
     public CamperPlace create(CamperPlace_DTO camperPlaceDto) {
         var camperPlaceType = camperPlaceTypeService.findById(camperPlaceDto.type().id());
@@ -111,6 +113,12 @@ public class CamperPlaceService extends CRUDServiceImpl<CamperPlace> {
 
     public List<LocalDate> getOccupiedDate(Integer cpId) {
         return camperPlaceRepository.getOccupiedDates(cpId);
+    }
+
+    public BigDecimal getCalculatedReservationPrice(Integer cpId, LocalDate checkin, LocalDate checkout) {
+        final var price = getRepository().findById(cpId).map(CamperPlace::getPrice).get();
+        final var daysInReservation = checkin.datesUntil(checkout).count();
+        return reservationCalculatorService.calculate(price, daysInReservation);
     }
 
     @Override

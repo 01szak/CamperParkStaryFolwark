@@ -40,4 +40,6 @@ public interface CamperPlaceRepository extends CRUDRepository<CamperPlace> {
         WHERE d >= CURDATE()
     """, nativeQuery = true)
     List<LocalDate> getOccupiedDates(@Param("cpId") Integer cpId);
+
+
 }

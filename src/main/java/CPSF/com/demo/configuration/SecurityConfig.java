@@ -54,10 +54,10 @@ public class SecurityConfig {
                 .csrf(AbstractHttpConfigurer::disable)
                 .cors(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(auth -> auth
-                        //TODO revert before merge!!!
                         .requestMatchers("/swagger-ui/**", "/swagger-ui.html/**", "/v3/api-docs/**").permitAll()
                         .requestMatchers("/error/**", "/auth/login", "/auth/register").permitAll()
                         .requestMatchers("/camperPlace/**", "/camperPlace").permitAll()
+                        .requestMatchers("/reservation/**", "/reservation").permitAll()
                         .anyRequest().authenticated()
                 )
                 .sessionManagement(s -> s.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
