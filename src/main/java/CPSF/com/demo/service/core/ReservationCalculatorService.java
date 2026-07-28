@@ -5,7 +5,6 @@ import CPSF.com.demo.model.constant.Operation;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
-import java.time.LocalDate;
 
 @Service
 public class ReservationCalculatorService {
@@ -16,7 +15,7 @@ public class ReservationCalculatorService {
 		final var condition = new DiscountCondition(10, 3, Operation.GREATER_THEN, DiscountType.SUBTRACT_VAL);
 		var finalPrice = BigDecimal.ZERO;
 
-		for (int i = 0; i < daysInReservation; i++) {
+		for (int i = 1; i <= daysInReservation; i++) {
 			var discountedPrice = condition.doDiscount(cpPrice, i);
 			if (discountedPrice instanceof Double p) {
 				finalPrice = finalPrice.add(BigDecimal.valueOf(p));
