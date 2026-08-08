@@ -21,6 +21,6 @@ public class StatisticsController {
 
     @GetMapping("/countryDistribution/{month}/{year}")
     public List<StatisticsService.StatisticsModel.CountryDistribution> getUserPerCountry(@PathVariable int month, @PathVariable int year) {
-        return statisticsService.getUserPerCountry(month, year);
+        return statisticsService.getGuestPerCountry(month, year);
     }
 }

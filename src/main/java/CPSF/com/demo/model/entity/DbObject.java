@@ -14,6 +14,7 @@ import java.util.Date;
 @NoArgsConstructor
 @MappedSuperclass
 public abstract class DbObject {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;

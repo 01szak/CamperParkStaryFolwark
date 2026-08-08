@@ -107,4 +107,30 @@ ALTER TABLE camper_place
 -- preconditions onFail:MARK_RAN
 -- precondition-sql-check expectedResult:0 SELECT COUNT(*) FROM information_schema.columns WHERE table_schema = DATABASE() AND table_name = 'guest' AND column_name = 'country'
 ALTER TABLE guest
-    ADD COLUMN country VARCHAR(2)
+    ADD COLUMN country VARCHAR(2);
+
+-- changeset 01szak:organisation_table
+-- validCheckSum: ANY
+-- preconditions onFail:MARK_RAN
+-- precondition-sql-check expectedResult:0 SELECT COUNT(*) FROM information_schema.tables WHERE table_schema = DATABASE() AND table_name = 'organisation'
+CREATE TABLE IF NOT EXISTS organisation (
+    id BIGINT AUTO_INCREMENT PRIMARY KEY,
+    owner_id BIGINT NOT NULL,
+    organisation_name VARCHAR(255) NOT NULL,
+    address VARCHAR(255) NOT NULL,
+    created_at DATETIME,
+    updated_at DATETIME,
+    FOREIGN KEY (owner_id) REFERENCES app_user(id)
+);
+
+-- changeset 01szak:organisation_column
+-- validCheckSum: ANY
+-- preconditions onFail:MARK_RAN
+-- precondition-sql-check expectedResult:0 SELECT COUNT(*) FROM information_schema.columns WHERE table_schema = DATABASE() AND table_name = 'app_user' AND column_name = 'organisation'
+ALTER TABLE app_user
+    ADD COLUMN organisation_id BIGINT,
+    ADD CONSTRAINT fk_organisation_id
+        FOREIGN KEY (organisation_id)
+            REFERENCES organisation(id)
+            ON DELETE RESTRICT;
+
