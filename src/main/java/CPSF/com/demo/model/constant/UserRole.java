@@ -1,22 +1,21 @@
 package CPSF.com.demo.model.constant;
 
+import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.GrantedAuthority;
 
+@RequiredArgsConstructor
 public enum UserRole implements GrantedAuthority {
 
-        SUPER_ADMIN("SUPER_ADMIN"),
+        OWNER("OWNER"),
         ADMIN("ADMIN"),
         REGULAR("REGULAR"),
-        OWNER("OWNER");
+        WEB_APP("WEB_APP");
 
         private final String value;
-
-        UserRole(String value) {
-            this.value = value;
-        }
 
         @Override
         public String getAuthority() {
             return value;
         }
+
     }

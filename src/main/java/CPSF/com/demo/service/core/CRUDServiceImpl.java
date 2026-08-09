@@ -24,7 +24,7 @@ public abstract class CRUDServiceImpl<T extends DbObject> implements CRUDService
      private class SpecificationBuilder {
 
         public Specification<T> build(SearchCriteria...criteria) {
-            if (criteria == null ||criteria.length == 0) {
+            if (criteria == null || criteria.length == 0) {
                 return Specification.where((Specification<T>) null);
             }
 

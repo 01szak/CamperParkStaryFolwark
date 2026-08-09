@@ -118,6 +118,7 @@ CREATE TABLE IF NOT EXISTS organisation (
     owner_id BIGINT NOT NULL,
     organisation_name VARCHAR(255) NOT NULL,
     address VARCHAR(255) NOT NULL,
+    web_app_api_key VARCHAR(255) NOT NULL,
     created_at DATETIME,
     updated_at DATETIME,
     FOREIGN KEY (owner_id) REFERENCES app_user(id)

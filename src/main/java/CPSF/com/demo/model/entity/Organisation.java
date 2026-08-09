@@ -1,5 +1,6 @@
 package CPSF.com.demo.model.entity;
 
+import jakarta.annotation.Nullable;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.JoinColumn;
@@ -34,5 +35,9 @@ public class Organisation extends DbObject {
     @NotBlank
     @Column(name = "address")
     private String address;
+
+    @Nullable
+    @Column(name = "web_app_api_key")
+    private String webAppApiKey;
 
 }
