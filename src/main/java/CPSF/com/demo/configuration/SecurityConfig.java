@@ -50,13 +50,13 @@ public class SecurityConfig {
     };
     private static final String[] POST_AUTHENTICATED_PATHS = new String[] {"/reservation"};
     private static final String[] ALL_AUTHORITIES =
-            (String[]) Arrays.stream(UserRole.values()).map(UserRole::getAuthority).toArray();
+            Arrays.stream(UserRole.values()).map(UserRole::getAuthority).toArray(String[]::new);
 
     private static final String[] ALL_AUTHORITIES_WITHOUT_WEB_APP =
-            (String[]) Arrays.stream(UserRole.values())
+            Arrays.stream(UserRole.values())
                     .filter(userRole -> !userRole.equals(UserRole.WEB_APP))
                     .map(UserRole::getAuthority)
-                    .toArray();
+                    .toArray(String[]::new);
 
 
     private final RsaConfig rsaConfig;

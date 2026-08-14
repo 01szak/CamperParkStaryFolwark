@@ -48,21 +48,25 @@ public class WebAppAuthFilter extends OncePerRequestFilter {
             HttpServletRequest request,
             HttpServletResponse response,
             FilterChain filterChain
-    ) throws ServletException, IOException {
+    ) {
         var orgId = request.getHeader(ORGANISATION_ID_HEADER);
         var apiKey = request.getHeader(API_KEY_HEADER);
         var headersPresent = orgId != null && apiKey != null;
 
-        if (headersPresent) {
-            var appUser = authCache.getIfPresent(getCacheKey(orgId, apiKey));
+        try {
+            if (headersPresent) {
+                var appUser = authCache.getIfPresent(getCacheKey(orgId, apiKey));
 
-            Optional.ofNullable(appUser).ifPresentOrElse(
-                    this::authoriseUser,
-                    () -> authenticateUser(orgId, apiKey)
-            );
+                Optional.ofNullable(appUser).ifPresentOrElse(
+                        this::authoriseUser,
+                        () -> authenticateUser(orgId, apiKey)
+                );
+            }
+            filterChain.doFilter(request, response);
+        } catch (Exception e) {
+            logger.error("Unexpected exception occurred while trying to authenticate the request: " + e.getLocalizedMessage());
+            throw new AuthenticationException("Something went wrong");
         }
-
-        filterChain.doFilter(request, response);
     }
 
     private void authenticateUser(String orgId, String apiKey) {
