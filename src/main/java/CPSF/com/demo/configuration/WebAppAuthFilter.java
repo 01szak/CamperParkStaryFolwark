@@ -17,6 +17,7 @@ import lombok.extern.log4j.Log4j2;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
@@ -33,6 +34,7 @@ public class WebAppAuthFilter extends OncePerRequestFilter {
     private static final String ORGANISATION_ID_HEADER = "X-org-id";
     private static final String API_KEY_HEADER = "X-api-key";
 
+    private final PasswordEncoder passwordEncoder;
     private final OrganisationService organisationService;
     private final UserService userService;
     private final Cache<String, User> authCache = Caffeine.newBuilder()
@@ -67,7 +69,6 @@ public class WebAppAuthFilter extends OncePerRequestFilter {
         logger.info("Web app auth headers found, starting Authentication for orgId: " + orgId);
 
         var organisation = organisationService.findById(Integer.parseInt(orgId));
-        var compareApiKey = organisation.getWebAppApiKey();
         var appUser = userService.findBy(
                         new SearchCriteria("organisation", "id", Operation.EQUALS, orgId),
                         new SearchCriteria("userRole", Operation.EQUALS, "WEB_APP")
@@ -76,7 +77,7 @@ public class WebAppAuthFilter extends OncePerRequestFilter {
                 .findFirst()
                 .orElseThrow(() -> new AuthenticationException("No web app associated for the given organisation"));
 
-        if (apiKey.equals(compareApiKey)) {
+        if (passwordEncoder.matches(apiKey, organisation.getWebAppApiKey())) {
             authoriseUser(appUser);
             logger.info("Web app authentication succeeded for orgId: " + orgId);
         } else {

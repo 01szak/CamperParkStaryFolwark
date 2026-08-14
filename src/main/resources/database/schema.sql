@@ -121,7 +121,9 @@ CREATE TABLE IF NOT EXISTS organisation (
     web_app_api_key VARCHAR(255) NOT NULL,
     created_at DATETIME,
     updated_at DATETIME,
-    FOREIGN KEY (owner_id) REFERENCES app_user(id)
+    FOREIGN KEY (owner_id) REFERENCES app_user(id),
+    UNIQUE KEY uk_owner_id (owner_id),
+    UNIQUE KEY uk_api_key (web_app_api_key)
 );
 
 -- changeset 01szak:organisation_column
