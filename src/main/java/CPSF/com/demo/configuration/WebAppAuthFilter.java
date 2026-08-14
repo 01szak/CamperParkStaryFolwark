@@ -1,6 +1,6 @@
 package CPSF.com.demo.configuration;
 
-import CPSF.com.demo.exception.AuthorizationException;
+import CPSF.com.demo.exception.AuthenticationException;
 import CPSF.com.demo.model.constant.Operation;
 import CPSF.com.demo.model.entity.User;
 import CPSF.com.demo.service.core.OrganisationService;
@@ -74,13 +74,13 @@ public class WebAppAuthFilter extends OncePerRequestFilter {
                 )
                 .stream()
                 .findFirst()
-                .orElseThrow(() -> new AuthorizationException("No web app associated for the given organisation"));
+                .orElseThrow(() -> new AuthenticationException("No web app associated for the given organisation"));
 
         if (apiKey.equals(compareApiKey)) {
             authoriseUser(appUser);
             logger.info("Web app authentication succeeded for orgId: " + orgId);
         } else {
-            throw new AuthorizationException("Api key not matched");
+            throw new AuthenticationException("Api key not matched");
         }
         authCache.put(getCacheKey(orgId, apiKey), appUser);
 
