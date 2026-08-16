@@ -129,11 +129,37 @@ CREATE TABLE IF NOT EXISTS organisation (
 -- changeset 01szak:organisation_column
 -- validCheckSum: ANY
 -- preconditions onFail:MARK_RAN
--- precondition-sql-check expectedResult:0 SELECT COUNT(*) FROM information_schema.columns WHERE table_schema = DATABASE() AND table_name = 'app_user' AND column_name = 'organisation'
+-- precondition-sql-check expectedResult:0 SELECT COUNT(*) FROM information_schema.columns WHERE table_schema = DATABASE() AND table_name = 'app_user' AND column_name = 'organisation_id'
 ALTER TABLE app_user
     ADD COLUMN organisation_id BIGINT,
     ADD CONSTRAINT fk_organisation_id
         FOREIGN KEY (organisation_id)
             REFERENCES organisation(id)
             ON DELETE RESTRICT;
+-- changeset 01szak:creator_column
+-- validCheckSum: ANY
+-- preconditions onFail:MARK_RAN
+-- precondition-sql-check expectedResult:0 SELECT COUNT(*) FROM information_schema.columns WHERE table_schema = DATABASE() AND table_name = 'reservation' AND column_name = 'creator_id'
+ALTER TABLE reservation
+ADD COLUMN creator_id BIGINT,
+ADD CONSTRAINT fk_creator_id
+    FOREIGN KEY (creator_id)
+        REFERENCES app_user(id)
+        ON DELETE no action;
 
+-- changeset 01szak:system_task_table
+-- validCheckSum: ANY
+-- preconditions onFail:MARK_RAN
+-- precondition-sql-check expectedResult:0 SELECT COUNT(*) FROM information_schema.tables WHERE table_schema = DATABASE() AND table_name = 'status_task'
+CREATE TABLE IF NOT EXISTS system_task (
+     id BIGINT AUTO_INCREMENT PRIMARY KEY NOT NULL,
+     created_at DATETIME,
+     updated_at DATETIME,
+     target_id VARCHAR(36),
+     payload JSON,
+     task_status VARCHAR(50) NOT NULL,
+     task_type VARCHAR(50) NOT NULL,
+     retry_count BIGINT,
+     parent_task_id BIGINT,
+     CONSTRAINT fk_system_task_parent FOREIGN KEY (parent_task_id) REFERENCES system_task(id)
+);

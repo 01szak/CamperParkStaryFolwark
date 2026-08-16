@@ -59,5 +59,9 @@ public class Reservation extends DbObject {
     @Column(name = "price")
     private BigDecimal price;
 
+    @NotNull
+    @ManyToOne
+    @JoinColumn(name = "creator_id")
+    private User creator;
 
 }

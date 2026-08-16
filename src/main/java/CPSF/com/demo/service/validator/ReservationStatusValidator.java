@@ -3,13 +3,11 @@ package CPSF.com.demo.service.validator;
 import CPSF.com.demo.model.constant.ReservationStatus;
 import CPSF.com.demo.model.entity.Reservation;
 import CPSF.com.demo.repository.ReservationRepository;
-import CPSF.com.demo.service.util.ReservationCalculator;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
@@ -20,6 +18,7 @@ import static CPSF.com.demo.model.constant.ReservationStatus.ACTIVE;
 import static CPSF.com.demo.model.constant.ReservationStatus.EXPIRED;
 
 @Service
+//TODO refactor - this should be a Task
 public class ReservationStatusValidator implements StatusValidator {
 
     private final ReservationRepository repository;
@@ -39,23 +38,6 @@ public class ReservationStatusValidator implements StatusValidator {
         for (Reservation r : unexpiredReservations) {
             Optional<Reservation> temp = returnReservationWithCorrectStatus(r);
             temp.ifPresent(updatedReservations::add);
-        }
-
-        repository.saveAll(updatedReservations);
-    }
-
-    @Scheduled(fixedRate = 1000L)
-    @Transactional(propagation = Propagation.REQUIRES_NEW)
-    public void checkIsPriceSet() {
-        List<Reservation> reservations =
-                repository.findAll();
-        List<Reservation> updatedReservations = new ArrayList<>();
-
-        for (Reservation r : reservations) {
-            if (r.getPrice().compareTo(BigDecimal.ZERO) == 0) {
-                r.setPrice(new ReservationCalculator().calculateFinalReservationCost(r.getCheckin(), r.getCheckout(), r.getCamperPlace().getPrice()));
-                updatedReservations.add(r);
-            }
         }
 
         repository.saveAll(updatedReservations);

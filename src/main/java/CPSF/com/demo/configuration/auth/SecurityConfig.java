@@ -1,4 +1,4 @@
-package CPSF.com.demo.configuration;
+package CPSF.com.demo.configuration.auth;
 
 import CPSF.com.demo.model.constant.UserRole;
 import CPSF.com.demo.service.core.OrganisationService;
@@ -29,6 +29,8 @@ import org.springframework.security.web.DefaultSecurityFilterChain;
 
 import java.util.Arrays;
 
+import static CPSF.com.demo.model.constant.UserRole.WEB_APP;
+
 @Configuration
 @EnableWebSecurity
 @EnableMethodSecurity
@@ -48,13 +50,16 @@ public class SecurityConfig {
             "/camperPlace/calcPrice/**",
             "/camperPlace/occupancy/**"
     };
+    private static final String[] POST_WEB_APP_PATHS = new String[] {
+            "/web/reservation/init",
+    };
     private static final String[] POST_AUTHENTICATED_PATHS = new String[] {"/reservation"};
     private static final String[] ALL_AUTHORITIES =
             Arrays.stream(UserRole.values()).map(UserRole::getAuthority).toArray(String[]::new);
 
     private static final String[] ALL_AUTHORITIES_WITHOUT_WEB_APP =
             Arrays.stream(UserRole.values())
-                    .filter(userRole -> !userRole.equals(UserRole.WEB_APP))
+                    .filter(userRole -> !userRole.equals(WEB_APP))
                     .map(UserRole::getAuthority)
                     .toArray(String[]::new);
 
@@ -97,6 +102,7 @@ public class SecurityConfig {
                         .requestMatchers(PERMIT_ALL_PATHS).permitAll()
                         .requestMatchers(HttpMethod.POST, POST_AUTHENTICATED_PATHS).hasAnyAuthority(ALL_AUTHORITIES)
                         .requestMatchers(HttpMethod.GET, GET_AUTHENTICATED_PATHS).hasAnyAuthority(ALL_AUTHORITIES)
+                        .requestMatchers(HttpMethod.POST, POST_WEB_APP_PATHS).hasAnyAuthority(WEB_APP.getAuthority())
                         .anyRequest().hasAnyAuthority(ALL_AUTHORITIES_WITHOUT_WEB_APP)
                 )
                 .sessionManagement(s -> s.sessionCreationPolicy(SessionCreationPolicy.STATELESS))

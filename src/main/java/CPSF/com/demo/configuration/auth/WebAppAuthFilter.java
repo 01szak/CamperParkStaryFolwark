@@ -1,4 +1,4 @@
-package CPSF.com.demo.configuration;
+package CPSF.com.demo.configuration.auth;
 
 import CPSF.com.demo.exception.AuthenticationException;
 import CPSF.com.demo.model.constant.Operation;
@@ -48,31 +48,28 @@ public class WebAppAuthFilter extends OncePerRequestFilter {
             HttpServletRequest request,
             HttpServletResponse response,
             FilterChain filterChain
-    ) {
+    ) throws ServletException, IOException {
         var orgId = request.getHeader(ORGANISATION_ID_HEADER);
         var apiKey = request.getHeader(API_KEY_HEADER);
         var headersPresent = orgId != null && apiKey != null;
 
-        try {
-            if (headersPresent) {
-                var appUser = authCache.getIfPresent(getCacheKey(orgId, apiKey));
+        if (headersPresent) {
+            var appUser = authCache.getIfPresent(getCacheKey(orgId, apiKey));
 
-                Optional.ofNullable(appUser).ifPresentOrElse(
-                        this::authoriseUser,
-                        () -> authenticateUser(orgId, apiKey)
-                );
-            }
-            filterChain.doFilter(request, response);
-        } catch (Exception e) {
-            logger.error("Unexpected exception occurred while trying to authenticate the request: " + e.getLocalizedMessage());
-            throw new AuthenticationException("Something went wrong");
+            Optional.ofNullable(appUser).ifPresentOrElse(
+                    this::authoriseUser,
+                    () -> authenticateUser(orgId, apiKey)
+            );
         }
+
+        filterChain.doFilter(request, response);
     }
 
     private void authenticateUser(String orgId, String apiKey) {
         logger.info("Web app auth headers found, starting Authentication for orgId: " + orgId);
 
         var organisation = organisationService.findById(Integer.parseInt(orgId));
+
         var appUser = userService.findBy(
                         new SearchCriteria("organisation", "id", Operation.EQUALS, orgId),
                         new SearchCriteria("userRole", Operation.EQUALS, "WEB_APP")
@@ -100,7 +97,7 @@ public class WebAppAuthFilter extends OncePerRequestFilter {
         SecurityContextHolder.getContext().setAuthentication(auth);
     }
 
-    private static String getCacheKey(String orgId, String apiKey) {
+    private String getCacheKey(String orgId, String apiKey) {
         return orgId + ":" + apiKey;
     }
 
