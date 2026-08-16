@@ -1,10 +1,8 @@
     package CPSF.com.demo.controller;
 
-import CPSF.com.demo.model.dto.CamperPlace_DTO;
+import CPSF.com.demo.model.dto.camperPlaceDTO;
 import CPSF.com.demo.service.core.CamperPlaceService;
-import CPSF.com.demo.service.core.ReservationCalculatorService;
 import CPSF.com.demo.service.util.DtoMapper;
-import CPSF.com.demo.service.util.ReservationCalculator;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
@@ -25,12 +23,12 @@ public class CamperPlaceController {
     private final CamperPlaceService camperPlaceService;
 
     @GetMapping
-    public List<CamperPlace_DTO> getCamperPlaces() {
+    public List<camperPlaceDTO> getCamperPlaces() {
         return camperPlaceService.findAllOrderByIndex().stream().map(DtoMapper::getCamperPlaceDto).toList();
     }
 
     @GetMapping("{typeId}")
-    public List<CamperPlace_DTO> getCamperPlacesWithUniquePriceAndCamperTypeId(@PathVariable Integer typeId) {
+    public List<camperPlaceDTO> getCamperPlacesWithUniquePriceAndCamperTypeId(@PathVariable Integer typeId) {
         return camperPlaceService.findCamperPlaceByPriceNotNullAndCamperPlaceType_Id(typeId).stream()
                 .map(DtoMapper::getCamperPlaceDto)
                 .toList();
@@ -38,7 +36,7 @@ public class CamperPlaceController {
 
     @GetMapping("/occupancy/{cpId}")
     public List<LocalDate> getOccupiedDate(@PathVariable Integer cpId) {
-        return camperPlaceService.getOccupiedDate(cpId);
+        return camperPlaceService.getOccupiedDates(cpId);
     }
 
     @GetMapping("/calcPrice/{cpId}/{checkin}/{checkout}")
@@ -51,13 +49,13 @@ public class CamperPlaceController {
     }
 
     @PatchMapping
-    public ResponseEntity<Map<String, String>> update(@RequestBody @Valid List<CamperPlace_DTO> camperPlaceDtos) {
+    public ResponseEntity<Map<String, String>> update(@RequestBody @Valid List<camperPlaceDTO> camperPlaceDtos) {
         camperPlaceService.updateAll(camperPlaceDtos);
         return ResponseEntity.status(HttpStatus.OK).body(Map.of("success","Parcele zostały zmienione"));
     }
 
     @PostMapping
-    public ResponseEntity<Map<String, String>> create(@RequestBody @Valid CamperPlace_DTO camperPlaceDto) {
+    public ResponseEntity<Map<String, String>> create(@RequestBody @Valid camperPlaceDTO camperPlaceDto) {
         camperPlaceService.create(camperPlaceDto);
         return ResponseEntity.status(HttpStatus.OK).body(Map.of("success","Parcela została dodana"));
     }

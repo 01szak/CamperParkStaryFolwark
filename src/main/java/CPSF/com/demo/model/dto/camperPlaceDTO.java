@@ -6,7 +6,7 @@ import jakarta.validation.constraints.Positive;
 
 import java.math.BigDecimal;
 
-public record CamperPlace_DTO(
+public record camperPlaceDTO(
         @Nullable Integer id,
         @Nullable String index,
         @NotNull CamperPlaceTypeDTO type,

@@ -3,9 +3,9 @@ package CPSF.com.demo;
 import CPSF.com.demo.model.constant.Country;
 import CPSF.com.demo.model.constant.ReservationStatus;
 import CPSF.com.demo.model.dto.CamperPlaceTypeDTO;
-import CPSF.com.demo.model.dto.CamperPlace_DTO;
+import CPSF.com.demo.model.dto.camperPlaceDTO;
 import CPSF.com.demo.model.dto.GuestDTO;
-import CPSF.com.demo.model.dto.Reservation_DTO;
+import CPSF.com.demo.model.dto.ReservationDTO;
 import CPSF.com.demo.model.entity.CamperPlace;
 import CPSF.com.demo.model.entity.CamperPlaceType;
 import CPSF.com.demo.model.entity.Guest;
@@ -16,7 +16,6 @@ import CPSF.com.demo.service.core.GuestService;
 import CPSF.com.demo.service.core.ReservationService;
 import CPSF.com.demo.service.core.StatisticsService;
 import CPSF.com.demo.service.util.DtoMapper;
-import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
@@ -126,7 +125,7 @@ public class BaseIT {
             boolean paid
     ) {
         return reservationService.create(
-                new Reservation_DTO(
+                new ReservationDTO(
                         null,
                         checkin,
                         checkout,
@@ -154,7 +153,7 @@ public class BaseIT {
 
     protected CamperPlace createCamperPlace(String camperPlaceIndex, CamperPlaceType cpType) {
         return camperPlaceService.create(
-                new CamperPlace_DTO(
+                new camperPlaceDTO(
                         null,
                         camperPlaceIndex,
                         DtoMapper.getCamperPlaceTypeDTO(cpType),

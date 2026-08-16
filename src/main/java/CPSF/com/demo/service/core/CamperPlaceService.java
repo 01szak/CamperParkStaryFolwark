@@ -1,7 +1,7 @@
 package CPSF.com.demo.service.core;
 
 import CPSF.com.demo.exception.UserInputException;
-import CPSF.com.demo.model.dto.CamperPlace_DTO;
+import CPSF.com.demo.model.dto.camperPlaceDTO;
 import CPSF.com.demo.model.entity.CamperPlace;
 import CPSF.com.demo.repository.CRUDRepository;
 import CPSF.com.demo.repository.CamperPlaceRepository;
@@ -14,7 +14,8 @@ import org.springframework.stereotype.Service;
 import java.math.BigDecimal;
 import java.sql.SQLIntegrityConstraintViolationException;
 import java.time.LocalDate;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -26,7 +27,7 @@ public class CamperPlaceService extends CRUDServiceImpl<CamperPlace> {
     private final CamperPlaceTypeService camperPlaceTypeService;
     private final ReservationCalculatorService reservationCalculatorService;
 
-    public CamperPlace create(CamperPlace_DTO camperPlaceDto) {
+    public CamperPlace create(camperPlaceDTO camperPlaceDto) {
         var camperPlaceType = camperPlaceTypeService.findById(camperPlaceDto.type().id());
 
         if (camperPlaceType == null) {
@@ -67,7 +68,7 @@ public class CamperPlaceService extends CRUDServiceImpl<CamperPlace> {
         return String.valueOf(Integer.parseInt(maxIndex) + 1);
     }
 
-    public List<CamperPlace> updateAll(List<CamperPlace_DTO> camperPlaceDtos) {
+    public List<CamperPlace> updateAll(List<camperPlaceDTO> camperPlaceDtos) {
         try {
             var cpToUpdate = new ArrayList<CamperPlace>();
             camperPlaceDtos.forEach(dto -> {
@@ -85,7 +86,7 @@ public class CamperPlaceService extends CRUDServiceImpl<CamperPlace> {
         }
     }
 
-    private @NonNull CamperPlace mapToCamperPlace(CamperPlace_DTO dto) {
+    private @NonNull CamperPlace mapToCamperPlace(camperPlaceDTO dto) {
         var cp = findById(dto.id());
         var cpt = camperPlaceTypeService.findById(dto.type().id());
         cp.setCamperPlaceType(cpt);
@@ -111,7 +112,7 @@ public class CamperPlaceService extends CRUDServiceImpl<CamperPlace> {
         return camperPlaceRepository.findCamperPlaceByPriceNotNullAndCamperPlaceType_Id(id);
     }
 
-    public List<LocalDate> getOccupiedDate(Integer cpId) {
+    public List<LocalDate> getOccupiedDates(Integer cpId) {
         return camperPlaceRepository.getOccupiedDates(cpId);
     }
 
