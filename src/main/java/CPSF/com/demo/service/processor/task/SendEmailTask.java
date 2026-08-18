@@ -3,6 +3,10 @@ package CPSF.com.demo.service.processor.task;
 import CPSF.com.demo.model.entity.Task;
 
 public class SendEmailTask implements ExecutableTask {
+
+    public SendEmailTask(Task task) {
+    }
+
     @Override
     public Task getEntity() {
         throw new UnsupportedOperationException();

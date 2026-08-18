@@ -66,7 +66,7 @@ public class WebAppAuthFilter extends OncePerRequestFilter {
     }
 
     private void authenticateUser(String orgId, String apiKey) {
-        logger.info("Web app auth headers found, starting Authentication for orgId: " + orgId);
+        log.info("Web app auth headers found, starting Authentication for orgId: {}", orgId);
 
         var organisation = organisationService.findById(Integer.parseInt(orgId));
 
@@ -80,7 +80,7 @@ public class WebAppAuthFilter extends OncePerRequestFilter {
 
         if (passwordEncoder.matches(apiKey, organisation.getWebAppApiKey())) {
             authoriseUser(appUser);
-            logger.info("Web app authentication succeeded for orgId: " + orgId);
+            log.info("Web app authentication succeeded for orgId: {}", orgId);
         } else {
             throw new AuthenticationException("Api key not matched");
         }

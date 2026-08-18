@@ -5,59 +5,43 @@ import CPSF.com.demo.model.dto.ReservationDTO;
 import CPSF.com.demo.model.entity.Task;
 import CPSF.com.demo.service.core.ReservationService;
 import CPSF.com.demo.service.processor.TaskService;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
 import java.util.UUID;
 
 import static CPSF.com.demo.model.constant.ReservationStatus.UNVERIFIED;
-import static CPSF.com.demo.model.constant.TaskStatus.EXECUTED;
-import static CPSF.com.demo.model.constant.TaskStatus.PENDING;
 import static CPSF.com.demo.model.constant.TaskType.SEND_EMAIL_TASK;
-import static CPSF.com.demo.model.constant.TaskType.WEB_APP_RESERVATION_TASK;
 
+@Slf4j
+@RequiredArgsConstructor
 public class WebAppReservationTask implements ExecutableTask {
 
     private final ReservationService reservationService;
     private final TaskService taskService;
-
-    private final Task emailTaskEntity = new Task();
-    private final Task webAppReservationTask = new Task();
-
-    public WebAppReservationTask(
-            ReservationService reservationService,
-            TaskService taskService,
-            ReservationDTO payload
-    ) {
-        webAppReservationTask.setTaskType(WEB_APP_RESERVATION_TASK);
-        webAppReservationTask.setPayload(payload);
-        this.reservationService = reservationService;
-        this.taskService = taskService;
-    }
+    private final Task webAppReservationTaskEntity;
 
     @Override
     public Task getEntity() {
-        return webAppReservationTask;
+        return webAppReservationTaskEntity;
     }
 
     @Override
     public void doTask() {
-        final var reservationDTO = (ReservationDTO) webAppReservationTask.getPayload();
+        final var reservationDTO = (ReservationDTO) webAppReservationTaskEntity.getPayload();
         reservationService.create(
                 reservationDTO.toBuilder().reservationStatus(UNVERIFIED).build());
-
-        webAppReservationTask.setTaskStatus(EXECUTED);
-        webAppReservationTask.setTargetId(UUID.randomUUID().toString());
-        taskService.create(webAppReservationTask); //TODO maybe deleted later, I thought about having some history data
-
-        prepareEmailTask(webAppReservationTask, reservationDTO);
+        prepareEmailTask(webAppReservationTaskEntity, reservationDTO);
     }
 
     private void prepareEmailTask(Task webAppReservationTask, ReservationDTO reservationDTO) {
         //load email
-        emailTaskEntity.setPayload(new EmailData());
-        emailTaskEntity.setTaskType(SEND_EMAIL_TASK);
-        emailTaskEntity.setParentTask(webAppReservationTask);
-        emailTaskEntity.setTaskStatus(PENDING);
-        emailTaskEntity.setTargetId(UUID.randomUUID().toString());
+        final var emailTaskEntity = Task.builder()
+                .targetId(UUID.randomUUID().toString())
+                .payload(new EmailData())
+                .taskType(SEND_EMAIL_TASK)
+                .parentTask(webAppReservationTask)
+                .build();
         taskService.create(emailTaskEntity);
     }
 

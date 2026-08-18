@@ -12,7 +12,6 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotNull;
-import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -25,9 +24,7 @@ import org.jspecify.annotations.Nullable;
 @Getter
 @Setter
 @Table(name = "system_task")
-@Builder(toBuilder = true)
 @NoArgsConstructor
-@AllArgsConstructor
 public class Task extends DbObject {
 
     @Column(name = "target_id")
@@ -45,6 +42,8 @@ public class Task extends DbObject {
     @Enumerated(EnumType.STRING)
     @NotNull
     private TaskType taskType;
+    @Column(name = "retryable")
+    private boolean retryable;
     @Column(name = "retry_count")
     @NotNull
     private long retryCount;
@@ -52,4 +51,21 @@ public class Task extends DbObject {
     @JoinColumn(name = "parent_task_id")
     @Nullable
     private Task parentTask;
+    @Builder(toBuilder = true)
+    public Task(
+            String targetId,
+            @Nullable Object payload,
+            TaskStatus taskStatus,
+            TaskType taskType,
+            long retryCount,
+            @Nullable Task parentTask
+    ) {
+        this.targetId = targetId;
+        this.payload = payload;
+        this.taskStatus = taskStatus;
+        this.taskType = taskType;
+        this.retryable = !TaskType.WEB_APP_RESERVATION_TASK.equals(taskType);
+        this.retryCount = retryCount;
+        this.parentTask = parentTask;
+    }
 }

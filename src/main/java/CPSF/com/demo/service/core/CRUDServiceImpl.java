@@ -1,5 +1,6 @@
 package CPSF.com.demo.service.core;
 
+import CPSF.com.demo.model.constant.JoinOperator;
 import CPSF.com.demo.model.entity.DbObject;
 import CPSF.com.demo.repository.CRUDRepository;
 import org.springframework.data.domain.Page;
@@ -31,7 +32,11 @@ public abstract class CRUDServiceImpl<T extends DbObject> implements CRUDService
             var spec = Specification.where(new GenericSpecification<T>(criteria[0]));
 
             for (int i = 1; i < criteria.length; i++) {
-                spec = spec.and(new GenericSpecification<>(criteria[i]));
+                if (JoinOperator.AND.equals(criteria[i].joinOperator())) {
+                    spec = spec.and(new GenericSpecification<>(criteria[i]));
+                } else {
+                    spec = spec.or(new GenericSpecification<>(criteria[i]));
+                }
             }
 
             return spec;
