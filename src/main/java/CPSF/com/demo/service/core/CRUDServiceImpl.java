@@ -32,7 +32,7 @@ public abstract class CRUDServiceImpl<T extends DbObject> implements CRUDService
             var spec = Specification.where(new GenericSpecification<T>(criteria[0]));
 
             for (int i = 1; i < criteria.length; i++) {
-                if (JoinOperator.AND.equals(criteria[i].joinOperator())) {
+                if (JoinOperator.OR.equals(criteria[i].joinOperator())) {
                     spec = spec.and(new GenericSpecification<>(criteria[i]));
                 } else {
                     spec = spec.or(new GenericSpecification<>(criteria[i]));

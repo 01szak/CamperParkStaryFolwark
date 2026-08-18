@@ -66,8 +66,10 @@ public class TaskProcessor {
         }
     }
 
-    private static void increaseRetryCount(List<Task> pendingTasks) {
-        pendingTasks.stream().filter(t -> FAILED.equals(t.getTaskStatus())).peek(t -> t.setRetryCount(t.getRetryCount() + 1));
+    private void increaseRetryCount(List<Task> pendingTasks) {
+        pendingTasks.stream()
+                .filter(t -> FAILED.equals(t.getTaskStatus()))
+                .forEach(t -> t.setRetryCount(t.getRetryCount() + 1));
     }
 
     private <T extends Task> T mapTaskStatus(T task, TaskStatus taskStatus) {

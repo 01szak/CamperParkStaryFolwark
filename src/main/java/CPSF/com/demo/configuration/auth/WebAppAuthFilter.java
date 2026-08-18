@@ -22,6 +22,7 @@ import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.Optional;
 
 import static CPSF.com.demo.model.constant.UserRole.WEB_APP;
@@ -52,14 +53,22 @@ public class WebAppAuthFilter extends OncePerRequestFilter {
         var orgId = request.getHeader(ORGANISATION_ID_HEADER);
         var apiKey = request.getHeader(API_KEY_HEADER);
         var headersPresent = orgId != null && apiKey != null;
+        try {
+            if (headersPresent) {
+                var appUser = authCache.getIfPresent(getCacheKey(orgId, apiKey));
 
-        if (headersPresent) {
-            var appUser = authCache.getIfPresent(getCacheKey(orgId, apiKey));
-
-            Optional.ofNullable(appUser).ifPresentOrElse(
-                    this::authoriseUser,
-                    () -> authenticateUser(orgId, apiKey)
+                Optional.ofNullable(appUser).ifPresentOrElse(
+                        this::authoriseUser,
+                        () -> authenticateUser(orgId, apiKey)
+                );
+            }
+        } catch (AuthenticationException | NumberFormatException | NoSuchElementException e) {
+            SecurityContextHolder.clearContext();
+            response.sendError(
+                    HttpServletResponse.SC_UNAUTHORIZED,
+                    "Invalid web application credentials"
             );
+            return;
         }
 
         filterChain.doFilter(request, response);
