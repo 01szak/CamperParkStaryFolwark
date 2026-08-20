@@ -1,4 +1,4 @@
-package CPSF.com.demo;
+package CPSF.com.demo.integrationtest;
 
 import CPSF.com.demo.model.constant.Operation;
 import CPSF.com.demo.model.dto.CamperPlaceTypeDTO;

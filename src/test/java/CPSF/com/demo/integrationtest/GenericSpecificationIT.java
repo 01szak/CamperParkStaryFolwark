@@ -1,18 +1,28 @@
-package CPSF.com.demo;
+package CPSF.com.demo.integrationtest;
+
+import CPSF.com.demo.exception.ClientSideException;
+import CPSF.com.demo.exception.UserInputException;
+import CPSF.com.demo.helper.AuthenticationHelper;
 import CPSF.com.demo.model.constant.Country;
-import CPSF.com.demo.model.entity.Reservation;
-import org.junit.jupiter.api.AfterEach;
+import CPSF.com.demo.model.constant.JoinOperator;
 import CPSF.com.demo.model.constant.Operation;
+import CPSF.com.demo.model.constant.UserRole;
+import CPSF.com.demo.model.entity.Reservation;
+import CPSF.com.demo.model.entity.User;
 import CPSF.com.demo.service.core.SearchCriteria;
-import jakarta.persistence.criteria.*;
+import CPSF.com.demo.service.core.UserService;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.Objects;
 
-import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
+import static CPSF.com.demo.helper.AuthenticationHelper.IT_USER_LOGIN;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 class GenericSpecificationIT extends BaseIT {
 
@@ -29,8 +39,21 @@ class GenericSpecificationIT extends BaseIT {
 
     private static Reservation reservation = null;
 
+    @Autowired
+    private UserService userService;
+
     @BeforeEach
     void prepareData() {
+        final var testUser = userService.create(User.builder()
+            .login(IT_USER_LOGIN)
+            .username(IT_USER_LOGIN)
+            .email("it_test_user@example.com")
+            .password("testPassword")
+            .userRole(UserRole.ADMIN)
+            .build()
+    );
+        AuthenticationHelper.authenticateUser(testUser);
+
         reservation = createReservationWithNewData(
                 CP_TYPE,
                 CP_TYPE_PRICE,
@@ -240,4 +263,160 @@ class GenericSpecificationIT extends BaseIT {
         assertThat(result.size()).isEqualTo(0);
     }
 
+    // --- Multiple Joining Operators Tests (a OR b OR c, (a AND b) OR c, (y AND z) OR x) ---
+
+    @Test
+    void shouldReturnDataWithAllOrJoinOperators() {
+        // given (a or b or c)
+        final var guestA = createGuest("Alice", "Alpha", Country.POLAND);
+        final var guestB = createGuest("Bob", "Beta", Country.POLAND);
+        final var guestC = createGuest("Charlie", "Gamma", Country.POLAND);
+
+        final var criteriaA = new SearchCriteria("firstname", Operation.EQUALS, "Alice");
+        final var criteriaB = new SearchCriteria("firstname", Operation.EQUALS, "Bob", JoinOperator.OR);
+        final var criteriaC = new SearchCriteria("firstname", Operation.EQUALS, "Charlie", JoinOperator.OR);
+
+        // when
+        final var result = guestService.findBy(criteriaA, criteriaB, criteriaC).getContent();
+
+        // then
+        final var firstNames = result.stream().map(g -> g.getFirstname()).toList();
+        assertThat(firstNames).contains("Alice", "Bob", "Charlie");
+    }
+
+    @Test
+    void shouldReturnDataWithAndThenOrJoinOperators() {
+        // given ((a and b) or c)
+        final var guestA = createGuest("David", "Delta", Country.POLAND);
+        final var guestB = createGuest("Eva", "Echo", Country.POLAND);
+
+        // Subcase 1: Matching (David AND Delta) OR (NonExistent)
+        final var criteria1A = new SearchCriteria("firstname", Operation.EQUALS, "David");
+        final var criteria1B = new SearchCriteria("lastname", Operation.EQUALS, "Delta", JoinOperator.AND);
+        final var criteria1C = new SearchCriteria("firstname", Operation.EQUALS, "NonExistent", JoinOperator.OR);
+
+        final var result1 = guestService.findBy(criteria1A, criteria1B, criteria1C).getContent();
+        assertThat(result1.stream().anyMatch(g -> "David".equals(g.getFirstname()) && "Delta".equals(g.getLastname()))).isTrue();
+
+        // Subcase 2: Matching (David AND WrongLastName) OR (Eva) -> (false) OR true -> returns Eva
+        final var criteria2A = new SearchCriteria("firstname", Operation.EQUALS, "David");
+        final var criteria2B = new SearchCriteria("lastname", Operation.EQUALS, "WrongLastName", JoinOperator.AND);
+        final var criteria2C = new SearchCriteria("firstname", Operation.EQUALS, "Eva", JoinOperator.OR);
+
+        final var result2 = guestService.findBy(criteria2A, criteria2B, criteria2C).getContent();
+        final var result2Names = result2.stream().map(g -> g.getFirstname()).toList();
+        assertThat(result2Names).contains("Eva");
+        assertThat(result2Names).doesNotContain("David");
+    }
+
+    @Test
+    void shouldReturnDataWithXOrYAndZJoinOperators() {
+        // given (x or (y and z)) structured as (y and z) or x
+        final var guestY = createGuest("Frank", "Foxtrot", Country.POLAND);
+        final var guestX = createGuest("Grace", "Golf", Country.POLAND);
+
+        // (Frank AND Foxtrot) OR Grace
+        final var criteriaY = new SearchCriteria("firstname", Operation.EQUALS, "Frank");
+        final var criteriaZ = new SearchCriteria("lastname", Operation.EQUALS, "Foxtrot", JoinOperator.AND);
+        final var criteriaX = new SearchCriteria("firstname", Operation.EQUALS, "Grace", JoinOperator.OR);
+
+        final var result = guestService.findBy(criteriaY, criteriaZ, criteriaX).getContent();
+        final var matchedNames = result.stream().map(g -> g.getFirstname()).toList();
+        assertThat(matchedNames).contains("Frank", "Grace");
+    }
+
+    @Test
+    void shouldThrowClientSideExceptionWhenSearchingByInvalidProperty() {
+        // given
+        final var criteria = new SearchCriteria("nonExistentProperty", Operation.EQUALS, "value");
+
+        // when & then
+        assertThatThrownBy(() -> guestService.findBy(criteria))
+                .isInstanceOf(ClientSideException.class);
+    }
+
+    @Test
+    void shouldThrowClientSideExceptionWhenJoiningInvalidRelation() {
+        // given
+        final var criteria = new SearchCriteria("invalidRelation", "someField", Operation.EQUALS, "value");
+
+        // when & then
+        assertThatThrownBy(() -> reservationService.findBy(criteria))
+                .isInstanceOf(ClientSideException.class);
+    }
+
+    @Test
+    void shouldThrowUserInputExceptionWhenDateFormatIsInvalid() {
+        // given
+        final var criteria = new SearchCriteria("checkin", Operation.EQUALS, "invalid-date-format");
+
+        // when & then
+        assertThatThrownBy(() -> reservationService.findBy(criteria))
+                .isInstanceOf(UserInputException.class)
+                .hasMessage("Nieprawidłowa data!");
+    }
+
+    @Test
+    void shouldThrowClientSideExceptionWhenBetweenOperationHasNullSecondValue() {
+        // given
+        final var criteria = new SearchCriteria(null, "checkin", Operation.BETWEEN, "3026-01-01", null, null);
+
+        // when & then
+        assertThatThrownBy(() -> reservationService.findBy(criteria))
+                .isInstanceOf(ClientSideException.class)
+                .hasMessage("second values cannot be null while using between operation");
+    }
+
+    @Test
+    void shouldReturnDataFilteredByNumericBetweenOperation() {
+        // given
+        final var criteria = new SearchCriteria(
+                "price",
+                Operation.BETWEEN,
+                "1.00",
+                "100000.00"
+        );
+
+        // when
+        final var result = reservationService.findBy(criteria).getContent();
+
+        // then
+        assertThat(result).isNotEmpty();
+        assertThat(result.stream().anyMatch(r -> Objects.equals(r.getId(), reservation.getId()))).isTrue();
+    }
+
+    @Test
+    void shouldReturnDataFilteredByNumericGreaterThanAndLessThan() {
+        // given
+        final var criteriaGreater = new SearchCriteria("price", Operation.GREATER_THEN, "1.00");
+        final var criteriaLess = new SearchCriteria("price", Operation.LESS_THEN, "100000.00", JoinOperator.AND);
+
+        // when
+        final var result = reservationService.findBy(criteriaGreater, criteriaLess).getContent();
+
+        // then
+        assertThat(result).isNotEmpty();
+        assertThat(result.stream().anyMatch(r -> Objects.equals(r.getId(), reservation.getId()))).isTrue();
+    }
+
+    @Test
+    void shouldReturnAllRecordsWhenCriteriaArrayIsEmpty() {
+        // when
+        final var result = guestService.findBy().getContent();
+
+        // then
+        assertThat(result).isNotEmpty();
+    }
+
+    @Test
+    void shouldReturnAllRecordsWhenCriteriaHasEmptyKey() {
+        // given
+        final var criteria = new SearchCriteria("", Operation.EQUALS, "someValue");
+
+        // when
+        final var result = guestService.findBy(criteria).getContent();
+
+        // then
+        assertThat(result).isNotEmpty();
+    }
 }

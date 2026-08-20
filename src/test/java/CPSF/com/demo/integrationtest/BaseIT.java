@@ -1,5 +1,6 @@
-package CPSF.com.demo;
+package CPSF.com.demo.integrationtest;
 
+import CPSF.com.demo.CamperparkdemoApplication;
 import CPSF.com.demo.model.constant.Country;
 import CPSF.com.demo.model.constant.ReservationStatus;
 import CPSF.com.demo.model.dto.CamperPlaceTypeDTO;
@@ -28,6 +29,7 @@ import org.springframework.test.context.DynamicPropertyRegistry;
 import org.springframework.test.context.DynamicPropertySource;
 import org.springframework.transaction.annotation.Transactional;
 import org.testcontainers.containers.MySQLContainer;
+import org.testcontainers.junit.jupiter.Testcontainers;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -38,6 +40,7 @@ import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 @SpringBootTest(classes = CamperparkdemoApplication.class)
 @ActiveProfiles("test")
 @Transactional
+@Testcontainers
 public class BaseIT {
 
     @Autowired
