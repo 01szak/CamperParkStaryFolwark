@@ -33,9 +33,9 @@ public abstract class CRUDServiceImpl<T extends DbObject> implements CRUDService
 
             for (int i = 1; i < criteria.length; i++) {
                 if (JoinOperator.OR.equals(criteria[i].joinOperator())) {
-                    spec = spec.and(new GenericSpecification<>(criteria[i]));
-                } else {
                     spec = spec.or(new GenericSpecification<>(criteria[i]));
+                } else {
+                    spec = spec.and(new GenericSpecification<>(criteria[i]));
                 }
             }
 
