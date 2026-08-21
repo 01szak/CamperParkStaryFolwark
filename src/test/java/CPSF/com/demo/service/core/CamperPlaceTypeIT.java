@@ -1,12 +1,10 @@
-package CPSF.com.demo.integrationtest;
+package CPSF.com.demo.service.core;
 
+import CPSF.com.demo.BaseIT;
 import CPSF.com.demo.model.constant.Operation;
 import CPSF.com.demo.model.dto.CamperPlaceTypeDTO;
 import CPSF.com.demo.model.entity.CamperPlace;
 import CPSF.com.demo.model.entity.CamperPlaceType;
-import CPSF.com.demo.service.core.CamperPlaceService;
-import CPSF.com.demo.service.core.CamperPlaceTypeService;
-import CPSF.com.demo.service.core.SearchCriteria;
 import jakarta.annotation.Nullable;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;

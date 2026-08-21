@@ -1,5 +1,6 @@
-package CPSF.com.demo.integrationtest;
+package CPSF.com.demo.service.core;
 
+import CPSF.com.demo.BaseIT;
 import CPSF.com.demo.exception.ClientSideException;
 import CPSF.com.demo.exception.UserInputException;
 import CPSF.com.demo.helper.AuthenticationHelper;
@@ -9,8 +10,6 @@ import CPSF.com.demo.model.constant.Operation;
 import CPSF.com.demo.model.constant.UserRole;
 import CPSF.com.demo.model.entity.Reservation;
 import CPSF.com.demo.model.entity.User;
-import CPSF.com.demo.service.core.SearchCriteria;
-import CPSF.com.demo.service.core.UserService;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

@@ -1,9 +1,8 @@
-package CPSF.com.demo.integrationtest;
+package CPSF.com.demo.service.core;
 
+import CPSF.com.demo.BaseIT;
 import CPSF.com.demo.model.constant.Country;
 import CPSF.com.demo.model.constant.Operation;
-import CPSF.com.demo.service.core.SearchCriteria;
-import CPSF.com.demo.service.core.StatisticsService;
 import org.junit.jupiter.api.Test;
 
 import java.math.BigDecimal;

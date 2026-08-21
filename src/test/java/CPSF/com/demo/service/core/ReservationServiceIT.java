@@ -1,5 +1,6 @@
-package CPSF.com.demo.integrationtest;
+package CPSF.com.demo.service.core;
 
+import CPSF.com.demo.BaseIT;
 import CPSF.com.demo.exception.UserInputException;
 import CPSF.com.demo.helper.AuthenticationHelper;
 import CPSF.com.demo.model.constant.Country;
@@ -8,7 +9,6 @@ import CPSF.com.demo.model.constant.UserRole;
 import CPSF.com.demo.model.dto.GuestDTO;
 import CPSF.com.demo.model.dto.ReservationDTO;
 import CPSF.com.demo.model.entity.User;
-import CPSF.com.demo.service.core.UserService;
 import CPSF.com.demo.service.util.DtoMapper;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -22,7 +22,7 @@ import static CPSF.com.demo.helper.AuthenticationHelper.IT_USER_LOGIN;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
-public class ReservationIT extends BaseIT {
+public class ReservationServiceIT extends BaseIT {
 
     @Autowired
     private UserService userService;
