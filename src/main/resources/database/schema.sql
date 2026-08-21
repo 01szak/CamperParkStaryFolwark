@@ -162,5 +162,6 @@ CREATE TABLE IF NOT EXISTS system_task (
     retryable BOOLEAN DEFAULT FALSE,
     retry_count BIGINT,
     parent_task_id BIGINT,
+    execution_date DATETIME,
     CONSTRAINT fk_system_task_parent FOREIGN KEY (parent_task_id) REFERENCES system_task(id)
 );
