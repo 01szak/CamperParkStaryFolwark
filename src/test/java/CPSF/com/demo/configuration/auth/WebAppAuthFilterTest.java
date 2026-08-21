@@ -1,4 +1,4 @@
-package CPSF.com.demo.unittest;
+package CPSF.com.demo.configuration.auth;
 
 import CPSF.com.demo.configuration.auth.WebAppAuthFilter;
 import CPSF.com.demo.helper.AuthenticationHelper;

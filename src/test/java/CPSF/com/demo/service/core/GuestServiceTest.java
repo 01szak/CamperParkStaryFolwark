@@ -1,4 +1,4 @@
-package CPSF.com.demo.unittest;
+package CPSF.com.demo.service.core;
 
 import CPSF.com.demo.exception.UserInputException;
 import CPSF.com.demo.model.dto.GuestDTO;

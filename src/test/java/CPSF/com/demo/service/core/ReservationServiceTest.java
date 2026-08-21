@@ -1,4 +1,4 @@
-package CPSF.com.demo.unittest;
+package CPSF.com.demo.service.core;
 
 import CPSF.com.demo.exception.UserInputException;
 import CPSF.com.demo.helper.AuthenticationHelper;
@@ -14,11 +14,6 @@ import CPSF.com.demo.model.entity.Guest;
 import CPSF.com.demo.model.entity.Reservation;
 import CPSF.com.demo.model.entity.User;
 import CPSF.com.demo.repository.ReservationRepository;
-import CPSF.com.demo.service.core.CamperPlaceService;
-import CPSF.com.demo.service.core.GuestService;
-import CPSF.com.demo.service.core.ReservationCalculatorService;
-import CPSF.com.demo.service.core.ReservationService;
-import CPSF.com.demo.service.core.UserService;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

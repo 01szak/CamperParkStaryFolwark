@@ -12,13 +12,9 @@ import lombok.extern.log4j.Log4j2;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.HashMap;
+import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Map;
-import java.util.Optional;
 import java.util.concurrent.Executors;
-import java.util.stream.Gatherer;
 
 import static CPSF.com.demo.model.constant.TaskStatus.EXECUTED;
 import static CPSF.com.demo.model.constant.TaskStatus.FAILED;
@@ -35,20 +31,24 @@ public class TaskProcessor {
 
     @Scheduled(fixedDelay = 10000L)
     public void processTask() {
+        final var currentDateTimeStr = LocalDateTime.now().toString();
         final var pendingTasks =
                 (List<Task>) taskService.findBy(
-                        new SearchCriteria("taskStatus", Operation.EQUALS, PENDING.toString()),
+                        new SearchCriteria("executionDate", Operation.LESS_THEN, currentDateTimeStr),
+                        new SearchCriteria("executionDate", Operation.EQUALS, currentDateTimeStr, JoinOperator.OR),
+                        new SearchCriteria("taskStatus", Operation.EQUALS, PENDING.toString(), JoinOperator.AND),
                         new SearchCriteria("taskStatus", Operation.EQUALS, FAILED.toString(), JoinOperator.OR),
                         new SearchCriteria("retryable", Operation.EQUALS, "true", JoinOperator.AND)
                         ).get().toList();
-
-        final var taskForest = pendingTasks.stream().gather(toTaskForest()).toList();
 
         if (pendingTasks.isEmpty()) {
             return;
         }
 
         increaseRetryCount(pendingTasks);
+
+        final var taskForest = pendingTasks.stream().gather(TaskGatherer.createTaskForest()).toList();
+
         try(final var executor =  Executors.newVirtualThreadPerTaskExecutor()) {
             log.info("{} pending tasks found", pendingTasks.size());
             taskForest.forEach(node -> {
@@ -57,7 +57,9 @@ public class TaskProcessor {
         } catch (Exception e) {
             log.error("Exception occurred while processing the tasks: {}", e.getLocalizedMessage());
             final var inProgressTasks =
-                    (List<Task>) taskService.findBy(new SearchCriteria("taskStatus" , Operation.EQUALS, IN_PROGRESS.toString())).get().toList();
+                    (List<Task>) taskService.findBy(
+                            new SearchCriteria("taskStatus" , Operation.EQUALS, IN_PROGRESS.toString())
+                            ).get().toList();
             taskService.update(inProgressTasks.stream().map(t -> mapTaskStatus(t, FAILED)).toList());
         }
     }
@@ -69,6 +71,18 @@ public class TaskProcessor {
             executableTaskFactory.getExecutableTask(taskNode.task()).doTask();
             taskService.update(mapTaskStatus(taskNode.task(), EXECUTED));
             log.info("task: {} executed successfully", taskNode.task().getTaskType());
+
+            if (taskNode.subTasks().isEmpty()) return;
+
+            try(final var executor =  Executors.newVirtualThreadPerTaskExecutor()) {
+                taskNode.subTasks().forEach(subTask -> {
+                    executor.submit(() -> {
+                        executeTaskNode(subTask);
+                    });
+                });
+
+            }
+
         } catch (Exception e) {
             log.error("Exception occurred while processing the task: {} {}", taskNode.task().getTaskType(), e);
             taskService.update(mapTaskStatus(taskNode.task(), FAILED));
@@ -78,7 +92,7 @@ public class TaskProcessor {
 
     private void failDescendants(TaskNode taskNode) {
         taskNode.subTasks().forEach(s -> {
-            log.warn("Skipping child task {} with ID{} because parent task failed", s.task().getTaskType(), s.task.getId());
+            log.warn("Skipping child task {} with ID {} because parent task failed", s.task().getTaskType(), s.task().getId());
             taskService.update(mapTaskStatus(s.task(), FAILED));
             failDescendants(s);
 
@@ -96,44 +110,4 @@ public class TaskProcessor {
         return task ;
     }
 
-    private record TaskNode(Task task, List<TaskNode> subTasks) {
-
-        public TaskNode(Task task) {
-            this(task, new ArrayList<>());
-        }
-
-        public void addSubTask(Task task) {
-            subTasks().add(new TaskNode(task, new ArrayList<>()));
-        }
-    }
-
-    private static Gatherer<Task, Map<Integer, TaskNode>, TaskNode> toTaskForest() {
-        return Gatherer.ofSequential(
-                HashMap::new,
-                (map, task, downstream) -> {
-                    map.put(task.getId(), new TaskNode(task));
-                    return true;
-                },
-                (map, downstream) -> {
-                    final var roots = new ArrayList<>();
-
-                    map.values().forEach(v -> {
-                        final var parent = v.task().getParentTask();
-
-                        Optional.ofNullable(parent).ifPresentOrElse(t -> {
-                            if (map.containsKey(parent.getId())) {
-                                map.get(parent.getId()).addSubTask(v.task());
-                            }
-                        }, () -> {
-                            roots.add(v.task());
-                        });
-
-                    });
-
-                    roots.forEach(root -> {
-                        if (!downstream.push((TaskNode) root)) return;
-                    });
-                }
-        );
-    }
 }

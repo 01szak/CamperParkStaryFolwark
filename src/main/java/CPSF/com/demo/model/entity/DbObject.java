@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
+import org.jetbrains.annotations.TestOnly;
 
 import java.util.Date;
 
@@ -40,6 +41,11 @@ public abstract class DbObject {
     @PreUpdate
     protected void onUpdate() {
         setUpdatedAt(new Date());
+    }
+
+    @TestOnly
+    protected DbObject (Integer id) {
+        this.id = id;
     }
 
 }

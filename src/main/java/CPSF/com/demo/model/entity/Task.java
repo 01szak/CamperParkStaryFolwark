@@ -18,7 +18,10 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.hibernate.annotations.JdbcTypeCode;
 import org.hibernate.type.SqlTypes;
+import org.jetbrains.annotations.TestOnly;
 import org.jspecify.annotations.Nullable;
+
+import java.time.LocalDateTime;
 
 @Entity
 @Getter
@@ -37,7 +40,7 @@ public class Task extends DbObject {
     @Column(name = "task_status")
     @Enumerated(EnumType.STRING)
     @NotNull
-    private TaskStatus taskStatus;
+    private TaskStatus taskStatus = TaskStatus.PENDING;
     @Column(name = "task_type")
     @Enumerated(EnumType.STRING)
     @NotNull
@@ -51,6 +54,10 @@ public class Task extends DbObject {
     @JoinColumn(name = "parent_task_id")
     @Nullable
     private Task parentTask;
+    @Nullable
+    @Column(name = "execution_date")
+    private LocalDateTime executionDate;
+
     @Builder(toBuilder = true)
     public Task(
             String targetId,
@@ -66,6 +73,12 @@ public class Task extends DbObject {
         this.taskType = taskType;
         this.retryable = !TaskType.WEB_APP_RESERVATION_TASK.equals(taskType);
         this.retryCount = retryCount;
+        this.parentTask = parentTask;
+    }
+
+    @TestOnly
+    public Task(Integer id, Task parentTask) {
+        super(id);
         this.parentTask = parentTask;
     }
 }
