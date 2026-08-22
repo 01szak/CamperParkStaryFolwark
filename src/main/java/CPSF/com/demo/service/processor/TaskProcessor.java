@@ -74,7 +74,7 @@ public class TaskProcessor {
                     (List<Task>) taskService.findBy(
                             new SearchCriteria("taskStatus" , Operation.EQUALS, IN_PROGRESS.toString())
                             ).get().toList();
-            taskService.update(inProgressTasks.stream().map(t -> mapTaskStatus(t, FAILED)).toList());
+            taskService.update(inProgressTasks.stream().map(t -> mapTaskStatus(t, FAILED, e.getLocalizedMessage())).toList());
         }
     }
 
@@ -122,9 +122,14 @@ public class TaskProcessor {
         pendingTasks.forEach(t -> t.setTaskStatus(PENDING));
     }
 
-    private <T extends Task> T mapTaskStatus(T task, TaskStatus taskStatus) {
+    private <T extends Task> T mapTaskStatus(T task, TaskStatus taskStatus, String statusMessage) {
         task.setTaskStatus(taskStatus);
+        task.setStatusMessage(statusMessage);
         return task ;
+    }
+
+    private <T extends Task> T mapTaskStatus(T task, TaskStatus taskStatus) {
+        return mapTaskStatus(task, taskStatus, null);
     }
 
     private Stream<TaskNode> flattenNode(TaskNode node) {
