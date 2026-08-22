@@ -13,8 +13,11 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.Executors;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import static CPSF.com.demo.model.constant.TaskStatus.EXECUTED;
 import static CPSF.com.demo.model.constant.TaskStatus.FAILED;
@@ -36,18 +39,29 @@ public class TaskProcessor {
                 (List<Task>) taskService.findBy(
                         new SearchCriteria("executionDate", Operation.LESS_THEN, currentDateTimeStr),
                         new SearchCriteria("executionDate", Operation.EQUALS, currentDateTimeStr, JoinOperator.OR),
-                        new SearchCriteria("taskStatus", Operation.EQUALS, PENDING.toString(), JoinOperator.AND),
-                        new SearchCriteria("taskStatus", Operation.EQUALS, FAILED.toString(), JoinOperator.OR),
-                        new SearchCriteria("retryable", Operation.EQUALS, "true", JoinOperator.AND)
+                        new SearchCriteria("taskStatus", Operation.EQUALS, FAILED.toString(), JoinOperator.AND),
+                        new SearchCriteria("retryable", Operation.EQUALS, "true", JoinOperator.AND),
+                        new SearchCriteria("taskStatus", Operation.EQUALS, PENDING.toString(), JoinOperator.OR)
                         ).get().toList();
 
         if (pendingTasks.isEmpty()) {
             return;
         }
 
-        increaseRetryCount(pendingTasks);
+        increaseRetryCountAndSetStatusToPending(pendingTasks);
 
-        final var taskForest = pendingTasks.stream().gather(TaskGatherer.createTaskForest()).toList();
+        final var taskForest = pendingTasks.stream()
+                .gather(TaskGatherer.createTaskForest())
+                .collect(Collectors.toCollection(ArrayList::new));
+        final var failedTaskNodes = taskForest.stream()
+                .filter(tn -> FAILED.equals(tn.task().getTaskStatus()))
+                .flatMap(this::flattenNode)
+                .collect(Collectors.toCollection(ArrayList::new));
+
+        if (!failedTaskNodes.isEmpty()) {
+            taskForest.removeAll(failedTaskNodes);
+            taskService.update(failedTaskNodes.stream().map(TaskNode::task).toList());
+        }
 
         try(final var executor =  Executors.newVirtualThreadPerTaskExecutor()) {
             log.info("{} pending tasks found", pendingTasks.size());
@@ -99,10 +113,13 @@ public class TaskProcessor {
         });
     }
 
-    private void increaseRetryCount(List<Task> pendingTasks) {
+    private void increaseRetryCountAndSetStatusToPending(List<Task> pendingTasks) {
         pendingTasks.stream()
                 .filter(t -> FAILED.equals(t.getTaskStatus()))
-                .forEach(t -> t.setRetryCount(t.getRetryCount() + 1));
+                .forEach(t -> {
+                    t.setRetryCount(t.getRetryCount() + 1);
+                });
+        pendingTasks.forEach(t -> t.setTaskStatus(PENDING));
     }
 
     private <T extends Task> T mapTaskStatus(T task, TaskStatus taskStatus) {
@@ -110,4 +127,10 @@ public class TaskProcessor {
         return task ;
     }
 
+    private Stream<TaskNode> flattenNode(TaskNode node) {
+        return Stream.concat(
+                Stream.of(node),
+                node.subTasks().stream().flatMap(this::flattenNode)
+        );
+    }
 }

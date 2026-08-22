@@ -1,6 +1,8 @@
 package CPSF.com.demo.service.processor;
 
 import static org.assertj.core.api.Assertions.assertThat;
+
+import CPSF.com.demo.model.constant.TaskStatus;
 import CPSF.com.demo.model.entity.Task;
 import org.junit.jupiter.api.Test;
 
@@ -9,6 +11,8 @@ import java.util.stream.Stream;
 
 
 class TaskGathererTest {
+
+    private static final String FAILED_ORPHAN_TASK_MESSAGE = "No parent task available in the current task stream";
 
     @Test
     void shouldReturnListOfTasksWhenNoSubTasks() {
@@ -102,10 +106,9 @@ class TaskGathererTest {
     }
 
     @Test
-    void shouldIgnoreOrphanTasksWhenParentIsNotInStream() {
-        //TODO is this really desired flow?
+    void shouldFailOrphanTasksWhenParentIsNotInStreamWithProperStatusMessage() {
         //given
-        final var missingParent = new Task(99, null); // Nie dodajemy go do listy wejściowej
+        final var missingParent = new Task(99, null);
         final var orphanTask = new Task(1, missingParent);
 
         final var validRoot = new Task(2, null);
@@ -116,8 +119,42 @@ class TaskGathererTest {
         final var result = tasks.stream().gather(TaskGatherer.createTaskForest()).toList();
 
         //then
+        assertThat(result).hasSize(2);
+
+        final var failedOrphanTaskNode = result.stream().filter(taskNode ->
+                TaskStatus.FAILED.equals(taskNode.task().getTaskStatus())
+        ).toList();
+
+        assertThat(failedOrphanTaskNode).hasSize(1);
+        assertThat(failedOrphanTaskNode.getFirst().task().getStatusMessage()).isEqualTo(FAILED_ORPHAN_TASK_MESSAGE);
+    }
+
+    @Test
+    void shouldChainFailTheChildTasksOfTheOrphanParent() {
+        //given
+        final var missingParent = new Task(99, null);
+        final var orphanTask = new Task(1, missingParent);
+        final var child1 = new Task(2, orphanTask);
+        final var child2 = new Task(3, child1);
+
+        final var tasks = List.of(child1, orphanTask, child2);
+
+        //when
+        final var result = tasks.stream().gather(TaskGatherer.createTaskForest()).toList();
+
+        //then
         assertThat(result).hasSize(1);
-        assertThat(result.getFirst().task().getId()).isEqualTo(2);
+
+        final var parent = result.getFirst();
+        assertThat(parent.task().getTaskStatus()).isEqualTo(TaskStatus.FAILED);
+        assertThat(parent.subTasks()).hasSize(1);
+
+        final var subTask1 = parent.subTasks().getFirst();
+        assertThat(subTask1.task().getTaskStatus()).isEqualTo(TaskStatus.FAILED);
+        assertThat(subTask1.subTasks()).hasSize(1);
+
+        final var subTask2 = subTask1.subTasks().getFirst();
+        assertThat(subTask2.task().getTaskStatus()).isEqualTo(TaskStatus.FAILED);
     }
 
 }

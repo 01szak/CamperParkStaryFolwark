@@ -1,5 +1,6 @@
 package CPSF.com.demo.service.processor;
 
+import CPSF.com.demo.model.constant.TaskStatus;
 import CPSF.com.demo.model.entity.Task;
 
 import java.util.ArrayList;
@@ -20,15 +21,23 @@ public class TaskGatherer {
                 (map, downstream) -> {
                     final var roots = new ArrayList<TaskNode>();
 
-                    map.values().forEach(v -> {
-                        final var parent = v.task().getParentTask();
+                    map.values().forEach(taskNode -> {
+                        final var parent = taskNode.task().getParentTask();
 
-                        Optional.ofNullable(parent).ifPresentOrElse(t -> {
-                            if (map.containsKey(t.getId())) {
-                                map.get(t.getId()).addSubTask(v);
+                        Optional.ofNullable(parent).ifPresentOrElse(parentTask -> {
+                            if (map.containsKey(parentTask.getId())) {
+                                final var parentTaskNode = map.get(parentTask.getId());
+                                if (TaskStatus.FAILED.equals(parentTaskNode.task().getTaskStatus())) {
+                                    taskNode.task().setTaskStatus(TaskStatus.FAILED);
+                                }
+                                parentTaskNode.addSubTask(taskNode);
+                            } else {
+                                taskNode.task().setTaskStatus(TaskStatus.FAILED);
+                                taskNode.task().setStatusMessage("No parent task available in the current task stream");
+                                roots.add(taskNode);
                             }
                         }, () -> {
-                            roots.add(v);
+                            roots.add(taskNode);
                         });
 
                     });

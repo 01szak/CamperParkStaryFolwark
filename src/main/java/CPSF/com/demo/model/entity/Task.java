@@ -57,6 +57,9 @@ public class Task extends DbObject {
     @Nullable
     @Column(name = "execution_date")
     private LocalDateTime executionDate;
+    @Nullable
+    @Column(name = "status_message")
+    private String statusMessage;
 
     @Builder(toBuilder = true)
     public Task(
