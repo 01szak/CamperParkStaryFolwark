@@ -15,6 +15,7 @@ import CPSF.com.demo.service.core.CamperPlaceTypeService;
 import CPSF.com.demo.service.core.GuestService;
 import CPSF.com.demo.service.core.ReservationService;
 import CPSF.com.demo.service.core.StatisticsService;
+import CPSF.com.demo.service.processor.TaskService;
 import CPSF.com.demo.service.util.DtoMapper;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.AfterEach;
@@ -52,6 +53,8 @@ public class BaseIT {
     protected CamperPlaceTypeService camperPlaceTypeService;
     @Autowired
     protected StatisticsService statisticsService;
+    @Autowired
+    protected TaskService taskService;
 
     private static long eachTestStart;
     private static long testStart;

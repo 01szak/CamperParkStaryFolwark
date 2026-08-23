@@ -8,6 +8,7 @@ import CPSF.com.demo.model.entity.User;
 import CPSF.com.demo.repository.CRUDRepository;
 import CPSF.com.demo.repository.ReservationRepository;
 import CPSF.com.demo.service.core.StatisticsService.StatisticsModel;
+import jakarta.annotation.Nullable;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
@@ -21,6 +22,8 @@ import static CPSF.com.demo.exception.UserInputException.checkClientInput;
 import static CPSF.com.demo.model.constant.ReservationStatus.ACTIVE;
 import static CPSF.com.demo.model.constant.ReservationStatus.COMING;
 import static CPSF.com.demo.model.constant.ReservationStatus.EXPIRED;
+import static CPSF.com.demo.model.constant.ReservationStatus.UNVERIFIED;
+import static CPSF.com.demo.model.constant.ReservationStatus.VERIFIED;
 
 @Service
 @RequiredArgsConstructor
@@ -42,7 +45,7 @@ public class ReservationService extends CRUDServiceImpl<Reservation> {
 
         final var creator = (User) userService.loadUserByUsername(authentication.getPrincipal().toString());
 
-        validateDates(checkout, checkin, camperPlace);
+        validateDates(checkout, checkin, camperPlace.getId());
 
         final var guest = Optional.ofNullable(reservationDto.guest().id()).isPresent()
                 ? guestService.update(reservationDto.guest())
@@ -78,7 +81,7 @@ public class ReservationService extends CRUDServiceImpl<Reservation> {
         return LocalDate.now().isAfter(checkout);
     }
 
-    public void update(ReservationDTO reservationDto) {
+    public Reservation update(ReservationDTO reservationDto) {
         var camperPlace = camperPlaceService.findById(reservationDto.camperPlace().id());
         var checkin = reservationDto.checkin();
         var checkout = reservationDto.checkout();
@@ -91,13 +94,16 @@ public class ReservationService extends CRUDServiceImpl<Reservation> {
 
     //it is checked because of the constraints and reservations overlapping
         if (datesOrCpChanged) {
-            validateDates(checkout, checkin, camperPlace);
+            validateDates(checkout, checkin, camperPlace.getId(), r.getId());
             r.setCheckin(checkin);
             r.setCheckout(checkout);
             r.setCamperPlace(camperPlace);
             r.setPrice(calculator.calculate(camperPlace.getPrice(), checkin.datesUntil(checkout).count()));
-            if (isActive(checkin, checkout)) {
-                r.setReservationStatus(ACTIVE);
+            if (
+                !VERIFIED.equals(r.getReservationStatus())
+                && !UNVERIFIED.equals(r.getReservationStatus())
+            ) {
+                r.setReservationStatus(getReservationStatus(checkin, checkout));
             }
         }
 
@@ -106,7 +112,7 @@ public class ReservationService extends CRUDServiceImpl<Reservation> {
         r.setGuest(guest);
         r.setPaid(reservationDto.paid());
 
-        super.update(r);
+        return super.update(r);
     }
 
     public List<StatisticsModel.Revenue> countRevenueOfAllCamperPlaces(boolean isPaid, int month, int year) {
@@ -118,12 +124,16 @@ public class ReservationService extends CRUDServiceImpl<Reservation> {
         return checkin.isBefore(currentDate.plusDays(1)) && checkout.isAfter(currentDate.minusDays(1));
     }
 
-    private void validateDates(LocalDate checkout, LocalDate checkin, CamperPlace camperPlace) {
-        final var occupiedDates = camperPlaceService.getOccupiedDates(camperPlace.getId());
+    private void validateDates(LocalDate checkout, LocalDate checkin, Integer camperPlaceId) {
+        validateDates(checkout, checkin, camperPlaceId, null);
+    }
+
+    private void validateDates(LocalDate checkout, LocalDate checkin, Integer camperPlaceId, Integer reservationId) {
+        final var occupiedDates = camperPlaceService.getOccupiedDates(camperPlaceId, reservationId);
 
         checkClientInput(checkout.isBefore(checkin), "Data wyjazdu nie może być przed datą wjazdu");
         checkClientInput(checkout.equals(checkin), "Czas trwania rezerwacji musi wynosić minimum 1 dobę");
-        checkClientInput(occupiedDates.contains(checkin) || occupiedDates.contains(checkout), "Parcela jest już zajęta!");
+        checkClientInput(!occupiedDates.isEmpty() && (occupiedDates.contains(checkin) || occupiedDates.contains(checkout)), "Parcela jest już zajęta!");
     }
 
     @Override

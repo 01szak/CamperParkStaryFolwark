@@ -17,12 +17,8 @@ public class ReservationCalculatorService {
 
 		for (int i = 1; i <= daysInReservation; i++) {
 			var discountedPrice = condition.doDiscount(cpPrice, i);
-			if (discountedPrice instanceof Double p) {
-				finalPrice = finalPrice.add(BigDecimal.valueOf(p));
-			} else {
-				finalPrice = finalPrice.add((BigDecimal) discountedPrice);
+				finalPrice = finalPrice.add(cpPrice);
 			}
-		}
 
 		return finalPrice;
 	}

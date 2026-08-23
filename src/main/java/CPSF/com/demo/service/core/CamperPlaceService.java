@@ -99,21 +99,16 @@ public class CamperPlaceService extends CRUDServiceImpl<CamperPlace> {
         return camperPlaceRepository.findAllOrderByIndex();
     }
 
-    public boolean isOccupied(CamperPlace cp, LocalDate checkin, LocalDate checkout, @Nullable Integer idToExclude) {
-        var res = cp.getReservations();
-        return res != null ?
-                cp.getReservations().stream()
-                        .filter(r -> !r.getId().equals(idToExclude))
-                        .anyMatch(r -> checkin.isBefore(r.getCheckout()) && checkout.isAfter(r.getCheckin()))
-                : false;
-    }
-
     public List<CamperPlace> findCamperPlaceByPriceNotNullAndCamperPlaceType_Id(Integer id) {
         return camperPlaceRepository.findCamperPlaceByPriceNotNullAndCamperPlaceType_Id(id);
     }
 
     public List<LocalDate> getOccupiedDates(Integer cpId) {
-        return camperPlaceRepository.getOccupiedDates(cpId);
+        return getOccupiedDates(cpId, null);
+    }
+
+    public List<LocalDate> getOccupiedDates(Integer cpId, Integer reservationId) {
+        return camperPlaceRepository.getOccupiedDates(cpId, reservationId);
     }
 
     public BigDecimal getCalculatedReservationPrice(Integer cpId, LocalDate checkin, LocalDate checkout) {

@@ -9,6 +9,7 @@ import CPSF.com.demo.model.constant.JoinOperator;
 import CPSF.com.demo.model.constant.Operation;
 import CPSF.com.demo.model.constant.UserRole;
 import CPSF.com.demo.model.entity.Reservation;
+import CPSF.com.demo.model.entity.Task;
 import CPSF.com.demo.model.entity.User;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -17,9 +18,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.Objects;
 
 import static CPSF.com.demo.helper.AuthenticationHelper.IT_USER_LOGIN;
+import static CPSF.com.demo.model.constant.TaskType.WEB_APP_RESERVATION_TASK;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
@@ -396,6 +399,22 @@ class GenericSpecificationIT extends BaseIT {
         // then
         assertThat(result).isNotEmpty();
         assertThat(result.stream().anyMatch(r -> Objects.equals(r.getId(), reservation.getId()))).isTrue();
+    }
+
+    @Test
+    void shouldReturnDataFilteredByLocalDateTimeGreaterThanAndLessThan() {
+        // given
+        final var task = taskService.create(Task.builder().taskType(WEB_APP_RESERVATION_TASK).targetId("dummyID").executionDate(LocalDateTime.parse("2067-01-02T01:00:00")).build());
+
+        final var criteriaGreater = new SearchCriteria("executionDate", Operation.GREATER_THEN, "2067-01-01T01:00:00");
+        final var criteriaLess = new SearchCriteria("executionDate", Operation.LESS_THEN, "2067-01-03T01:00:00", JoinOperator.AND);
+
+        // when
+        final var result = (Task) taskService.findBy(criteriaGreater, criteriaLess).get().findFirst().get();
+
+        // then
+        assertThat(result).isNotNull();
+        assertThat(result.getId()).isEqualTo(task.getId());
     }
 
     @Test

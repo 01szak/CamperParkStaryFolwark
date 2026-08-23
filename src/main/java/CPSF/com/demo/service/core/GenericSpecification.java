@@ -16,6 +16,7 @@ import org.springframework.data.jpa.domain.Specification;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.format.DateTimeParseException;
 import java.util.Optional;
 
@@ -79,6 +80,8 @@ public record GenericSpecification<S>(@NotNull SearchCriteria searchCriteria) im
         try {
             if (value == null) {
                 return null;
+            } else if (LocalDateTime.class.isAssignableFrom(javaType)) {
+                return LocalDateTime.parse(value);
             } else if (LocalDate.class.isAssignableFrom(javaType)) {
                 return LocalDate.parse(value);
             } else if (BigDecimal.class.isAssignableFrom(javaType)) {

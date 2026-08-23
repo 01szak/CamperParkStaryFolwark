@@ -112,7 +112,7 @@ public class ReservationServiceTest {
 
         when(userService.loadUserByUsername(USERNAME)).thenReturn(defaultUser);
         when(camperPlaceService.findById(1)).thenReturn(defaultCamperPlace);
-        when(camperPlaceService.getOccupiedDates(1)).thenReturn(Collections.emptyList());
+        when(camperPlaceService.getOccupiedDates(1, null)).thenReturn(Collections.emptyList());
         when(guestService.create(guestDto)).thenReturn(defaultGuest);
         when(calculator.calculate(DEFAULT_PRICE, 3L)).thenReturn(CALCULATED_PRICE);
         when(reservationRepository.save(any(Reservation.class))).thenAnswer(invocation -> invocation.getArgument(0));
@@ -135,7 +135,7 @@ public class ReservationServiceTest {
 
         when(userService.loadUserByUsername(USERNAME)).thenReturn(defaultUser);
         when(camperPlaceService.findById(1)).thenReturn(defaultCamperPlace);
-        when(camperPlaceService.getOccupiedDates(1)).thenReturn(Collections.emptyList());
+        when(camperPlaceService.getOccupiedDates(1, null)).thenReturn(Collections.emptyList());
         when(guestService.create(guestDto)).thenReturn(defaultGuest);
         when(calculator.calculate(DEFAULT_PRICE, 4L)).thenReturn(CALCULATED_PRICE);
         when(reservationRepository.save(any(Reservation.class))).thenAnswer(invocation -> invocation.getArgument(0));
@@ -158,7 +158,7 @@ public class ReservationServiceTest {
 
         when(userService.loadUserByUsername(USERNAME)).thenReturn(defaultUser);
         when(camperPlaceService.findById(1)).thenReturn(defaultCamperPlace);
-        when(camperPlaceService.getOccupiedDates(1)).thenReturn(Collections.emptyList());
+        when(camperPlaceService.getOccupiedDates(1, null)).thenReturn(Collections.emptyList());
         when(guestService.create(guestDto)).thenReturn(defaultGuest);
         when(calculator.calculate(DEFAULT_PRICE, 2L)).thenReturn(CALCULATED_PRICE);
         when(reservationRepository.save(any(Reservation.class))).thenAnswer(invocation -> invocation.getArgument(0));
@@ -197,7 +197,7 @@ public class ReservationServiceTest {
 
         when(camperPlaceService.findById(1)).thenReturn(defaultCamperPlace);
         when(userService.loadUserByUsername(USERNAME)).thenReturn(defaultUser);
-        when(camperPlaceService.getOccupiedDates(1)).thenReturn(Collections.emptyList());
+        when(camperPlaceService.getOccupiedDates(1, null)).thenReturn(Collections.emptyList());
 
         // When & Then
         assertThatThrownBy(() -> reservationService.create(reservationDto))
@@ -215,7 +215,7 @@ public class ReservationServiceTest {
 
         when(camperPlaceService.findById(1)).thenReturn(defaultCamperPlace);
         when(userService.loadUserByUsername(USERNAME)).thenReturn(defaultUser);
-        when(camperPlaceService.getOccupiedDates(1)).thenReturn(Collections.emptyList());
+        when(camperPlaceService.getOccupiedDates(1, null)).thenReturn(Collections.emptyList());
 
         // When & Then
         assertThatThrownBy(() -> reservationService.create(reservationDto))
@@ -234,7 +234,7 @@ public class ReservationServiceTest {
 
         when(camperPlaceService.findById(1)).thenReturn(defaultCamperPlace);
         when(userService.loadUserByUsername(USERNAME)).thenReturn(defaultUser);
-        when(camperPlaceService.getOccupiedDates(1)).thenReturn(List.of(checkin));
+        when(camperPlaceService.getOccupiedDates(1, null)).thenReturn(List.of(checkin));
 
         // When & Then
         assertThatThrownBy(() -> reservationService.create(reservationDto))
@@ -253,7 +253,7 @@ public class ReservationServiceTest {
 
         when(camperPlaceService.findById(1)).thenReturn(defaultCamperPlace);
         when(userService.loadUserByUsername(USERNAME)).thenReturn(defaultUser);
-        when(camperPlaceService.getOccupiedDates(1)).thenReturn(List.of(checkout));
+        when(camperPlaceService.getOccupiedDates(1, null)).thenReturn(List.of(checkout));
 
         // When & Then
         assertThatThrownBy(() -> reservationService.create(reservationDto))
@@ -311,7 +311,7 @@ public class ReservationServiceTest {
 
         when(camperPlaceService.findById(1)).thenReturn(defaultCamperPlace);
         when(reservationRepository.findById(10)).thenReturn(Optional.of(existingReservation));
-        when(camperPlaceService.getOccupiedDates(1)).thenReturn(Collections.emptyList());
+        when(camperPlaceService.getOccupiedDates(1, 10)).thenReturn(Collections.emptyList());
         when(calculator.calculate(DEFAULT_PRICE, 4L)).thenReturn(BigDecimal.valueOf(400));
         when(guestService.update(guestDto)).thenReturn(defaultGuest);
 
@@ -346,7 +346,7 @@ public class ReservationServiceTest {
 
         when(camperPlaceService.findById(1)).thenReturn(defaultCamperPlace);
         when(reservationRepository.findById(10)).thenReturn(Optional.of(existingReservation));
-        when(camperPlaceService.getOccupiedDates(1)).thenReturn(List.of(newCheckin));
+        when(camperPlaceService.getOccupiedDates(1, 10)).thenReturn(List.of(newCheckin));
 
         // When & Then
         assertThatThrownBy(() -> reservationService.update(updateDto))
@@ -370,7 +370,7 @@ public class ReservationServiceTest {
 
         when(camperPlaceService.findById(1)).thenReturn(defaultCamperPlace);
         when(reservationRepository.findById(10)).thenReturn(Optional.of(existingReservation));
-        when(camperPlaceService.getOccupiedDates(1)).thenReturn(Collections.emptyList());
+        when(camperPlaceService.getOccupiedDates(1, 10)).thenReturn(Collections.emptyList());
 
         // When & Then
         assertThatThrownBy(() -> reservationService.update(updateDto))

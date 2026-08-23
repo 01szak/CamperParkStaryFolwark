@@ -24,22 +24,34 @@ public interface CamperPlaceRepository extends CRUDRepository<CamperPlace> {
     List<CamperPlace> findCamperPlaceByPriceNotNullAndCamperPlaceType_Id(Integer cptId);
 
     @Query(value = """
-        WITH RECURSIVE ocp AS ( 
-            SELECT checkin as d, checkout 
+        WITH RECURSIVE exc AS (
+            SELECT DATE_ADD(checkin, INTERVAL 1 DAY ) as exc_date, checkout as exc_checkout 
+            FROM reservation AS r
+            WHERE r.id = :reservationId
+                
+            UNION ALL
+            
+            SELECT DATE_ADD(exc_date, INTERVAL 1 DAY), exc_checkout
+            FROM exc
+            WHERE DATE_ADD(exc_date, INTERVAL 1 DAY) < exc_checkout
+        ),
+        ocp AS ( 
+            SELECT DATE_ADD(checkin, INTERVAL 1 DAY) as ocp_date, checkout as ocp_checkout 
             FROM reservation AS r
             WHERE r.camper_place_id = :cpId AND r.checkin >= CURDATE()
                 
             UNION ALL
                 
-            SELECT DATE_ADD(d, INTERVAL 1 DAY), checkout
+            SELECT DATE_ADD(ocp_date, INTERVAL 1 DAY), ocp_checkout
             FROM ocp
-            WHERE d <= checkout
-        )    
-        SELECT d 
+            WHERE DATE_ADD(ocp_date, INTERVAL 1 DAY) < ocp_checkout
+        )
+            
+        SELECT DISTINCT ocp_date
         FROM ocp
-        WHERE d >= CURDATE()
+        WHERE ocp_date >= CURDATE() AND ocp_date NOT IN (SELECT exc_date FROM exc)
     """, nativeQuery = true)
-    List<LocalDate> getOccupiedDates(@Param("cpId") Integer cpId);
+    List<LocalDate> getOccupiedDates(@Param("cpId") Integer cpId, @Param("reservationId") Integer reservationId);
 
 
 }

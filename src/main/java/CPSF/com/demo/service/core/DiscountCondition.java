@@ -5,6 +5,8 @@ import CPSF.com.demo.model.constant.Operation;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.List;
 
 import static CPSF.com.demo.model.constant.Operation.EQUALS;
@@ -18,13 +20,17 @@ public class DiscountCondition {
 
     private static final List<Operation> supportedOperations = List.of(EQUALS, NOT_EQUALS, GREATER_THEN, LESS_THEN);
 
-
     private double discountValue;
     private Number discountConditionValue;
     private Operation operation;
     private DiscountType discountType;
 
-    public DiscountCondition(double discountValue, Number discountConditionValue, Operation operation, DiscountType discountType) {
+    public DiscountCondition(
+            double discountValue,
+            Number discountConditionValue,
+            Operation operation,
+            DiscountType discountType
+    ) {
         if (!supportedOperations.contains(operation)) {
             throw new IllegalArgumentException("Unsupported operation in Discount Condition: " + operation);
         }
@@ -35,19 +41,25 @@ public class DiscountCondition {
         this.discountType = discountType;
     }
 
-    public Object doDiscount(Object valueToDiscount, Object conditionValue) {
+    public BigDecimal doDiscount(BigDecimal valueToDiscount, Number conditionValue) {
         if (!isConditionMet(conditionValue)) {
             return valueToDiscount;
         }
-
-        var doubleValue = ((Number) valueToDiscount).doubleValue();
-
+        final var discountValueBD = BigDecimal.valueOf(discountValue);
         switch (discountType) {
             case SUBTRACT_VAL -> {
-                return doubleValue - discountValue;
+                return valueToDiscount.subtract(discountValueBD);
             }
             case SUBTRACT_PERCENT -> {
-                return doubleValue - doubleValue * (discountValue / 100);
+                final var divisor = BigDecimal.valueOf(100);
+                final var percentage = discountValueBD.divide(divisor, 2, RoundingMode.HALF_UP);
+
+                var discountAmount = valueToDiscount.multiply(percentage);
+
+                // Round the final discount amount to match the value's scale to avoid long decimals
+                discountAmount = discountAmount.setScale(valueToDiscount.scale(), RoundingMode.HALF_UP);
+
+                return valueToDiscount.subtract(discountAmount);
             }
             default -> {
                 return valueToDiscount;
@@ -55,23 +67,19 @@ public class DiscountCondition {
         }
     }
 
-    private boolean isConditionMet(Object conditionValue) {
-        if (!(conditionValue instanceof Number val)) {
-            return false;
-        }
-
+    private boolean isConditionMet(Number conditionValue) {
         switch (operation) {
             case EQUALS -> {
-              return val.doubleValue() == discountConditionValue.doubleValue();
+              return conditionValue.doubleValue() == discountConditionValue.doubleValue();
             }
             case NOT_EQUALS -> {
-              return val.doubleValue() != discountConditionValue.doubleValue();
+              return conditionValue.doubleValue() != discountConditionValue.doubleValue();
             }
             case GREATER_THEN -> {
-                return val.doubleValue() > discountConditionValue.doubleValue();
+                return conditionValue.doubleValue() > discountConditionValue.doubleValue();
             }
             case LESS_THEN -> {
-                  return val.doubleValue() < discountConditionValue.doubleValue();
+                  return conditionValue.doubleValue() < discountConditionValue.doubleValue();
             }
             //should never happen
             default -> throw new IllegalArgumentException("Unsupported operation in Discount Condition");

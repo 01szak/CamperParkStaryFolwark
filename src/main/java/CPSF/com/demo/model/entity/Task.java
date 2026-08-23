@@ -19,6 +19,7 @@ import lombok.Setter;
 import org.hibernate.annotations.JdbcTypeCode;
 import org.hibernate.type.SqlTypes;
 import org.jetbrains.annotations.TestOnly;
+import org.jspecify.annotations.NonNull;
 import org.jspecify.annotations.Nullable;
 
 import java.time.LocalDateTime;
@@ -49,7 +50,7 @@ public class Task extends DbObject {
     private boolean retryable;
     @Column(name = "retry_count")
     @NotNull
-    private long retryCount;
+    private long retryCount = 0;
     @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.DETACH)
     @JoinColumn(name = "parent_task_id")
     @Nullable
@@ -63,20 +64,22 @@ public class Task extends DbObject {
 
     @Builder(toBuilder = true)
     public Task(
-            String targetId,
+            @Nullable String targetId,
             @Nullable Object payload,
-            TaskStatus taskStatus,
-            TaskType taskType,
-            long retryCount,
-            @Nullable Task parentTask
+            @Nullable TaskStatus taskStatus,
+            @NonNull TaskType taskType,
+            @NonNull long retryCount,
+            @Nullable Task parentTask,
+            @Nullable LocalDateTime executionDate
     ) {
         this.targetId = targetId;
         this.payload = payload;
-        this.taskStatus = taskStatus;
+        this.taskStatus = taskStatus == null ? this.taskStatus : taskStatus;
         this.taskType = taskType;
         this.retryable = !TaskType.WEB_APP_RESERVATION_TASK.equals(taskType);
-        this.retryCount = retryCount;
+        this.retryCount = retryCount == 0 ? this.retryCount : retryCount;
         this.parentTask = parentTask;
+        this.executionDate = executionDate;
     }
 
     @TestOnly

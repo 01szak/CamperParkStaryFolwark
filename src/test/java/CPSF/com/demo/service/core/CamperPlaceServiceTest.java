@@ -148,66 +148,6 @@ public class CamperPlaceServiceTest {
     }
 
     @Test
-    public void shouldDetectIsOccupiedWhenDatesOverlapExistingReservation() {
-        // Given
-        final var existingReservation = Reservation.builder()
-                .id(10)
-                .checkin(LocalDate.parse("2026-06-01"))
-                .checkout(LocalDate.parse("2026-06-05"))
-                .build();
-
-        final var camperPlace = CamperPlace.builder()
-                .id(1)
-                .index("1")
-                .reservations(List.of(existingReservation))
-                .build();
-
-        // When & Then
-        final var overlaps = camperPlaceService.isOccupied(
-                camperPlace,
-                LocalDate.parse("2026-06-03"),
-                LocalDate.parse("2026-06-07"),
-                null
-        );
-        assertThat(overlaps).isTrue();
-
-        final var doesNotOverlap = camperPlaceService.isOccupied(
-                camperPlace,
-                LocalDate.parse("2026-06-06"),
-                LocalDate.parse("2026-06-10"),
-                null
-        );
-        assertThat(doesNotOverlap).isFalse();
-    }
-
-    @Test
-    public void shouldIgnoreExcludedReservationIdInIsOccupied() {
-        // Given
-        final var existingReservation = Reservation.builder()
-                .id(99)
-                .checkin(LocalDate.parse("2026-06-01"))
-                .checkout(LocalDate.parse("2026-06-05"))
-                .build();
-
-        final var camperPlace = CamperPlace.builder()
-                .id(1)
-                .index("1")
-                .reservations(List.of(existingReservation))
-                .build();
-
-        // When
-        final var result = camperPlaceService.isOccupied(
-                camperPlace,
-                LocalDate.parse("2026-06-01"),
-                LocalDate.parse("2026-06-05"),
-                99
-        );
-
-        // Then
-        assertThat(result).isFalse();
-    }
-
-    @Test
     public void shouldSetOverriddenPriceToNullWhenMatchingTypePriceInUpdateAll() {
         // Given
         final var existingCp = CamperPlace.builder()

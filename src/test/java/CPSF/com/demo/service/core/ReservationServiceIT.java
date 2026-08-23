@@ -53,9 +53,9 @@ public class ReservationServiceIT extends BaseIT {
         final var cpPrice = BigDecimal.valueOf(50);
 
         final var createdReservation = createReservationWithNewData(
-                "IT_TYPE_1",
+                "1_IT_TYPE",
                 cpPrice,
-                "IT_CP_1",
+                "1_IT_CP",
                 "Jan",
                 "Kowalski",
                 Country.POLAND,
@@ -85,8 +85,8 @@ public class ReservationServiceIT extends BaseIT {
     public void shouldCreateReservationWithExistingGuest() {
         // Given
         final var guest = createGuest("Existing", "Guest", Country.POLAND);
-        final var cpType = createCpType("IT_TYPE_2", BigDecimal.valueOf(60));
-        final var cp = createCamperPlace("IT_CP_2", cpType);
+        final var cpType = createCpType("2_IT_TYPE", BigDecimal.valueOf(60));
+        final var cp = createCamperPlace("2_IT_CP", cpType);
         final var checkin = LocalDate.parse("2030-06-01");
         final var checkout = LocalDate.parse("2030-06-04");
 
@@ -115,8 +115,8 @@ public class ReservationServiceIT extends BaseIT {
     @Test
     public void shouldRejectOverlappingReservationUsingDbOccupiedDates() {
         // Given
-        final var cpType = createCpType("IT_TYPE_3", BigDecimal.valueOf(70));
-        final var cp = createCamperPlace("IT_CP_3", cpType);
+        final var cpType = createCpType("3_IT_TYPE", BigDecimal.valueOf(70));
+        final var cp = createCamperPlace("3_IT_CP", cpType);
         final var guest1 = createGuest("Guest", "One", Country.POLAND);
         final var guest2 = createGuest("Guest", "Two", Country.GERMANY);
 
@@ -146,9 +146,9 @@ public class ReservationServiceIT extends BaseIT {
         final var initialCheckin = LocalDate.parse("2030-08-01");
         final var initialCheckout = LocalDate.parse("2030-08-05");
         final var reservation = createReservationWithNewData(
-                "IT_TYPE_4",
+                "4_IT_TYPE",
                 BigDecimal.valueOf(80),
-                "IT_CP_4",
+                "4_IT_CP",
                 "Piotr",
                 "Zieliński",
                 Country.POLAND,
@@ -194,8 +194,8 @@ public class ReservationServiceIT extends BaseIT {
     @Test
     public void shouldRejectUpdateWhenOverlappingAnotherReservationInDatabase() {
         // Given
-        final var cpType = createCpType("IT_TYPE_5", BigDecimal.valueOf(90));
-        final var cp = createCamperPlace("IT_CP_5", cpType);
+        final var cpType = createCpType("5_IT_TYPE", BigDecimal.valueOf(90));
+        final var cp = createCamperPlace("5_IT_CP", cpType);
         final var guest1 = createGuest("Adam", "Pierwszy", Country.POLAND);
         final var guest2 = createGuest("Ewa", "Druga", Country.POLAND);
 
@@ -216,5 +216,40 @@ public class ReservationServiceIT extends BaseIT {
         assertThatThrownBy(() -> reservationService.update(conflictingUpdateDto))
                 .isInstanceOf(UserInputException.class)
                 .hasMessage("Parcela jest już zajęta!");
+    }
+
+    @Test
+    public void shouldPassAnUpdateWhenReservationDatesOverlapsWithThemSelf() {
+        final var checkin = LocalDate.parse("2067-01-01");
+        var checkout = LocalDate.parse("2067-01-15");
+
+        var reservation = createReservationWithNewData(
+                "IT_TYPE_6",
+                BigDecimal.valueOf(100),
+                "6_IT_CP",
+                "Jan",
+                "Kowalski",
+                Country.POLAND,
+                checkin,
+                checkout,
+                false);
+
+        checkout = LocalDate.parse("2067-01-17");
+        final var updatePayload = new ReservationDTO(
+                reservation.getId(),
+                checkin,
+                checkout,
+                DtoMapper.getGuestDTO(reservation.getGuest()),
+                DtoMapper.getCamperPlaceDto(reservation.getCamperPlace()),
+                reservation.getPaid(),
+                reservation.getReservationStatus()
+        );
+
+        reservationService.update(updatePayload);
+
+        reservation = reservationService.findById(reservation.getId());
+
+        assertThat(reservation).isNotNull();
+        assertThat(reservation.getCheckout()).isEqualTo(checkout);
     }
 }

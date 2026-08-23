@@ -81,6 +81,7 @@ public class TaskProcessor {
     private void executeTaskNode(TaskNode taskNode) {
         try {
             log.info("Starting to process task: {} ", taskNode.task().getTaskType());
+            if (FAILED.equals(taskNode.task().getTaskStatus())) return;
             taskService.update(mapTaskStatus(taskNode.task(), IN_PROGRESS));
             executableTaskFactory.getExecutableTask(taskNode.task()).doTask();
             taskService.update(mapTaskStatus(taskNode.task(), EXECUTED));
