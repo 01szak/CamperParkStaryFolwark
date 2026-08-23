@@ -1,25 +1,9 @@
-package CPSF.com.demo;
+package CPSF.com.demo.service.core;
 
+import CPSF.com.demo.BaseIT;
 import CPSF.com.demo.model.constant.Country;
 import CPSF.com.demo.model.constant.Operation;
-import CPSF.com.demo.model.constant.ReservationStatus;
-import CPSF.com.demo.model.dto.CamperPlaceTypeDTO;
-import CPSF.com.demo.model.dto.CamperPlace_DTO;
-import CPSF.com.demo.model.dto.GuestDTO;
-import CPSF.com.demo.model.dto.Reservation_DTO;
-import CPSF.com.demo.model.entity.CamperPlace;
-import CPSF.com.demo.model.entity.CamperPlaceType;
-import CPSF.com.demo.model.entity.Guest;
-import CPSF.com.demo.model.entity.Reservation;
-import CPSF.com.demo.service.core.CamperPlaceService;
-import CPSF.com.demo.service.core.CamperPlaceTypeService;
-import CPSF.com.demo.service.core.GuestService;
-import CPSF.com.demo.service.core.ReservationService;
-import CPSF.com.demo.service.core.SearchCriteria;
-import CPSF.com.demo.service.core.StatisticsService;
-import CPSF.com.demo.service.util.DtoMapper;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -86,7 +70,7 @@ public class StatisticsServiceIT extends BaseIT {
                 LocalDate.parse("2030-01-05"),
                 false
         );
-        assertThat(statisticsService.getUserPerCountry(01, 2030).size() == 2).isTrue()
+        assertThat(statisticsService.getGuestPerCountry(01, 2030).size() == 2).isTrue()
                 .withFailMessage("country distribution should contains x count equal to distinct countries count");
 
         createReservation(
@@ -96,9 +80,9 @@ public class StatisticsServiceIT extends BaseIT {
                 guestService.findBy(new SearchCriteria("firstname", Operation.EQUALS, "GUEST_FN1")).stream().findFirst().get(),
                 false
         );
-        assertThat(statisticsService.getUserPerCountry(01, 2030).get(0).usersCount() == 1).isTrue()
+        assertThat(statisticsService.getGuestPerCountry(01, 2030).get(0).usersCount() == 1).isTrue()
                 .withFailMessage("if guest contains 2 reservations in given month distribution y's should be equal to number of guests (1)");
-        assertThat(statisticsService.getUserPerCountry(01, 2030).get(1).usersCount() == 1).isTrue();
+        assertThat(statisticsService.getGuestPerCountry(01, 2030).get(1).usersCount() == 1).isTrue();
     }
 
     private static void validateRevenues(

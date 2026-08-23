@@ -1,18 +1,19 @@
 package CPSF.com.demo.model.dto;
 
 import CPSF.com.demo.model.constant.ReservationStatus;
-import CPSF.com.demo.model.entity.Reservation;
 import jakarta.annotation.Nullable;
 import jakarta.validation.constraints.NotNull;
+import lombok.Builder;
 
 import java.time.LocalDate;
 
-public record Reservation_DTO(
+@Builder(toBuilder = true)
+public record ReservationDTO(
         @Nullable Integer id,
         @NotNull LocalDate checkin,
         @NotNull LocalDate checkout,
         @NotNull GuestDTO guest,
-        @NotNull CamperPlace_DTO camperPlace,
+        @NotNull camperPlaceDTO camperPlace,
         @NotNull Boolean paid,
         @Nullable ReservationStatus reservationStatus
 ) {}

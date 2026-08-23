@@ -3,9 +3,9 @@ package CPSF.com.demo;
 import CPSF.com.demo.model.constant.Country;
 import CPSF.com.demo.model.constant.ReservationStatus;
 import CPSF.com.demo.model.dto.CamperPlaceTypeDTO;
-import CPSF.com.demo.model.dto.CamperPlace_DTO;
 import CPSF.com.demo.model.dto.GuestDTO;
-import CPSF.com.demo.model.dto.Reservation_DTO;
+import CPSF.com.demo.model.dto.ReservationDTO;
+import CPSF.com.demo.model.dto.camperPlaceDTO;
 import CPSF.com.demo.model.entity.CamperPlace;
 import CPSF.com.demo.model.entity.CamperPlaceType;
 import CPSF.com.demo.model.entity.Guest;
@@ -15,8 +15,8 @@ import CPSF.com.demo.service.core.CamperPlaceTypeService;
 import CPSF.com.demo.service.core.GuestService;
 import CPSF.com.demo.service.core.ReservationService;
 import CPSF.com.demo.service.core.StatisticsService;
+import CPSF.com.demo.service.processor.TaskService;
 import CPSF.com.demo.service.util.DtoMapper;
-import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
@@ -29,6 +29,7 @@ import org.springframework.test.context.DynamicPropertyRegistry;
 import org.springframework.test.context.DynamicPropertySource;
 import org.springframework.transaction.annotation.Transactional;
 import org.testcontainers.containers.MySQLContainer;
+import org.testcontainers.junit.jupiter.Testcontainers;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -39,6 +40,7 @@ import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 @SpringBootTest(classes = CamperparkdemoApplication.class)
 @ActiveProfiles("test")
 @Transactional
+@Testcontainers
 public class BaseIT {
 
     @Autowired
@@ -51,6 +53,8 @@ public class BaseIT {
     protected CamperPlaceTypeService camperPlaceTypeService;
     @Autowired
     protected StatisticsService statisticsService;
+    @Autowired
+    protected TaskService taskService;
 
     private static long eachTestStart;
     private static long testStart;
@@ -126,7 +130,7 @@ public class BaseIT {
             boolean paid
     ) {
         return reservationService.create(
-                new Reservation_DTO(
+                new ReservationDTO(
                         null,
                         checkin,
                         checkout,
@@ -154,7 +158,7 @@ public class BaseIT {
 
     protected CamperPlace createCamperPlace(String camperPlaceIndex, CamperPlaceType cpType) {
         return camperPlaceService.create(
-                new CamperPlace_DTO(
+                new camperPlaceDTO(
                         null,
                         camperPlaceIndex,
                         DtoMapper.getCamperPlaceTypeDTO(cpType),

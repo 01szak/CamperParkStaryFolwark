@@ -1,5 +1,6 @@
 package CPSF.com.demo.model.entity;
 
+import CPSF.com.demo.model.constant.UserRole;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -21,26 +22,6 @@ import java.util.List;
 @SuperBuilder
 public class User extends DbObject implements UserDetails {
 
-    public enum UserRole implements GrantedAuthority {
-
-        SUPER_ADMIN("SUPER_ADMIN"),
-
-        ADMIN("ADMIN"),
-
-        REGULAR("REGULAR");
-
-        private final String value;
-
-        UserRole(String value) {
-            this.value = value;
-        }
-
-        @Override
-        public String getAuthority() {
-            return value;
-        }
-    }
-
     @Column(name = "login")
     private String login;
 
@@ -56,6 +37,10 @@ public class User extends DbObject implements UserDetails {
     @Column(name = "role")
     @Enumerated(EnumType.STRING)
     private UserRole userRole;
+
+    @ManyToOne
+    @JoinColumn(name = "organisation_id")
+    private Organisation organisation;
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
