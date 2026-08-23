@@ -52,12 +52,10 @@ public class DiscountCondition {
             }
             case SUBTRACT_PERCENT -> {
                 final var divisor = BigDecimal.valueOf(100);
-                final var percentage = discountValueBD.divide(divisor, 2, RoundingMode.HALF_UP);
 
-                var discountAmount = valueToDiscount.multiply(percentage);
-
-                // Round the final discount amount to match the value's scale to avoid long decimals
-                discountAmount = discountAmount.setScale(valueToDiscount.scale(), RoundingMode.HALF_UP);
+                var discountAmount = valueToDiscount
+                        .multiply(discountValueBD)
+                        .divide(divisor, valueToDiscount.scale(), RoundingMode.HALF_UP);
 
                 return valueToDiscount.subtract(discountAmount);
             }
