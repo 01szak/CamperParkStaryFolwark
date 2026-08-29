@@ -116,7 +116,10 @@ public class CamperPlaceService extends CRUDServiceImpl<CamperPlace> {
     }
 
     public BigDecimal getCalculatedReservationPrice(Integer cpId, LocalDate checkin, LocalDate checkout) {
-        final var price = getRepository().findById(cpId).map(CamperPlace::getPrice).get();
+        if (!checkout.isAfter(checkin)) {
+            throw new UserInputException("Data wyjazdu musi być po dacie wjazdu");
+        }
+        final var price = findById(cpId).getPrice();
         final var daysInReservation = checkin.datesUntil(checkout).count();
         return reservationCalculatorService.calculate(price, daysInReservation);
     }

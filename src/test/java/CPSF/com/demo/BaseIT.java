@@ -32,8 +32,8 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.DynamicPropertyRegistry;
 import org.springframework.test.context.DynamicPropertySource;
 import org.springframework.transaction.annotation.Transactional;
-import org.testcontainers.containers.MySQLContainer;
 import org.testcontainers.junit.jupiter.Testcontainers;
+import org.testcontainers.mysql.MySQLContainer;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -66,7 +66,7 @@ public class BaseIT {
     private static long eachTestStart;
     private static long testStart;
 
-    private static final MySQLContainer<?> MY_SQL_CONTAINER = new MySQLContainer<>("mysql:8.0.32")
+    private static final MySQLContainer MY_SQL_CONTAINER = new MySQLContainer("mysql:8.0.32")
             .withDatabaseName("test_camper_park_sf")
             .withUsername("root")
             .withPassword("qwer");
@@ -91,7 +91,6 @@ public class BaseIT {
     public static void afterAll() {
         var testTime = (new Date().getTime() - testStart);
         System.out.printf("\nTOOK OVERALL: %s ms\n", testTime);
-        MY_SQL_CONTAINER.stop();
     }
 
     @BeforeEach
