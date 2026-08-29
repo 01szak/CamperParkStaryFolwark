@@ -1,6 +1,7 @@
 package CPSF.com.demo.service.processor.task;
 
 import CPSF.com.demo.model.EmailData;
+import CPSF.com.demo.model.constant.TaskStatus;
 import CPSF.com.demo.model.dto.ReservationDTO;
 import CPSF.com.demo.model.entity.Task;
 import CPSF.com.demo.service.core.ReservationService;
@@ -17,6 +18,9 @@ import static CPSF.com.demo.model.constant.TaskType.SEND_EMAIL_TASK;
 @RequiredArgsConstructor
 public class WebAppReservationTask implements ExecutableTask {
 
+    private static final String NO_RESERVATION_PAYLOAD_MESSAGE = "There is no reservation to store";
+    private static final String NO_RESERVATION_CREATOR_MESSAGE = "Reservation payload does not contains any creator";
+
     private final ReservationService reservationService;
     private final TaskService taskService;
     private final Task webAppReservationTaskEntity;
@@ -29,20 +33,50 @@ public class WebAppReservationTask implements ExecutableTask {
     @Override
     public void doTask() {
         final var reservationDTO = (ReservationDTO) webAppReservationTaskEntity.getPayload();
-        reservationService.create(
-                reservationDTO.toBuilder().reservationStatus(UNVERIFIED).build());
-        prepareEmailTask(webAppReservationTaskEntity, reservationDTO);
+
+        if (reservationDTO == null) {
+            failTaskWithMessage(NO_RESERVATION_PAYLOAD_MESSAGE);
+            return;
+        }
+
+        final var creator = reservationDTO.creator();
+
+        if (creator == null) {
+            failTaskWithMessage(NO_RESERVATION_CREATOR_MESSAGE);
+            return;
+        }
+
+        final var modifiedReservation = reservationDTO.toBuilder()
+                .reservationStatus(UNVERIFIED)
+                .build();
+
+        reservationService.create(modifiedReservation);
+
+        prepareEmailTask(reservationDTO);
     }
 
-    private void prepareEmailTask(Task webAppReservationTask, ReservationDTO reservationDTO) {
+    private void prepareEmailTask(ReservationDTO reservationDTO) {
+        final var sharedTargetId = UUID.randomUUID().toString();
         //load email
         final var emailTaskEntity = Task.builder()
-                .targetId(UUID.randomUUID().toString())
-                .payload(new EmailData())
+                .targetId(sharedTargetId)
+                .payload(new EmailData()) //TODO fill this object
                 .taskType(SEND_EMAIL_TASK)
-                .parentTask(webAppReservationTask)
                 .build();
+
+        prepareReservationVerifierTask(sharedTargetId);
+
         taskService.create(emailTaskEntity);
     }
 
+    private void prepareReservationVerifierTask(String sharedTargetId) {
+        //TODO create this child event
+    }
+
+    private void failTaskWithMessage(String message) {
+        webAppReservationTaskEntity.setTaskStatus(TaskStatus.FAILED);
+        webAppReservationTaskEntity.setStatusMessage(message);
+    }
+
 }
+

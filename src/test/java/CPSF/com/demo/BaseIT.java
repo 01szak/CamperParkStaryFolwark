@@ -1,7 +1,9 @@
 package CPSF.com.demo;
 
+import CPSF.com.demo.helper.AuthenticationHelper;
 import CPSF.com.demo.model.constant.Country;
 import CPSF.com.demo.model.constant.ReservationStatus;
+import CPSF.com.demo.model.constant.UserRole;
 import CPSF.com.demo.model.dto.CamperPlaceTypeDTO;
 import CPSF.com.demo.model.dto.GuestDTO;
 import CPSF.com.demo.model.dto.ReservationDTO;
@@ -10,11 +12,13 @@ import CPSF.com.demo.model.entity.CamperPlace;
 import CPSF.com.demo.model.entity.CamperPlaceType;
 import CPSF.com.demo.model.entity.Guest;
 import CPSF.com.demo.model.entity.Reservation;
+import CPSF.com.demo.model.entity.User;
 import CPSF.com.demo.service.core.CamperPlaceService;
 import CPSF.com.demo.service.core.CamperPlaceTypeService;
 import CPSF.com.demo.service.core.GuestService;
 import CPSF.com.demo.service.core.ReservationService;
 import CPSF.com.demo.service.core.StatisticsService;
+import CPSF.com.demo.service.core.UserService;
 import CPSF.com.demo.service.processor.TaskService;
 import CPSF.com.demo.service.util.DtoMapper;
 import org.junit.jupiter.api.AfterAll;
@@ -35,6 +39,7 @@ import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.Date;
 
+import static CPSF.com.demo.helper.AuthenticationHelper.IT_USER_LOGIN;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 
 @SpringBootTest(classes = CamperparkdemoApplication.class)
@@ -55,6 +60,8 @@ public class BaseIT {
     protected StatisticsService statisticsService;
     @Autowired
     protected TaskService taskService;
+    @Autowired
+    protected UserService userService;
 
     private static long eachTestStart;
     private static long testStart;
@@ -91,6 +98,16 @@ public class BaseIT {
     public void before() {
         eachTestStart = new Date().getTime();
         System.out.println("\n-----------< TEST START >-----------");
+
+        final var testUser = userService.create(User.builder()
+                .login(IT_USER_LOGIN)
+                .username(IT_USER_LOGIN)
+                .email("it_test_user@example.com")
+                .password("testPassword")
+                .userRole(UserRole.ADMIN)
+                .build()
+        );
+        AuthenticationHelper.authenticateUser(testUser);
     }
 
     @AfterEach
@@ -137,7 +154,8 @@ public class BaseIT {
                         DtoMapper.getGuestDTO(guest),
                         DtoMapper.getCamperPlaceDto(camperPlace),
                         paid,
-                        ReservationStatus.COMING
+                        ReservationStatus.COMING,
+                        null
                 )
         );
     }

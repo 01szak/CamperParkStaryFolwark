@@ -38,7 +38,7 @@ public interface CamperPlaceRepository extends CRUDRepository<CamperPlace> {
         ocp AS ( 
             SELECT DATE_ADD(checkin, INTERVAL 1 DAY) as ocp_date, checkout as ocp_checkout 
             FROM reservation AS r
-            WHERE r.camper_place_id = :cpId AND r.checkin >= CURDATE()
+            WHERE r.camper_place_id = :cpId AND r.checkout >= CURDATE()
                 
             UNION ALL
                 
@@ -52,6 +52,18 @@ public interface CamperPlaceRepository extends CRUDRepository<CamperPlace> {
         WHERE ocp_date >= CURDATE() AND ocp_date NOT IN (SELECT exc_date FROM exc)
     """, nativeQuery = true)
     List<LocalDate> getOccupiedDates(@Param("cpId") Integer cpId, @Param("reservationId") Integer reservationId);
+
+    @Query(value = """
+        SELECT COUNT(*) FROM reservation r
+        WHERE r.camper_place_id = :cpId
+          AND (:reservationId IS NULL OR r.id <> :reservationId)
+          AND r.checkin  < :checkout
+          AND r.checkout > :checkin
+    """, nativeQuery = true)
+    long countOverlappingReservations(@Param("cpId") Integer cpId,
+                                      @Param("checkin") LocalDate checkin,
+                                      @Param("checkout") LocalDate checkout,
+                                      @Param("reservationId") Integer reservationId);
 
 
 }

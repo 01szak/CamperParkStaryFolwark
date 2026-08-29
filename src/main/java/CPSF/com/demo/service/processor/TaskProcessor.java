@@ -81,9 +81,17 @@ public class TaskProcessor {
     private void executeTaskNode(TaskNode taskNode) {
         try {
             log.info("Starting to process task: {} ", taskNode.task().getTaskType());
-            if (FAILED.equals(taskNode.task().getTaskStatus())) return;
             taskService.update(mapTaskStatus(taskNode.task(), IN_PROGRESS));
+
             executableTaskFactory.getExecutableTask(taskNode.task()).doTask();
+
+            if (FAILED.equals(taskNode.task().getTaskStatus())) {
+                //if task failed while being processed we just stop executing the rest of the tree
+                taskService.update(taskNode.task());
+                failDescendants(taskNode);
+                return;
+            }
+
             taskService.update(mapTaskStatus(taskNode.task(), EXECUTED));
             log.info("task: {} executed successfully", taskNode.task().getTaskType());
 

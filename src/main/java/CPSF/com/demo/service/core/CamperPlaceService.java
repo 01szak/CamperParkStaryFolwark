@@ -111,6 +111,10 @@ public class CamperPlaceService extends CRUDServiceImpl<CamperPlace> {
         return camperPlaceRepository.getOccupiedDates(cpId, reservationId);
     }
 
+    public boolean hasOverlappingReservation(Integer cpId, LocalDate checkin, LocalDate checkout, Integer reservationId) {
+        return camperPlaceRepository.countOverlappingReservations(cpId, checkin, checkout, reservationId) > 0;
+    }
+
     public BigDecimal getCalculatedReservationPrice(Integer cpId, LocalDate checkin, LocalDate checkout) {
         final var price = getRepository().findById(cpId).map(CamperPlace::getPrice).get();
         final var daysInReservation = checkin.datesUntil(checkout).count();
