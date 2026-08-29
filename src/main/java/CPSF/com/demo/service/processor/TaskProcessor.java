@@ -29,6 +29,8 @@ import static CPSF.com.demo.model.constant.TaskStatus.PENDING;
 @RequiredArgsConstructor
 public class TaskProcessor {
 
+    private static final long MAX_RETRY_COUNT = 5;
+
     private final TaskService taskService;
     private final ExecutableTaskFactory executableTaskFactory;
 
@@ -41,6 +43,7 @@ public class TaskProcessor {
                         new SearchCriteria("executionDate", Operation.EQUALS, currentDateTimeStr, JoinOperator.OR),
                         new SearchCriteria("taskStatus", Operation.EQUALS, FAILED.toString(), JoinOperator.AND),
                         new SearchCriteria("retryable", Operation.EQUALS, "true", JoinOperator.AND),
+                        new SearchCriteria("retryCount", Operation.LESS_THEN, String.valueOf(MAX_RETRY_COUNT), JoinOperator.AND),
                         new SearchCriteria("taskStatus", Operation.EQUALS, PENDING.toString(), JoinOperator.OR)
                         ).get().toList();
 
@@ -125,10 +128,20 @@ public class TaskProcessor {
     private void increaseRetryCountAndSetStatusToPending(List<Task> pendingTasks) {
         pendingTasks.stream()
                 .filter(t -> FAILED.equals(t.getTaskStatus()))
-                .forEach(t -> {
-                    t.setRetryCount(t.getRetryCount() + 1);
-                });
-        pendingTasks.forEach(t -> t.setTaskStatus(PENDING));
+                .forEach(t -> t.setRetryCount(t.getRetryCount() + 1));
+
+        pendingTasks.forEach(t -> {
+            if (t.getRetryCount() >= MAX_RETRY_COUNT) {
+                t.setTaskStatus(FAILED);
+                t.setStatusMessage("Retry count exceeded the maximum of " + MAX_RETRY_COUNT);
+                log.warn(
+                        "Task {} with ID {} permanently failed - retry count {} exceeded the maximum of {}",
+                        t.getTaskType(), t.getId(), t.getRetryCount(), MAX_RETRY_COUNT
+                );
+            } else {
+                t.setTaskStatus(PENDING);
+            }
+        });
     }
 
     private <T extends Task> T mapTaskStatus(T task, TaskStatus taskStatus, String statusMessage) {
