@@ -126,7 +126,7 @@ public class CamperPlaceServiceTest {
         // When & Then
         assertThatThrownBy(() -> camperPlaceService.create(cpDto))
                 .isInstanceOf(UserInputException.class)
-                .hasMessage("Indedx nie może byc pusty");
+                .hasMessage("Indeks nie może być pusty");
 
         verify(camperPlaceRepository, never()).save(any(CamperPlace.class));
     }
@@ -142,7 +142,7 @@ public class CamperPlaceServiceTest {
         // When & Then
         assertThatThrownBy(() -> camperPlaceService.create(cpDto))
                 .isInstanceOf(UserInputException.class)
-                .hasMessage("Index musi zaczynać sie od cyfry");
+                .hasMessage("Indeks musi zaczynać się od cyfry");
 
         verify(camperPlaceRepository, never()).save(any(CamperPlace.class));
     }

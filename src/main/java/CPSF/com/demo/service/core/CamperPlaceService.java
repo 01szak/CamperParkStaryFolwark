@@ -53,13 +53,13 @@ public class CamperPlaceService extends CRUDServiceImpl<CamperPlace> {
 
     private void validateIndex(String cpIndex) {
         if (cpIndex == null || cpIndex.isBlank()) {
-            throw new UserInputException("Indedx nie może byc pusty");
+            throw new UserInputException("Indeks nie może być pusty");
         }
         var firstEl = String.valueOf(cpIndex.charAt(0));
         try {
             Integer.parseInt(firstEl);
         } catch (NumberFormatException e) {
-            throw new UserInputException("Index musi zaczynać sie od cyfry");
+            throw new UserInputException("Indeks musi zaczynać się od cyfry");
         }
     }
 
