@@ -2,45 +2,17 @@ package CPSF.com.demo.service.core;
 
 import CPSF.com.demo.BaseIT;
 import CPSF.com.demo.exception.UserInputException;
-import CPSF.com.demo.helper.AuthenticationHelper;
 import CPSF.com.demo.model.constant.Country;
 import CPSF.com.demo.model.constant.Operation;
-import CPSF.com.demo.model.constant.UserRole;
-import CPSF.com.demo.model.entity.User;
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
 
-import static CPSF.com.demo.helper.AuthenticationHelper.IT_USER_LOGIN;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 public class CamperPlaceServiceIT extends BaseIT {
-
-    @Autowired
-    private UserService userService;
-
-    @BeforeEach
-    public void setUpSecurity() {
-        final var testUser = userService.create(User.builder()
-                .login(IT_USER_LOGIN)
-                .username(IT_USER_LOGIN)
-                .email("it_test_user@example.com")
-                .password("testPassword")
-                .userRole(UserRole.ADMIN)
-                .build()
-        );
-        AuthenticationHelper.authenticateUser(testUser);
-    }
-    @BeforeAll
-    public static void beforeAll() {
-
-    }
-
 
     @Test
     public void shouldReturnOccupiedDates() {

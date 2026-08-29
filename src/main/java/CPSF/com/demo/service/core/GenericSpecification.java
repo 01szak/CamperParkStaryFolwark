@@ -97,6 +97,8 @@ public record GenericSpecification<S>(@NotNull SearchCriteria searchCriteria) im
             }
         } catch (DateTimeParseException e) {
             throw new UserInputException("Nieprawidłowa data!");
+        } catch (IllegalArgumentException e) {
+            throw new UserInputException("Nieprawidłowa wartość filtra: " + value);
         }
 
     }

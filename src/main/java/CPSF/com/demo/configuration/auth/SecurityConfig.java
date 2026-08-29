@@ -54,8 +54,6 @@ public class SecurityConfig {
             "/web/reservation/init",
     };
     private static final String[] POST_AUTHENTICATED_PATHS = new String[] {"/reservation"};
-    private static final String[] ALL_AUTHORITIES =
-            Arrays.stream(UserRole.values()).map(UserRole::getAuthority).toArray(String[]::new);
 
     private static final String[] ALL_AUTHORITIES_WITHOUT_WEB_APP =
             Arrays.stream(UserRole.values())
@@ -100,8 +98,8 @@ public class SecurityConfig {
                 .cors(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers(PERMIT_ALL_PATHS).permitAll()
-                        .requestMatchers(HttpMethod.POST, POST_AUTHENTICATED_PATHS).hasAnyAuthority(ALL_AUTHORITIES)
-                        .requestMatchers(HttpMethod.GET, GET_AUTHENTICATED_PATHS).hasAnyAuthority(ALL_AUTHORITIES)
+                        .requestMatchers(HttpMethod.POST, POST_AUTHENTICATED_PATHS).hasAnyAuthority(ALL_AUTHORITIES_WITHOUT_WEB_APP)
+                        .requestMatchers(HttpMethod.GET, GET_AUTHENTICATED_PATHS).hasAnyAuthority(ALL_AUTHORITIES_WITHOUT_WEB_APP)
                         .requestMatchers(HttpMethod.POST, POST_WEB_APP_PATHS).hasAnyAuthority(WEB_APP.getAuthority())
                         .anyRequest().hasAnyAuthority(ALL_AUTHORITIES_WITHOUT_WEB_APP)
                 )

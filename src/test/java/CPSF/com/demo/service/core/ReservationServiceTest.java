@@ -25,8 +25,6 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
-import java.util.Collections;
-import java.util.List;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -112,7 +110,7 @@ public class ReservationServiceTest {
 
         when(userService.loadUserByUsername(USERNAME)).thenReturn(defaultUser);
         when(camperPlaceService.findById(1)).thenReturn(defaultCamperPlace);
-        when(camperPlaceService.getOccupiedDates(1, null)).thenReturn(Collections.emptyList());
+        when(camperPlaceService.hasOverlappingReservation(1, checkin, checkout, null)).thenReturn(false);
         when(guestService.create(guestDto)).thenReturn(defaultGuest);
         when(calculator.calculate(DEFAULT_PRICE, 3L)).thenReturn(CALCULATED_PRICE);
         when(reservationRepository.save(any(Reservation.class))).thenAnswer(invocation -> invocation.getArgument(0));
@@ -135,7 +133,7 @@ public class ReservationServiceTest {
 
         when(userService.loadUserByUsername(USERNAME)).thenReturn(defaultUser);
         when(camperPlaceService.findById(1)).thenReturn(defaultCamperPlace);
-        when(camperPlaceService.getOccupiedDates(1, null)).thenReturn(Collections.emptyList());
+        when(camperPlaceService.hasOverlappingReservation(1, checkin, checkout, null)).thenReturn(false);
         when(guestService.create(guestDto)).thenReturn(defaultGuest);
         when(calculator.calculate(DEFAULT_PRICE, 4L)).thenReturn(CALCULATED_PRICE);
         when(reservationRepository.save(any(Reservation.class))).thenAnswer(invocation -> invocation.getArgument(0));
@@ -158,7 +156,7 @@ public class ReservationServiceTest {
 
         when(userService.loadUserByUsername(USERNAME)).thenReturn(defaultUser);
         when(camperPlaceService.findById(1)).thenReturn(defaultCamperPlace);
-        when(camperPlaceService.getOccupiedDates(1, null)).thenReturn(Collections.emptyList());
+        when(camperPlaceService.hasOverlappingReservation(1, checkin, checkout, null)).thenReturn(false);
         when(guestService.create(guestDto)).thenReturn(defaultGuest);
         when(calculator.calculate(DEFAULT_PRICE, 2L)).thenReturn(CALCULATED_PRICE);
         when(reservationRepository.save(any(Reservation.class))).thenAnswer(invocation -> invocation.getArgument(0));
@@ -197,7 +195,6 @@ public class ReservationServiceTest {
 
         when(camperPlaceService.findById(1)).thenReturn(defaultCamperPlace);
         when(userService.loadUserByUsername(USERNAME)).thenReturn(defaultUser);
-        when(camperPlaceService.getOccupiedDates(1, null)).thenReturn(Collections.emptyList());
 
         // When & Then
         assertThatThrownBy(() -> reservationService.create(reservationDto))
@@ -215,7 +212,6 @@ public class ReservationServiceTest {
 
         when(camperPlaceService.findById(1)).thenReturn(defaultCamperPlace);
         when(userService.loadUserByUsername(USERNAME)).thenReturn(defaultUser);
-        when(camperPlaceService.getOccupiedDates(1, null)).thenReturn(Collections.emptyList());
 
         // When & Then
         assertThatThrownBy(() -> reservationService.create(reservationDto))
@@ -226,7 +222,7 @@ public class ReservationServiceTest {
     }
 
     @Test
-    public void shouldThrowExceptionWhenCamperPlaceOccupiedOnCheckin() {
+    public void shouldThrowExceptionWhenReservationOverlapsExistingOne() {
         // Given
         final var checkin = LocalDate.now().plusDays(5);
         final var checkout = LocalDate.now().plusDays(8);
@@ -234,26 +230,7 @@ public class ReservationServiceTest {
 
         when(camperPlaceService.findById(1)).thenReturn(defaultCamperPlace);
         when(userService.loadUserByUsername(USERNAME)).thenReturn(defaultUser);
-        when(camperPlaceService.getOccupiedDates(1, null)).thenReturn(List.of(checkin));
-
-        // When & Then
-        assertThatThrownBy(() -> reservationService.create(reservationDto))
-                .isInstanceOf(UserInputException.class)
-                .hasMessage("Parcela jest już zajęta!");
-
-        verify(reservationRepository, never()).save(any(Reservation.class));
-    }
-
-    @Test
-    public void shouldThrowExceptionWhenCamperPlaceOccupiedOnCheckout() {
-        // Given
-        final var checkin = LocalDate.now().plusDays(5);
-        final var checkout = LocalDate.now().plusDays(8);
-        final var reservationDto = createReservationDto(null, checkin, checkout, createGuestDto(null), createCamperPlaceDto(1, "1"), false, null);
-
-        when(camperPlaceService.findById(1)).thenReturn(defaultCamperPlace);
-        when(userService.loadUserByUsername(USERNAME)).thenReturn(defaultUser);
-        when(camperPlaceService.getOccupiedDates(1, null)).thenReturn(List.of(checkout));
+        when(camperPlaceService.hasOverlappingReservation(1, checkin, checkout, null)).thenReturn(true);
 
         // When & Then
         assertThatThrownBy(() -> reservationService.create(reservationDto))
@@ -292,7 +269,7 @@ public class ReservationServiceTest {
         assertThat(saved.getCheckin()).isEqualTo(checkin);
         assertThat(saved.getCheckout()).isEqualTo(checkout);
 
-        verify(camperPlaceService, never()).getOccupiedDates(any());
+        verify(camperPlaceService, never()).hasOverlappingReservation(any(), any(), any(), any());
         verify(calculator, never()).calculate(any(), anyLong());
     }
 
@@ -311,7 +288,7 @@ public class ReservationServiceTest {
 
         when(camperPlaceService.findById(1)).thenReturn(defaultCamperPlace);
         when(reservationRepository.findById(10)).thenReturn(Optional.of(existingReservation));
-        when(camperPlaceService.getOccupiedDates(1, 10)).thenReturn(Collections.emptyList());
+        when(camperPlaceService.hasOverlappingReservation(1, newCheckin, newCheckout, 10)).thenReturn(false);
         when(calculator.calculate(DEFAULT_PRICE, 4L)).thenReturn(BigDecimal.valueOf(400));
         when(guestService.update(guestDto)).thenReturn(defaultGuest);
 
@@ -346,7 +323,7 @@ public class ReservationServiceTest {
 
         when(camperPlaceService.findById(1)).thenReturn(defaultCamperPlace);
         when(reservationRepository.findById(10)).thenReturn(Optional.of(existingReservation));
-        when(camperPlaceService.getOccupiedDates(1, 10)).thenReturn(List.of(newCheckin));
+        when(camperPlaceService.hasOverlappingReservation(1, newCheckin, newCheckout, 10)).thenReturn(true);
 
         // When & Then
         assertThatThrownBy(() -> reservationService.update(updateDto))
@@ -370,7 +347,6 @@ public class ReservationServiceTest {
 
         when(camperPlaceService.findById(1)).thenReturn(defaultCamperPlace);
         when(reservationRepository.findById(10)).thenReturn(Optional.of(existingReservation));
-        when(camperPlaceService.getOccupiedDates(1, 10)).thenReturn(Collections.emptyList());
 
         // When & Then
         assertThatThrownBy(() -> reservationService.update(updateDto))
@@ -398,7 +374,7 @@ public class ReservationServiceTest {
             boolean paid,
             ReservationStatus status
     ) {
-        return new ReservationDTO(id, checkin, checkout, guestDto, cpDto, paid, status);
+        return new ReservationDTO(id, checkin, checkout, guestDto, cpDto, paid, status, null);
     }
 
     private Reservation createExistingReservation(

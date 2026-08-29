@@ -39,11 +39,7 @@ public class ReservationService extends CRUDServiceImpl<Reservation> {
         final var camperPlace = camperPlaceService.findById(reservationDto.camperPlace().id());
         final var checkin = reservationDto.checkin();
         final var checkout = reservationDto.checkout();
-        final var authentication = SecurityContextHolder.getContext().getAuthentication();
-
-        Objects.requireNonNull(authentication, "Unauthorized call detected");
-
-        final var creator = (User) userService.loadUserByUsername(authentication.getPrincipal().toString());
+        final var creator = resolveCreator(reservationDto);
 
         validateDates(checkout, checkin, camperPlace.getId());
 
@@ -65,6 +61,15 @@ public class ReservationService extends CRUDServiceImpl<Reservation> {
                 .creator(creator);
 
        return super.create(r.build());
+    }
+
+    private User resolveCreator(ReservationDTO reservationDto) {
+        if (reservationDto.creator() != null) {
+            return userService.findById(reservationDto.creator().id());
+        }
+        final var authentication = SecurityContextHolder.getContext().getAuthentication();
+        Objects.requireNonNull(authentication, "Unauthorized call detected");
+        return (User) userService.loadUserByUsername(authentication.getName());
     }
 
     private ReservationStatus getReservationStatus(LocalDate checkin, LocalDate checkout) {
@@ -129,11 +134,12 @@ public class ReservationService extends CRUDServiceImpl<Reservation> {
     }
 
     private void validateDates(LocalDate checkout, LocalDate checkin, Integer camperPlaceId, Integer reservationId) {
-        final var occupiedDates = camperPlaceService.getOccupiedDates(camperPlaceId, reservationId);
-
         checkClientInput(checkout.isBefore(checkin), "Data wyjazdu nie może być przed datą wjazdu");
         checkClientInput(checkout.equals(checkin), "Czas trwania rezerwacji musi wynosić minimum 1 dobę");
-        checkClientInput(!occupiedDates.isEmpty() && (occupiedDates.contains(checkin) || occupiedDates.contains(checkout)), "Parcela jest już zajęta!");
+        checkClientInput(
+                camperPlaceService.hasOverlappingReservation(camperPlaceId, checkin, checkout, reservationId),
+                "Parcela jest już zajęta!"
+        );
     }
 
     @Override

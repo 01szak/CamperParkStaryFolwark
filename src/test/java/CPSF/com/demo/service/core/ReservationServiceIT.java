@@ -5,15 +5,11 @@ import CPSF.com.demo.exception.UserInputException;
 import CPSF.com.demo.helper.AuthenticationHelper;
 import CPSF.com.demo.model.constant.Country;
 import CPSF.com.demo.model.constant.ReservationStatus;
-import CPSF.com.demo.model.constant.UserRole;
 import CPSF.com.demo.model.dto.GuestDTO;
 import CPSF.com.demo.model.dto.ReservationDTO;
-import CPSF.com.demo.model.entity.User;
 import CPSF.com.demo.service.util.DtoMapper;
 import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -23,22 +19,6 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 public class ReservationServiceIT extends BaseIT {
-
-    @Autowired
-    private UserService userService;
-
-    @BeforeEach
-    public void setUpSecurity() {
-        final var testUser = userService.create(User.builder()
-                .login(IT_USER_LOGIN)
-                .username(IT_USER_LOGIN)
-                .email("it_test_user@example.com")
-                .password("testPassword")
-                .userRole(UserRole.ADMIN)
-                .build()
-        );
-        AuthenticationHelper.authenticateUser(testUser);
-    }
 
     @AfterEach
     public void tearDownSecurity() {
@@ -74,7 +54,7 @@ public class ReservationServiceIT extends BaseIT {
         assertThat(foundReservation.getCheckout()).isEqualTo(checkout);
         assertThat(foundReservation.getPaid()).isFalse();
         assertThat(foundReservation.getReservationStatus()).isEqualTo(ReservationStatus.COMING);
-        assertThat(foundReservation.getCamperPlace().getIndex()).isEqualTo("IT_CP_1");
+        assertThat(foundReservation.getCamperPlace().getIndex()).isEqualTo("1_IT_CP");
         assertThat(foundReservation.getGuest().getFirstname()).isEqualTo("Jan");
         assertThat(foundReservation.getGuest().getLastname()).isEqualTo("Kowalski");
         assertThat(foundReservation.getCreator().getLogin()).isEqualTo(IT_USER_LOGIN);
@@ -97,7 +77,8 @@ public class ReservationServiceIT extends BaseIT {
                 DtoMapper.getGuestDTO(guest),
                 DtoMapper.getCamperPlaceDto(cp),
                 true,
-                ReservationStatus.COMING
+                ReservationStatus.COMING,
+                null
         );
 
         // When
@@ -113,7 +94,7 @@ public class ReservationServiceIT extends BaseIT {
     }
 
     @Test
-    public void shouldRejectOverlappingReservationUsingDbOccupiedDates() {
+    public void shouldNotAllowCreatingReservationInBetweenOtherReservationDates() {
         // Given
         final var cpType = createCpType("3_IT_TYPE", BigDecimal.valueOf(70));
         final var cp = createCamperPlace("3_IT_CP", cpType);
@@ -132,7 +113,8 @@ public class ReservationServiceIT extends BaseIT {
                 DtoMapper.getGuestDTO(guest2),
                 DtoMapper.getCamperPlaceDto(cp),
                 false,
-                ReservationStatus.COMING
+                ReservationStatus.COMING,
+                null
         );
 
         assertThatThrownBy(() -> reservationService.create(overlappingDto))
@@ -176,7 +158,8 @@ public class ReservationServiceIT extends BaseIT {
                 updatedGuestDto,
                 DtoMapper.getCamperPlaceDto(reservation.getCamperPlace()),
                 true,
-                ReservationStatus.COMING
+                ReservationStatus.COMING,
+                null
         );
 
         // When
@@ -210,7 +193,8 @@ public class ReservationServiceIT extends BaseIT {
                 DtoMapper.getGuestDTO(guest2),
                 DtoMapper.getCamperPlaceDto(cp),
                 false,
-                ReservationStatus.COMING
+                ReservationStatus.COMING,
+                null
         );
 
         assertThatThrownBy(() -> reservationService.update(conflictingUpdateDto))
@@ -242,7 +226,8 @@ public class ReservationServiceIT extends BaseIT {
                 DtoMapper.getGuestDTO(reservation.getGuest()),
                 DtoMapper.getCamperPlaceDto(reservation.getCamperPlace()),
                 reservation.getPaid(),
-                reservation.getReservationStatus()
+                reservation.getReservationStatus(),
+                null
         );
 
         reservationService.update(updatePayload);
@@ -252,4 +237,109 @@ public class ReservationServiceIT extends BaseIT {
         assertThat(reservation).isNotNull();
         assertThat(reservation.getCheckout()).isEqualTo(checkout);
     }
+
+    @Test
+    public void shouldNotAllowReservationsOverlapping() {
+        final var cpType = createCpType("7_IT_TYPE", BigDecimal.valueOf(70));
+        final var cp = createCamperPlace("7_IT_CP", cpType);
+        final var guest1 = createGuest("dummy", "dummyLN", Country.POLAND);
+        final var guest2 = createGuest("dummy2", "dummyLN2", Country.GERMANY);
+
+        final var checkin1 = LocalDate.parse("2030-10-10");
+        final var checkout1 = LocalDate.parse("2030-10-15");
+        createReservation(cp, checkin1, checkout1, guest1, false);
+
+        // When & Then - overlapping check-in
+        final var overlappingDto = new ReservationDTO(
+                null,
+                LocalDate.parse("2030-10-08"),
+                LocalDate.parse("2030-10-17"),
+                DtoMapper.getGuestDTO(guest2),
+                DtoMapper.getCamperPlaceDto(cp),
+                false,
+                ReservationStatus.COMING,
+                null
+        );
+
+        assertThatThrownBy(() -> reservationService.create(overlappingDto))
+                .isInstanceOf(UserInputException.class)
+                .hasMessage("Parcela jest już zajęta!");
+    }
+
+    @Test
+    public void shouldNotAllowActiveReservationsOverlapping() {
+        final var cpType = createCpType("8_IT_TYPE", BigDecimal.valueOf(70));
+        final var cp = createCamperPlace("8_IT_CP", cpType);
+        final var guest1 = createGuest("fn", "ln", Country.POLAND);
+        final var guest2 = createGuest("fn2", "ln2", Country.GERMANY);
+
+        final var checkin1 = LocalDate.now().minusDays(2);
+        final var checkout1 = LocalDate.now().plusDays(2);
+        createReservation(cp, checkin1, checkout1, guest1, false);
+
+        // When & Then - overlapping check-in
+        final var overlappingDto = new ReservationDTO(
+                null,
+                LocalDate.now(),
+                LocalDate.now().plusDays(1),
+                DtoMapper.getGuestDTO(guest2),
+                DtoMapper.getCamperPlaceDto(cp),
+                false,
+                ReservationStatus.COMING,
+                null
+        );
+
+        assertThatThrownBy(() -> reservationService.create(overlappingDto))
+                .isInstanceOf(UserInputException.class)
+                .hasMessage("Parcela jest już zajęta!");
+    }
+
+    @Test
+    public void shouldNotAllowReservationsOverlappingWhenReservationTakesOneDay() {
+        final var cpType = createCpType("8_IT_TYPE", BigDecimal.valueOf(70));
+        final var cp = createCamperPlace("8_IT_CP", cpType);
+        final var guest1 = createGuest("fn3", "ln3", Country.POLAND);
+        final var guest2 = createGuest("fn4", "ln4", Country.GERMANY);
+        final var checkin1 = LocalDate.parse("2030-12-07");
+        final var checkout1 = LocalDate.parse("2030-12-08");
+        createReservation(cp, checkin1, checkout1, guest1, false);
+
+        // When & Then - overlapping check-in
+        final var overlappingDto = new ReservationDTO(
+                null,
+                LocalDate.parse("2030-12-07"),
+                LocalDate.parse("2030-12-08"),
+                DtoMapper.getGuestDTO(guest2),
+                DtoMapper.getCamperPlaceDto(cp),
+                false,
+                ReservationStatus.COMING,
+                null
+        );
+
+        assertThatThrownBy(() -> reservationService.create(overlappingDto))
+                .isInstanceOf(UserInputException.class)
+                .hasMessage("Parcela jest już zajęta!");
+    }
+
+    @Test
+    public void shouldAllowBackToBackReservationsWhenReservationTakesOneDay() {
+        final var cpType = createCpType("8_IT_TYPE", BigDecimal.valueOf(70));
+        final var cp = createCamperPlace("9_IT_CP", cpType);
+        final var guest = createGuest("fn3", "ln3", Country.POLAND);
+        final var checkin1 = LocalDate.parse("2030-06-07");
+        final var checkout1 = LocalDate.parse("2030-06-08");
+        final var checkin2 = LocalDate.parse("2030-06-08");
+        final var checkout2 = LocalDate.parse("2030-06-09");
+        final var checkin3 = LocalDate.parse("2030-06-10");
+        final var checkout3 = LocalDate.parse("2030-06-11");
+
+        createReservation(cp, checkin1, checkout1, guest, false);
+        createReservation(cp, checkin2, checkout2, guest, false);
+        createReservation(cp, checkin3, checkout3, guest, false);
+
+        final var occupiedDates = checkin1.datesUntil(checkout3).toList();
+
+        assertThat(camperPlaceService.getOccupiedDates(cp.getId()).containsAll(occupiedDates));
+    }
 }
+

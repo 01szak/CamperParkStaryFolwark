@@ -16,6 +16,7 @@ public class DtoMapper {
 
     public static UserDTO getUserDTO(User u) {
         return new UserDTO(
+                u.getId(),
                 u.getUsername(),
                 u.getEmail(),
                 u.getUserRole().toString()
@@ -39,7 +40,8 @@ public class DtoMapper {
                 getGuestDTO(r.getGuest()),
                 getCamperPlaceDto(r.getCamperPlace()),
                 r.getPaid(),
-                r.getReservationStatus()
+                r.getReservationStatus(),
+                r.getCreator() != null ? getUserDTO(r.getCreator()) : null
         );
     }
 
