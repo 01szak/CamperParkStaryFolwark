@@ -101,6 +101,13 @@
             <scope>compile</scope>
         </dependency>
 
+        <!-- NOTIFICATIONS -->
+        <dependency>
+            <groupId>co.novu</groupId>
+            <artifactId>novu-java</artifactId>
+            <version>3.19.0</version>
+        </dependency>
+
         <!-- TESTS -->
         <dependency>
             <groupId>org.springframework.boot</groupId>

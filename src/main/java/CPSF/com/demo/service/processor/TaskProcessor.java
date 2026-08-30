@@ -14,6 +14,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.Executors;
 import java.util.stream.Collectors;
@@ -72,7 +73,7 @@ public class TaskProcessor {
                 executor.submit(() -> executeTaskNode(node));
             });
         } catch (Exception e) {
-            log.error("Exception occurred while processing the tasks: {}", e.getLocalizedMessage());
+            log.error("Exception occurred while processing the tasks: {} {}", e.getLocalizedMessage(), Arrays.toString(e.getStackTrace()));
             final var inProgressTasks =
                     (List<Task>) taskService.findBy(
                             new SearchCriteria("taskStatus" , Operation.EQUALS, IN_PROGRESS.toString())
@@ -110,7 +111,7 @@ public class TaskProcessor {
             }
 
         } catch (Exception e) {
-            log.error("Exception occurred while processing the task: {} {}", taskNode.task().getTaskType(), e);
+            log.error("Exception occurred while processing the task: {} {}", taskNode.task().getTaskType(), Arrays.toString(e.getStackTrace()));
             taskService.update(mapTaskStatus(taskNode.task(), FAILED));
             failDescendants(taskNode);
         }

@@ -1,6 +1,7 @@
 package CPSF.com.demo.configuration.auth;
 
 import CPSF.com.demo.model.constant.UserRole;
+import CPSF.com.demo.service.auth.WebAppAuthFilter;
 import CPSF.com.demo.service.core.OrganisationService;
 import CPSF.com.demo.service.core.UserService;
 import com.nimbusds.jose.jwk.JWKSet;
@@ -61,6 +62,8 @@ public class SecurityConfig {
                     .map(UserRole::getAuthority)
                     .toArray(String[]::new);
 
+    private static final String[] ALL_AUTHORITIES =
+            Arrays.stream(UserRole.values()).map(UserRole::getAuthority).toArray(String[]::new);
 
     private final RsaConfig rsaConfig;
     private final UserService userService;
@@ -99,7 +102,7 @@ public class SecurityConfig {
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers(PERMIT_ALL_PATHS).permitAll()
                         .requestMatchers(HttpMethod.POST, POST_AUTHENTICATED_PATHS).hasAnyAuthority(ALL_AUTHORITIES_WITHOUT_WEB_APP)
-                        .requestMatchers(HttpMethod.GET, GET_AUTHENTICATED_PATHS).hasAnyAuthority(ALL_AUTHORITIES_WITHOUT_WEB_APP)
+                        .requestMatchers(HttpMethod.GET, GET_AUTHENTICATED_PATHS).hasAnyAuthority(ALL_AUTHORITIES)
                         .requestMatchers(HttpMethod.POST, POST_WEB_APP_PATHS).hasAnyAuthority(WEB_APP.getAuthority())
                         .anyRequest().hasAnyAuthority(ALL_AUTHORITIES_WITHOUT_WEB_APP)
                 )

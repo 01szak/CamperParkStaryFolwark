@@ -1,8 +1,10 @@
 package CPSF.com.demo.service.processor.task;
 
 import CPSF.com.demo.model.entity.Task;
+import CPSF.com.demo.service.core.GuestService;
 import CPSF.com.demo.service.core.ReservationService;
 import CPSF.com.demo.service.processor.TaskService;
+import co.novu.Novu;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
@@ -12,10 +14,12 @@ public final class ExecutableTaskFactory {
 
     private final ReservationService reservationService;
     private final TaskService taskService;
+    private final Novu novu;
+    private final GuestService guestService;
 
     public ExecutableTask getExecutableTask(Task task) {
         switch (task.getTaskType()) {
-            case SEND_EMAIL_TASK -> {
+            case SEND_EMAIL_AUTHENTICATION_TASK -> {
                 return getSendEmailTask(task);
             }
             case WEB_APP_RESERVATION_TASK -> {
@@ -29,12 +33,13 @@ public final class ExecutableTaskFactory {
         return new WebAppReservationTask(
                 reservationService,
                 taskService,
+                guestService,
                 task
         );
     }
 
-    private SendEmailTask getSendEmailTask(Task task) {
-        return new SendEmailTask(task);
+    private SendEmailAuthenticationTask getSendEmailTask(Task task) {
+        return new SendEmailAuthenticationTask(novu, task);
     }
 
 }

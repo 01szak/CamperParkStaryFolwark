@@ -1,4 +1,4 @@
-package CPSF.com.demo.configuration.auth;
+package CPSF.com.demo.service.auth;
 
 import CPSF.com.demo.exception.AuthenticationException;
 import CPSF.com.demo.model.entity.User;

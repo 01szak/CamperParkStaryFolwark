@@ -1,4 +1,5 @@
 package CPSF.com.demo.model;
 
-public record EmailData() {
-}
+import CPSF.com.demo.model.entity.Guest;
+
+public record EmailData(Guest guest) {}

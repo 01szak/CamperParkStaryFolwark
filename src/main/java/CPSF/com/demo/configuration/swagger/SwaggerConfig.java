@@ -1,4 +1,4 @@
-package CPSF.com.demo.configuration;
+package CPSF.com.demo.configuration.swagger;
 
 import io.swagger.v3.oas.models.Components;
 import io.swagger.v3.oas.models.OpenAPI;
@@ -9,7 +9,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.stereotype.Component;
 
 @Component
-public class SwaggerConfiguration {
+public class SwaggerConfig {
 
     private static final String SEC_SCHEME_NAME = "ParceoSecurityScheme";
     private static final String SEC_SCHEME = "bearer";

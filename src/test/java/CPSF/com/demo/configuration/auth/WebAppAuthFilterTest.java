@@ -4,6 +4,7 @@ import CPSF.com.demo.helper.AuthenticationHelper;
 import CPSF.com.demo.model.constant.UserRole;
 import CPSF.com.demo.model.entity.Organisation;
 import CPSF.com.demo.model.entity.User;
+import CPSF.com.demo.service.auth.WebAppAuthFilter;
 import CPSF.com.demo.service.core.OrganisationService;
 import CPSF.com.demo.service.core.UserService;
 import jakarta.servlet.FilterChain;
