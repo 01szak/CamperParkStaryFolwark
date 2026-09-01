@@ -53,6 +53,7 @@ public class SecurityConfig {
     };
     private static final String[] POST_WEB_APP_PATHS = new String[] {
             "/web/reservation/init",
+            "/web/reservation/verify/**",
     };
     private static final String[] POST_AUTHENTICATED_PATHS = new String[] {"/reservation"};
 

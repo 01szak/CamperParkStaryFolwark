@@ -1,9 +1,12 @@
-package CPSF.com.demo.service.processor.task;
+package CPSF.com.demo.service.processor;
 
 import CPSF.com.demo.model.entity.Task;
 import CPSF.com.demo.service.core.GuestService;
 import CPSF.com.demo.service.core.ReservationService;
-import CPSF.com.demo.service.processor.TaskService;
+import CPSF.com.demo.service.processor.task.ExecutableTask;
+import CPSF.com.demo.service.processor.task.webappreservationflow.ReservationVerifierTask;
+import CPSF.com.demo.service.processor.task.webappreservationflow.SendEmailAuthenticationTask;
+import CPSF.com.demo.service.processor.task.webappreservationflow.WebAppReservationTask;
 import co.novu.Novu;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
@@ -25,8 +28,15 @@ public final class ExecutableTaskFactory {
             case WEB_APP_RESERVATION_TASK -> {
                 return getWebAppReservationTask(task);
             }
+            case RESERVATION_STATUS_VERIFIER_TASK -> {
+                return getReservationStatusVerifierTask(task);
+            }
             default -> throw new UnsupportedOperationException("Unsupported task");
         }
+    }
+
+    private ReservationVerifierTask getReservationStatusVerifierTask(Task task) {
+        return new ReservationVerifierTask(taskService, reservationService, task);
     }
 
     private WebAppReservationTask getWebAppReservationTask(Task task) {

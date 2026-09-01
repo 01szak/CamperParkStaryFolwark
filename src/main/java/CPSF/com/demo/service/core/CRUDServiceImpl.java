@@ -10,12 +10,14 @@ import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Arrays;
 import java.util.List;
 
 
 @Service
+@Transactional
 public abstract class CRUDServiceImpl<T extends DbObject> implements CRUDService<T> {
 
     private static final Sort UPDATED_AT_DESC = Sort.by(

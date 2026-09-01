@@ -2,13 +2,11 @@ package CPSF.com.demo.service.core;
 
 import CPSF.com.demo.model.constant.ReservationStatus;
 import CPSF.com.demo.model.dto.ReservationDTO;
-import CPSF.com.demo.model.entity.CamperPlace;
 import CPSF.com.demo.model.entity.Reservation;
 import CPSF.com.demo.model.entity.User;
 import CPSF.com.demo.repository.CRUDRepository;
 import CPSF.com.demo.repository.ReservationRepository;
 import CPSF.com.demo.service.core.StatisticsService.StatisticsModel;
-import jakarta.annotation.Nullable;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
@@ -18,7 +16,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 
-import static CPSF.com.demo.exception.UserInputException.checkClientInput;
+import static CPSF.com.demo.exception.DateValidationException.checkClientInput;
 import static CPSF.com.demo.model.constant.ReservationStatus.ACTIVE;
 import static CPSF.com.demo.model.constant.ReservationStatus.COMING;
 import static CPSF.com.demo.model.constant.ReservationStatus.EXPIRED;
@@ -48,7 +46,7 @@ public class ReservationService extends CRUDServiceImpl<Reservation> {
                 : guestService.create(reservationDto.guest());
 
         final var status = Optional.ofNullable(reservationDto.reservationStatus())
-                .orElse(getReservationStatus(checkin, checkout));
+                .orElse(getActuallReservationStatus(checkin, checkout));
 
         final var r = Reservation.builder()
                 .checkin(checkin)
@@ -63,16 +61,11 @@ public class ReservationService extends CRUDServiceImpl<Reservation> {
        return super.create(r.build());
     }
 
-    private User resolveCreator(ReservationDTO reservationDto) {
-        if (reservationDto.creator() != null) {
-            return userService.findById(reservationDto.creator().id());
-        }
-        final var authentication = SecurityContextHolder.getContext().getAuthentication();
-        Objects.requireNonNull(authentication, "Unauthorized call detected");
-        return (User) userService.loadUserByUsername(authentication.getName());
+    public ReservationStatus getActuallReservationStatus(Reservation reservation) {
+        return getActuallReservationStatus(reservation.getCheckin(), reservation.getCheckout());
     }
 
-    private ReservationStatus getReservationStatus(LocalDate checkin, LocalDate checkout) {
+    public ReservationStatus getActuallReservationStatus(LocalDate checkin, LocalDate checkout) {
         if (isActive(checkin, checkout)) {
             return ACTIVE;
         } else if (isExpired(checkout)) {
@@ -80,6 +73,15 @@ public class ReservationService extends CRUDServiceImpl<Reservation> {
         } else {
             return COMING;
         }
+    }
+
+    private User resolveCreator(ReservationDTO reservationDto) {
+        if (reservationDto.creator() != null) {
+            return userService.findById(reservationDto.creator().id());
+        }
+        final var authentication = SecurityContextHolder.getContext().getAuthentication();
+        Objects.requireNonNull(authentication, "Unauthorized call detected");
+        return (User) userService.loadUserByUsername(authentication.getName());
     }
 
     private boolean isExpired(LocalDate checkout) {
@@ -108,7 +110,7 @@ public class ReservationService extends CRUDServiceImpl<Reservation> {
                 !VERIFIED.equals(r.getReservationStatus())
                 && !UNVERIFIED.equals(r.getReservationStatus())
             ) {
-                r.setReservationStatus(getReservationStatus(checkin, checkout));
+                r.setReservationStatus(getActuallReservationStatus(checkin, checkout));
             }
         }
 
@@ -122,6 +124,10 @@ public class ReservationService extends CRUDServiceImpl<Reservation> {
 
     public List<StatisticsModel.Revenue> countRevenueOfAllCamperPlaces(boolean isPaid, int month, int year) {
         return reservationRepository.countRevenueOfAllCamperPlaces(isPaid, month, year);
+    }
+
+    public int setActualReservationStatuses() {
+        return reservationRepository.setActualReservationStatuses();
     }
 
     private boolean isActive(LocalDate checkin, LocalDate checkout) {

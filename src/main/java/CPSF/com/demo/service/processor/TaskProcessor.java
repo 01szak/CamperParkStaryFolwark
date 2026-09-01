@@ -1,18 +1,14 @@
 package CPSF.com.demo.service.processor;
 
 
-import CPSF.com.demo.model.constant.JoinOperator;
-import CPSF.com.demo.model.constant.Operation;
 import CPSF.com.demo.model.constant.TaskStatus;
 import CPSF.com.demo.model.entity.Task;
-import CPSF.com.demo.service.core.SearchCriteria;
-import CPSF.com.demo.service.processor.task.ExecutableTaskFactory;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -30,23 +26,15 @@ import static CPSF.com.demo.model.constant.TaskStatus.PENDING;
 @RequiredArgsConstructor
 public class TaskProcessor {
 
-    private static final long MAX_RETRY_COUNT = 5;
+    @Value("${parceo.task.max-retry-count}")
+    private long MAX_RETRY_COUNT;
 
     private final TaskService taskService;
     private final ExecutableTaskFactory executableTaskFactory;
 
-    @Scheduled(fixedDelay = 10000L)
-    public void processTask() {
-        final var currentDateTimeStr = LocalDateTime.now().toString();
-        final var pendingTasks =
-                (List<Task>) taskService.findBy(
-                        new SearchCriteria("executionDate", Operation.LESS_THEN, currentDateTimeStr),
-                        new SearchCriteria("executionDate", Operation.EQUALS, currentDateTimeStr, JoinOperator.OR),
-                        new SearchCriteria("taskStatus", Operation.EQUALS, FAILED.toString(), JoinOperator.AND),
-                        new SearchCriteria("retryable", Operation.EQUALS, "true", JoinOperator.AND),
-                        new SearchCriteria("retryCount", Operation.LESS_THEN, String.valueOf(MAX_RETRY_COUNT), JoinOperator.AND),
-                        new SearchCriteria("taskStatus", Operation.EQUALS, PENDING.toString(), JoinOperator.OR)
-                        ).get().toList();
+    @Scheduled(fixedDelayString = "${parceo.task.process-tasks.fixed-delay}")
+    public void processTasks() {
+        final var pendingTasks = taskService.getExecutableTasks();
 
         if (pendingTasks.isEmpty()) {
             return;
@@ -54,6 +42,21 @@ public class TaskProcessor {
 
         increaseRetryCountAndSetStatusToPending(pendingTasks);
 
+        final var taskForest = getTaskForest(pendingTasks);
+
+        try(final var executor =  Executors.newVirtualThreadPerTaskExecutor()) {
+            log.info("{} pending tasks found", pendingTasks.size());
+            taskForest.forEach(node -> {
+                executor.submit(() -> executeTaskNode(node));
+            });
+        } catch (Exception e) {
+            log.error("Exception occurred while processing the tasks: {} {}", e.getLocalizedMessage(), Arrays.toString(e.getStackTrace()));
+            final var inProgressTasks = taskService.getInProgressTask();
+            taskService.update(inProgressTasks.stream().map(t -> mapTaskStatus(t, FAILED, e.getLocalizedMessage())).toList());
+        }
+    }
+
+    private List<TaskNode> getTaskForest(List<Task> pendingTasks) {
         final var taskForest = pendingTasks.stream()
                 .gather(TaskGatherer.createTaskForest())
                 .collect(Collectors.toCollection(ArrayList::new));
@@ -66,20 +69,7 @@ public class TaskProcessor {
             taskForest.removeAll(failedTaskNodes);
             taskService.update(failedTaskNodes.stream().map(TaskNode::task).toList());
         }
-
-        try(final var executor =  Executors.newVirtualThreadPerTaskExecutor()) {
-            log.info("{} pending tasks found", pendingTasks.size());
-            taskForest.forEach(node -> {
-                executor.submit(() -> executeTaskNode(node));
-            });
-        } catch (Exception e) {
-            log.error("Exception occurred while processing the tasks: {} {}", e.getLocalizedMessage(), Arrays.toString(e.getStackTrace()));
-            final var inProgressTasks =
-                    (List<Task>) taskService.findBy(
-                            new SearchCriteria("taskStatus" , Operation.EQUALS, IN_PROGRESS.toString())
-                            ).get().toList();
-            taskService.update(inProgressTasks.stream().map(t -> mapTaskStatus(t, FAILED, e.getLocalizedMessage())).toList());
-        }
+        return taskForest;
     }
 
     private void executeTaskNode(TaskNode taskNode) {
@@ -111,8 +101,8 @@ public class TaskProcessor {
             }
 
         } catch (Exception e) {
-            log.error("Exception occurred while processing the task: {} {}", taskNode.task().getTaskType(), Arrays.toString(e.getStackTrace()));
-            taskService.update(mapTaskStatus(taskNode.task(), FAILED));
+            log.error("Exception occurred while processing the task: {} \n{} \n{}", taskNode.task().getTaskType(), e.getLocalizedMessage(), Arrays.toString(e.getStackTrace()));
+            taskService.update(mapTaskStatus(taskNode.task(), FAILED, e.getMessage()));
             failDescendants(taskNode);
         }
     }
@@ -132,7 +122,7 @@ public class TaskProcessor {
                 .forEach(t -> t.setRetryCount(t.getRetryCount() + 1));
 
         pendingTasks.forEach(t -> {
-            if (t.getRetryCount() >= MAX_RETRY_COUNT) {
+            if (t.getRetryCount() > MAX_RETRY_COUNT) {
                 t.setTaskStatus(FAILED);
                 t.setStatusMessage("Retry count exceeded the maximum of " + MAX_RETRY_COUNT);
                 log.warn(

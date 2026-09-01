@@ -1,12 +1,10 @@
 package CPSF.com.demo.configuration;
 
 import org.springframework.aop.interceptor.AsyncUncaughtExceptionHandler;
-import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.scheduling.annotation.AsyncConfigurer;
 import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
-import tools.jackson.databind.ObjectMapper;
 
 import java.util.concurrent.Executor;
 
@@ -27,7 +25,7 @@ public class AppConfig implements AsyncConfigurer {
 
     @Override
     public AsyncUncaughtExceptionHandler getAsyncUncaughtExceptionHandler() {
-//    TODO
+    //    TODO
     //        return new MyAsyncUncaughtExceptionHandler();
     return  null;
     }

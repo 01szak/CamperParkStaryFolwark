@@ -1,5 +1,5 @@
 package CPSF.com.demo.model;
 
-import CPSF.com.demo.model.entity.Guest;
+import CPSF.com.demo.model.dto.GuestDTO;
 
-public record EmailData(Guest guest) {}
+public record EmailData(GuestDTO guest) {}

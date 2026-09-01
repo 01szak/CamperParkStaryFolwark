@@ -28,12 +28,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.context.ActiveProfiles;
-import org.springframework.test.context.DynamicPropertyRegistry;
-import org.springframework.test.context.DynamicPropertySource;
 import org.springframework.transaction.annotation.Transactional;
-import org.testcontainers.junit.jupiter.Testcontainers;
-import org.testcontainers.mysql.MySQLContainer;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -43,10 +38,8 @@ import static CPSF.com.demo.helper.AuthenticationHelper.IT_USER_LOGIN;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 
 @SpringBootTest(classes = CamperparkdemoApplication.class)
-@ActiveProfiles("test")
 @Transactional
-@Testcontainers
-public class BaseIT {
+public abstract class BaseIT extends AbstractMySqlContainerTest {
 
     @Autowired
     protected ReservationService reservationService;
@@ -65,22 +58,6 @@ public class BaseIT {
 
     private static long eachTestStart;
     private static long testStart;
-
-    private static final MySQLContainer MY_SQL_CONTAINER = new MySQLContainer("mysql:8.0.32")
-            .withDatabaseName("test_camper_park_sf")
-            .withUsername("root")
-            .withPassword("qwer");
-
-    static {
-        MY_SQL_CONTAINER.start();
-    }
-
-    @DynamicPropertySource
-    static void overrideProps(DynamicPropertyRegistry registry) {
-        registry.add("spring.datasource.url", MY_SQL_CONTAINER::getJdbcUrl);
-        registry.add("spring.datasource.username", MY_SQL_CONTAINER::getUsername);
-        registry.add("spring.datasource.password", MY_SQL_CONTAINER::getPassword);
-    }
 
     @BeforeAll
     public static void beforeAll() {
@@ -118,7 +95,7 @@ public class BaseIT {
 
     @Test
     public void isContainerRunning() {
-        assertThat(MY_SQL_CONTAINER.isRunning()).isTrue();
+        assertThat(MY_SQL.isRunning()).isTrue();
     }
 
     protected Reservation createReservationWithNewData(
