@@ -1,4 +1,5 @@
 package CPSF.com.demo.model;
 
-public record EmailData() {
-}
+import CPSF.com.demo.model.dto.GuestDTO;
+
+public record EmailData(GuestDTO guest) {}

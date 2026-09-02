@@ -88,6 +88,8 @@ public record GenericSpecification<S>(@NotNull SearchCriteria searchCriteria) im
                 return new BigDecimal(value);
             } else if (Integer.class.isAssignableFrom(javaType)||int.class.isAssignableFrom(javaType) ) {
                 return Integer.parseInt(value);
+            } else if (Long.class.isAssignableFrom(javaType)||long.class.isAssignableFrom(javaType)) {
+                return Long.parseLong(value);
             } else if (Boolean.class.isAssignableFrom(javaType)||boolean.class.isAssignableFrom(javaType)) {
                 return Boolean.valueOf(value);
             } else if (Enum.class.isAssignableFrom(javaType)) {

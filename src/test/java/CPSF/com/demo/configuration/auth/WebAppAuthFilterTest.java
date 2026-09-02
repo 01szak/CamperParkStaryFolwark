@@ -1,13 +1,11 @@
 package CPSF.com.demo.configuration.auth;
 
-import CPSF.com.demo.configuration.auth.WebAppAuthFilter;
 import CPSF.com.demo.helper.AuthenticationHelper;
-import CPSF.com.demo.model.constant.Operation;
 import CPSF.com.demo.model.constant.UserRole;
 import CPSF.com.demo.model.entity.Organisation;
 import CPSF.com.demo.model.entity.User;
+import CPSF.com.demo.service.auth.WebAppAuthFilter;
 import CPSF.com.demo.service.core.OrganisationService;
-import CPSF.com.demo.service.core.SearchCriteria;
 import CPSF.com.demo.service.core.UserService;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -19,8 +17,6 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.security.core.Authentication;
@@ -28,11 +24,12 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.io.IOException;
-import java.util.List;
 import java.util.NoSuchElementException;
+import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -105,8 +102,8 @@ public class WebAppAuthFilterTest {
         // Then
         assertThat(SecurityContextHolder.getContext().getAuthentication()).isNull();
         verify(filterChain).doFilter(request, response);
-        verify(organisationService, never()).findBy(any());
-        verify(userService, never()).findBy(any(), any());
+        verify(organisationService, never()).findById(anyInt());
+        verify(userService, never()).findWebAppUser(anyInt());
         verify(passwordEncoder, never()).matches(any(), any());
     }
 
@@ -121,8 +118,8 @@ public class WebAppAuthFilterTest {
         // Then
         assertThat(SecurityContextHolder.getContext().getAuthentication()).isNull();
         verify(filterChain).doFilter(request, response);
-        verify(organisationService, never()).findBy(any());
-        verify(userService, never()).findBy(any(), any());
+        verify(organisationService, never()).findById(anyInt());
+        verify(userService, never()).findWebAppUser(anyInt());
     }
 
     @Test
@@ -136,8 +133,8 @@ public class WebAppAuthFilterTest {
         // Then
         assertThat(SecurityContextHolder.getContext().getAuthentication()).isNull();
         verify(filterChain).doFilter(request, response);
-        verify(organisationService, never()).findBy(any());
-        verify(userService, never()).findBy(any(), any());
+        verify(organisationService, never()).findById(anyInt());
+        verify(userService, never()).findWebAppUser(anyInt());
     }
 
     @Test
@@ -146,11 +143,8 @@ public class WebAppAuthFilterTest {
         request.addHeader(ORGANISATION_ID_HEADER, ORG_ID_STR);
         request.addHeader(API_KEY_HEADER, RAW_API_KEY);
 
-        final var orgCriteria = new SearchCriteria("organisation", "id", Operation.EQUALS, ORG_ID_STR);
-        final var roleCriteria = new SearchCriteria("userRole", Operation.EQUALS, "WEB_APP");
-
         when(organisationService.findById(ORG_ID)).thenReturn(testOrganisation);
-        when(userService.findBy(orgCriteria, roleCriteria)).thenReturn(new PageImpl<>(List.of(testUser)));
+        when(userService.findWebAppUser(ORG_ID)).thenReturn(Optional.of(testUser));
         when(passwordEncoder.matches(RAW_API_KEY, ENCODED_API_KEY)).thenReturn(true);
 
         // When
@@ -175,7 +169,7 @@ public class WebAppAuthFilterTest {
         request.addHeader(API_KEY_HEADER, RAW_API_KEY);
 
         when(organisationService.findById(ORG_ID)).thenReturn(testOrganisation);
-        when(userService.findBy(any(SearchCriteria.class), any(SearchCriteria.class))).thenReturn(new PageImpl<>(List.of(testUser)));
+        when(userService.findWebAppUser(ORG_ID)).thenReturn(Optional.of(testUser));
         when(passwordEncoder.matches(RAW_API_KEY, ENCODED_API_KEY)).thenReturn(true);
 
         // First call - Cache Miss
@@ -201,7 +195,7 @@ public class WebAppAuthFilterTest {
 
         // Verify services were invoked only once during first call
         verify(organisationService, times(1)).findById(ORG_ID);
-        verify(userService, times(1)).findBy(any(SearchCriteria.class), any(SearchCriteria.class));
+        verify(userService, times(1)).findWebAppUser(ORG_ID);
         verify(passwordEncoder, times(1)).matches(RAW_API_KEY, ENCODED_API_KEY);
         verify(filterChain).doFilter(secondRequest, secondResponse);
     }
@@ -246,11 +240,8 @@ public class WebAppAuthFilterTest {
         request.addHeader(ORGANISATION_ID_HEADER, ORG_ID_STR);
         request.addHeader(API_KEY_HEADER, RAW_API_KEY);
 
-        final var orgCriteria = new SearchCriteria("organisation", "id", Operation.EQUALS, ORG_ID_STR);
-        final var roleCriteria = new SearchCriteria("userRole", Operation.EQUALS, "WEB_APP");
-
         when(organisationService.findById(ORG_ID)).thenReturn(testOrganisation);
-        when(userService.findBy(orgCriteria, roleCriteria)).thenReturn(Page.empty());
+        when(userService.findWebAppUser(ORG_ID)).thenReturn(Optional.empty());
 
         // When
         authFilter.doFilter(request, response, filterChain);
@@ -270,11 +261,8 @@ public class WebAppAuthFilterTest {
         request.addHeader(ORGANISATION_ID_HEADER, ORG_ID_STR);
         request.addHeader(API_KEY_HEADER, invalidApiKey);
 
-        final var orgCriteria = new SearchCriteria("organisation", "id", Operation.EQUALS, ORG_ID_STR);
-        final var roleCriteria = new SearchCriteria("userRole", Operation.EQUALS, "WEB_APP");
-
         when(organisationService.findById(ORG_ID)).thenReturn(testOrganisation);
-        when(userService.findBy(orgCriteria, roleCriteria)).thenReturn(new PageImpl<>(List.of(testUser)));
+        when(userService.findWebAppUser(ORG_ID)).thenReturn(Optional.of(testUser));
         when(passwordEncoder.matches(invalidApiKey, ENCODED_API_KEY)).thenReturn(false);
 
         // When

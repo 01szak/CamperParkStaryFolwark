@@ -1,8 +1,8 @@
 package CPSF.com.demo.service.processor.task;
 
-import CPSF.com.demo.model.entity.Task;
+import tools.jackson.databind.ObjectMapper;
 
 public interface ExecutableTask {
-    Task getEntity();
+    ObjectMapper objectMapper = new ObjectMapper();
     void doTask();
 }

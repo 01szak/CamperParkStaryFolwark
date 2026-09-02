@@ -24,19 +24,19 @@ public class ReservationController {
     @PostMapping
     public ResponseEntity<Map<String, String>> create(@RequestBody @Valid ReservationDTO reservationDto) {
         reservationService.create(reservationDto);
-        return ResponseEntity.status(HttpStatus.CREATED).body(Map.of("success","Rezeracja została dodana"));
+        return ResponseEntity.status(HttpStatus.CREATED).body(Map.of("success","Rezerwacja została dodana"));
     }
 
     @PatchMapping
     public ResponseEntity<Map<String, String>> update(@RequestBody @Valid ReservationDTO reservationDto) {
         reservationService.update(reservationDto);
-        return ResponseEntity.status(HttpStatus.OK).body(Map.of("success","Rezeracja została zmieniona"));
+        return ResponseEntity.status(HttpStatus.OK).body(Map.of("success","Rezerwacja została zmieniona"));
     }
 
     @DeleteMapping("/{id}")
     public ResponseEntity<?> delete(@PathVariable int id) {
         reservationService.deleteById(id);
-        return ResponseEntity.status(HttpStatus.OK).body(Map.of("success","Rezeracja została usunięta"));
+        return ResponseEntity.status(HttpStatus.OK).body(Map.of("success","Rezerwacja została usunięta"));
     }
 
     @PostMapping("/findBy")

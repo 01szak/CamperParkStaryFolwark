@@ -35,19 +35,19 @@ public class Reservation extends DbObject {
     private LocalDate checkout;
 
     @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "camper_place_id")
+    @JoinColumn(name = "camper_place_id", nullable = false)
     @Lazy
     @JsonBackReference("camperPlace-reservations")
     private CamperPlace camperPlace;
 
     @ManyToOne
-    @JoinColumn(name = "guest_id")
+    @JoinColumn(name = "guest_id", nullable = false)
     @Lazy
     @JsonBackReference("guest-reservations")
     private Guest guest;
 
     @Enumerated(EnumType.STRING)
-    @Column(name = "status")
+    @Column(name = "status", nullable = false)
     @Builder.Default
     private ReservationStatus reservationStatus = COMING;
 

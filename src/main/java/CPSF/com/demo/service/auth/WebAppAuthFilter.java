@@ -1,10 +1,8 @@
-package CPSF.com.demo.configuration.auth;
+package CPSF.com.demo.service.auth;
 
 import CPSF.com.demo.exception.AuthenticationException;
-import CPSF.com.demo.model.constant.Operation;
 import CPSF.com.demo.model.entity.User;
 import CPSF.com.demo.service.core.OrganisationService;
-import CPSF.com.demo.service.core.SearchCriteria;
 import CPSF.com.demo.service.core.UserService;
 import com.github.benmanes.caffeine.cache.Cache;
 import com.github.benmanes.caffeine.cache.Caffeine;
@@ -40,7 +38,7 @@ public class WebAppAuthFilter extends OncePerRequestFilter {
     private final UserService userService;
     private final Cache<String, User> authCache = Caffeine.newBuilder()
             .expireAfterWrite(5, MINUTES)
-            .maximumSize(1)
+            .maximumSize(200)
             .build();
 
 
@@ -79,12 +77,7 @@ public class WebAppAuthFilter extends OncePerRequestFilter {
 
         var organisation = organisationService.findById(Integer.parseInt(orgId));
 
-        var appUser = userService.findBy(
-                        new SearchCriteria("organisation", "id", Operation.EQUALS, orgId),
-                        new SearchCriteria("userRole", Operation.EQUALS, "WEB_APP")
-                )
-                .stream()
-                .findFirst()
+        var appUser = userService.findWebAppUser(Integer.parseInt(orgId))
                 .orElseThrow(() -> new AuthenticationException("No web app associated for the given organisation"));
 
         if (passwordEncoder.matches(apiKey, organisation.getWebAppApiKey())) {

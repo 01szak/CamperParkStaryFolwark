@@ -76,7 +76,7 @@ public class Task extends DbObject {
         this.payload = payload;
         this.taskStatus = taskStatus == null ? this.taskStatus : taskStatus;
         this.taskType = taskType;
-        this.retryable = !TaskType.WEB_APP_RESERVATION_TASK.equals(taskType);
+        this.retryable = taskType.isRetryable();
         this.retryCount = retryCount == 0 ? this.retryCount : retryCount;
         this.parentTask = parentTask;
         this.executionDate = executionDate;
