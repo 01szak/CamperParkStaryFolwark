@@ -54,7 +54,7 @@ public class WebAppReservationTask implements ExecutableTask {
         }
 
         var guestOpt =
-                guestService.findBy(new SearchCriteria("email", Operation.LIKE, reservationDTO.guest().email())).get().findFirst();
+                guestService.findBy(new SearchCriteria("email", Operation.EQUALS, reservationDTO.guest().email())).get().findFirst();
 
         //If the guest already exists (matched by email) we reuse that entity so the reservation
         //is linked to a persisted guest id.
@@ -71,7 +71,6 @@ public class WebAppReservationTask implements ExecutableTask {
 
         try {
             createdReservation = reservationService.create(modifiedReservation);
-            createReservationHolderTask(createdReservation.getId());
         } catch (DateValidationException e) {
             //we check whether the guest is retrying the reservation flow
             Optional.ofNullable(guest.id()).orElseThrow(() -> e);
@@ -86,25 +85,31 @@ public class WebAppReservationTask implements ExecutableTask {
             .orElseThrow(() -> e);
         }
 
+        createReservationHolderTask(createdReservation.getId());
         //we need to map the entity again cause we need to pass Id as well
-        createEmailTask(DtoMapper.getGuestDTO(createdReservation.getGuest()));
+        createEmailTask(DtoMapper.getGuestDTO(createdReservation.getGuest()), DtoMapper.getReservationDto(createdReservation));
     }
 
     private void createReservationHolderTask(Integer createdReservationId) {
-        final var holderTask = Task.builder()
-                .targetId(webAppReservationTaskEntity.getTargetId())
-                .payload(createdReservationId)
-                .taskStatus(TaskStatus.ON_HOLD)
-                .taskType(TaskType.TEMPORARY_PAYLOAD_HOLDER_TASK)
-                .build();
+        final var optHolderTask =
+                Optional.ofNullable(taskService.findPayloadHolderTaskByTargetId(webAppReservationTaskEntity.getTargetId()));
+        optHolderTask.or(() -> {
+            final var holderTask = Task.builder()
+                    .targetId(webAppReservationTaskEntity.getTargetId())
+                    .payload(createdReservationId)
+                    .taskStatus(TaskStatus.ON_HOLD)
+                    .taskType(TaskType.TEMPORARY_PAYLOAD_HOLDER_TASK)
+                    .build();
 
-        taskService.create(holderTask);
+            taskService.create(holderTask);
+            return Optional.empty();
+        });
     }
 
-    private void createEmailTask(GuestDTO guest) {
+    private void createEmailTask(GuestDTO guest, ReservationDTO reservationDTO) {
         final var emailTaskEntity = Task.builder()
                 .targetId(webAppReservationTaskEntity.getTargetId())
-                .payload(new EmailData(guest))
+                .payload(new EmailData(guest, reservationDTO))
                 .taskType(SEND_EMAIL_AUTHENTICATION_TASK)
                 .build();
 

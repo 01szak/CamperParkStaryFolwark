@@ -38,7 +38,7 @@ class SendEmailAuthenticationTaskTest {
         final var guest = new GuestDTO(7, "Ada", "Kowalska", "ada@example.com", "600700800", null, "PL");
         final var taskEntity = Task.builder()
                 .targetId(TARGET_ID)
-                .payload(new EmailData(guest))
+//                .payload(new EmailData(guest))
                 .taskType(TaskType.SEND_EMAIL_AUTHENTICATION_TASK)
                 .build();
         task = new SendEmailAuthenticationTask(novu, taskEntity);

@@ -29,7 +29,6 @@ public record GenericSpecification<S>(@NotNull SearchCriteria searchCriteria) im
             @NonNull CriteriaBuilder criteriaBuilder
     ) {
         try {
-            //TODO handle date comaprison
             final var optJoinObject = Optional.ofNullable(searchCriteria.joinObject());
             final var key = (Expression) optJoinObject
                     .map(_ -> root.join(optJoinObject.get()).get(searchCriteria.key()))

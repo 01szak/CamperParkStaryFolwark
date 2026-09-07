@@ -23,9 +23,13 @@ public class SendEmailAuthenticationTask implements ExecutableTask {
     public void doTask() {
         final var emailData = objectMapper.convertValue(sendEmailAuthenticationTaskEntity.getPayload(), EmailData.class);
         final var guest = emailData.guest();
+        final var additionalPayload = emailData.additionalPayload();
         final var subscriber = buildSubscriber(guest);
         final var to = TriggerEventRequestDtoTo2.of(subscriber);
-        final var payload = Map.of("targetId", (Object) sendEmailAuthenticationTaskEntity.getTargetId());
+        final var payload = Map.of(
+                "targetId", sendEmailAuthenticationTaskEntity.getTargetId(),
+                "additionalPayload", additionalPayload
+        );
         final var workflow = NovuWorkflow.TEST_WORKFLOW.getWorkflowBuilder().to(to).payload(payload).build();
         novu.trigger().body(workflow).call();
     }
