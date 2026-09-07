@@ -37,6 +37,7 @@ services:
       SPRING_PROFILES_ACTIVE: ${SPRING_PROFILE}
       RSA_PRIVATE_KEY: file:/var/rsa/private.pem
       RSA_PUBLIC_KEY: file:/var/rsa/public.pem
+      NOVU_SECRET_KEY: ${NOVU_SECRET_KEY}
     volumes:
       - "/var/log/camper_park/${SPRING_PROFILE}:/var/log/camper_park"
       - "${RSA_PRIVATE_PATH}:/var/rsa/private.pem:ro"
