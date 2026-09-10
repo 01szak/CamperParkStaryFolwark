@@ -15,6 +15,7 @@ pipeline {
         SPRING_PROFILE = "${params.PROFILE}"
 
         EXTERNAL_PORT  = "${params.PROFILE == 'prod' ? '2000' : '2001'}"
+        EXTERNAL_DEBUG_PORT = '5005'
 
         LOCAL_PATH     = "/var/www/backend/camper_park_v2-${params.PROFILE}"
         DB_NAME        = "camper_park_${params.PROFILE}"

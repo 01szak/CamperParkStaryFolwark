@@ -30,8 +30,9 @@ services:
         condition: service_healthy
     ports:
       - "${EXTERNAL_PORT}:8080" #HTTP
-      - "5005:${EXTERNAL_PORT}" #DEBUG
+      - "127.0.0.1:${EXTERNAL_DEBUG_PORT}:${EXTERNAL_DEBUG_PORT}" #DEBUG
     environment:
+      JAVA_TOOL_OPTIONS: "-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:${EXTERNAL_DEBUG_PORT}"
       SPRING_DATASOURCE_URL: jdbc:mysql://db:3306/${DB_NAME}
       SPRING_DATASOURCE_USERNAME: ${DB_USER}
       SPRING_DATASOURCE_PASSWORD: ${DB_PASSWORD}
