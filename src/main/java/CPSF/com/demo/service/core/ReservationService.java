@@ -1,21 +1,27 @@
 package CPSF.com.demo.service.core;
 
-import CPSF.com.demo.model.dto.Reservation_DTO;
-import CPSF.com.demo.model.entity.CamperPlace;
-import CPSF.com.demo.model.entity.Guest;
+import CPSF.com.demo.model.constant.ReservationStatus;
+import CPSF.com.demo.model.dto.ReservationDTO;
 import CPSF.com.demo.model.entity.Reservation;
+import CPSF.com.demo.model.entity.User;
 import CPSF.com.demo.repository.CRUDRepository;
-import CPSF.com.demo.service.util.ReservationCalculator;
 import CPSF.com.demo.repository.ReservationRepository;
-import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Service;
 import CPSF.com.demo.service.core.StatisticsService.StatisticsModel;
+import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
-import java.util.*;
+import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
 
-import static CPSF.com.demo.exception.ClientInputException.checkClientInput;
+import static CPSF.com.demo.exception.DateValidationException.checkClientInput;
 import static CPSF.com.demo.model.constant.ReservationStatus.ACTIVE;
+import static CPSF.com.demo.model.constant.ReservationStatus.COMING;
+import static CPSF.com.demo.model.constant.ReservationStatus.EXPIRED;
+import static CPSF.com.demo.model.constant.ReservationStatus.UNVERIFIED;
+import static CPSF.com.demo.model.constant.ReservationStatus.VERIFIED;
 
 @Service
 @RequiredArgsConstructor
@@ -24,40 +30,65 @@ public class ReservationService extends CRUDServiceImpl<Reservation> {
     private final ReservationRepository reservationRepository;
     private final GuestService guestService;
     private final CamperPlaceService camperPlaceService;
-    private final ReservationCalculator calculator;
+    private final ReservationCalculatorService calculator;
+    private final UserService userService;
 
+    public Reservation create(ReservationDTO reservationDto) {
+        final var camperPlace = camperPlaceService.findById(reservationDto.camperPlace().id());
+        final var checkin = reservationDto.checkin();
+        final var checkout = reservationDto.checkout();
+        final var creator = resolveCreator(reservationDto);
 
-    public Reservation create(Reservation_DTO reservationDto) {
-        var camperPlace = camperPlaceService.findById(reservationDto.camperPlace().id());
-        var checkin = reservationDto.checkin();
-        var checkout = reservationDto.checkout();
+        validateDates(checkout, checkin, camperPlace.getId());
 
-        validateDates(checkout, checkin, camperPlace);
+        final var guest = Optional.ofNullable(reservationDto.guest().id()).isPresent()
+                ? guestService.update(reservationDto.guest())
+                : guestService.create(reservationDto.guest());
 
-        Guest guest;
+        final var status = Optional.ofNullable(reservationDto.reservationStatus())
+                .orElse(getActuallReservationStatus(checkin, checkout));
 
-        if (reservationDto.guest().id() == null) {
-            guest = guestService.create(reservationDto.guest());
-        } else {
-            guest = guestService.update(reservationDto.guest());
-        }
-
-        var r = Reservation.builder()
+        final var r = Reservation.builder()
                 .checkin(checkin)
                 .checkout(checkout)
                 .camperPlace(camperPlace)
                 .guest(guest)
-                .price(calculator.calculateFinalReservationCost(checkin, checkout, camperPlace.getPrice()))
-                .paid(reservationDto.paid());
-
-        if (isActive(checkin, checkout)) {
-            r.reservationStatus(ACTIVE);
-        }
+                .price(calculator.calculate(camperPlace.getPrice(), checkin.datesUntil(checkout).count())) //TODO it can be passed in request
+                .paid(reservationDto.paid())
+                .reservationStatus(status)
+                .creator(creator);
 
        return super.create(r.build());
     }
 
-    public void update(Reservation_DTO reservationDto) {
+    public ReservationStatus getActuallReservationStatus(Reservation reservation) {
+        return getActuallReservationStatus(reservation.getCheckin(), reservation.getCheckout());
+    }
+
+    public ReservationStatus getActuallReservationStatus(LocalDate checkin, LocalDate checkout) {
+        if (isActive(checkin, checkout)) {
+            return ACTIVE;
+        } else if (isExpired(checkout)) {
+            return EXPIRED;
+        } else {
+            return COMING;
+        }
+    }
+
+    private User resolveCreator(ReservationDTO reservationDto) {
+        if (reservationDto.creator() != null) {
+            return userService.findById(reservationDto.creator().id());
+        }
+        final var authentication = SecurityContextHolder.getContext().getAuthentication();
+        Objects.requireNonNull(authentication, "Unauthorized call detected");
+        return (User) userService.loadUserByUsername(authentication.getName());
+    }
+
+    private boolean isExpired(LocalDate checkout) {
+        return LocalDate.now().isAfter(checkout);
+    }
+
+    public Reservation update(ReservationDTO reservationDto) {
         var camperPlace = camperPlaceService.findById(reservationDto.camperPlace().id());
         var checkin = reservationDto.checkin();
         var checkout = reservationDto.checkout();
@@ -65,18 +96,21 @@ public class ReservationService extends CRUDServiceImpl<Reservation> {
         var r = findById(reservationDto.id());
 
         var datesOrCpChanged = !r.getCheckin().equals(checkin)
-                ||  !r.getCheckout().equals(checkout)
-                || !r.getCamperPlace().getIndex().equals(reservationDto.camperPlace());
+                || !r.getCheckout().equals(checkout)
+                || !r.getCamperPlace().getIndex().equals(reservationDto.camperPlace().index());
 
     //it is checked because of the constraints and reservations overlapping
         if (datesOrCpChanged) {
-            validateDates(checkout, checkin, camperPlace, r.getId());
+            validateDates(checkout, checkin, camperPlace.getId(), r.getId());
             r.setCheckin(checkin);
             r.setCheckout(checkout);
             r.setCamperPlace(camperPlace);
-            r.setPrice(calculator.calculateFinalReservationCost(checkin, checkout, camperPlace.getPrice()));
-            if (isActive(checkin, checkout)) {
-                r.setReservationStatus(ACTIVE);
+            r.setPrice(calculator.calculate(camperPlace.getPrice(), checkin.datesUntil(checkout).count()));
+            if (
+                !VERIFIED.equals(r.getReservationStatus())
+                && !UNVERIFIED.equals(r.getReservationStatus())
+            ) {
+                r.setReservationStatus(getActuallReservationStatus(checkin, checkout));
             }
         }
 
@@ -85,12 +119,15 @@ public class ReservationService extends CRUDServiceImpl<Reservation> {
         r.setGuest(guest);
         r.setPaid(reservationDto.paid());
 
-        super.update(r);
+        return super.update(r);
     }
-
 
     public List<StatisticsModel.Revenue> countRevenueOfAllCamperPlaces(boolean isPaid, int month, int year) {
         return reservationRepository.countRevenueOfAllCamperPlaces(isPaid, month, year);
+    }
+
+    public int setActualReservationStatuses() {
+        return reservationRepository.setActualReservationStatuses();
     }
 
     private boolean isActive(LocalDate checkin, LocalDate checkout) {
@@ -98,14 +135,17 @@ public class ReservationService extends CRUDServiceImpl<Reservation> {
         return checkin.isBefore(currentDate.plusDays(1)) && checkout.isAfter(currentDate.minusDays(1));
     }
 
-    private void validateDates(LocalDate checkout, LocalDate checkin, CamperPlace camperPlace, Integer reservationId) {
-        checkClientInput(checkout.isBefore(checkin), "Data wyjazdu nie może być przed datą wjazdu");
-        checkClientInput(camperPlaceService.isOccupied(camperPlace, checkin, checkout, reservationId),
-                "Parcela jest już zajęta!");
+    private void validateDates(LocalDate checkout, LocalDate checkin, Integer camperPlaceId) {
+        validateDates(checkout, checkin, camperPlaceId, null);
     }
 
-    private void validateDates(LocalDate checkout, LocalDate checkin, CamperPlace camperPlace) {
-        validateDates(checkout, checkin, camperPlace, null);
+    private void validateDates(LocalDate checkout, LocalDate checkin, Integer camperPlaceId, Integer reservationId) {
+        checkClientInput(checkout.isBefore(checkin), "Data wyjazdu nie może być przed datą wjazdu");
+        checkClientInput(checkout.equals(checkin), "Czas trwania rezerwacji musi wynosić minimum 1 dobę");
+        checkClientInput(
+                camperPlaceService.hasOverlappingReservation(camperPlaceId, checkin, checkout, reservationId),
+                "Parcela jest już zajęta!"
+        );
     }
 
     @Override

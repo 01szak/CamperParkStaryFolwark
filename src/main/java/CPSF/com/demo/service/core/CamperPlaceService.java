@@ -1,7 +1,7 @@
 package CPSF.com.demo.service.core;
 
-import CPSF.com.demo.exception.ClientInputException;
-import CPSF.com.demo.model.dto.CamperPlace_DTO;
+import CPSF.com.demo.exception.UserInputException;
+import CPSF.com.demo.model.dto.camperPlaceDTO;
 import CPSF.com.demo.model.entity.CamperPlace;
 import CPSF.com.demo.repository.CRUDRepository;
 import CPSF.com.demo.repository.CamperPlaceRepository;
@@ -11,9 +11,11 @@ import org.jspecify.annotations.Nullable;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
 import java.sql.SQLIntegrityConstraintViolationException;
 import java.time.LocalDate;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -23,8 +25,9 @@ public class CamperPlaceService extends CRUDServiceImpl<CamperPlace> {
 
     private final CamperPlaceRepository camperPlaceRepository;
     private final CamperPlaceTypeService camperPlaceTypeService;
+    private final ReservationCalculatorService reservationCalculatorService;
 
-    public CamperPlace create(CamperPlace_DTO camperPlaceDto) {
+    public CamperPlace create(camperPlaceDTO camperPlaceDto) {
         var camperPlaceType = camperPlaceTypeService.findById(camperPlaceDto.type().id());
 
         if (camperPlaceType == null) {
@@ -42,7 +45,7 @@ public class CamperPlaceService extends CRUDServiceImpl<CamperPlace> {
         } catch (DataIntegrityViolationException e) {
             var cause =  e.getMostSpecificCause();
             if (cause instanceof SQLIntegrityConstraintViolationException sqlEx && DUPLICATE_ENTRY == sqlEx.getErrorCode()) {
-                throw new ClientInputException("Parcela z podanym indexem już istnieje");
+                throw new UserInputException("Parcela z podanym indexem już istnieje");
             }
             throw new IllegalStateException();
         }
@@ -50,13 +53,13 @@ public class CamperPlaceService extends CRUDServiceImpl<CamperPlace> {
 
     private void validateIndex(String cpIndex) {
         if (cpIndex == null || cpIndex.isBlank()) {
-            throw new ClientInputException("Indedx nie może byc pusty");
+            throw new UserInputException("Indeks nie może być pusty");
         }
         var firstEl = String.valueOf(cpIndex.charAt(0));
         try {
             Integer.parseInt(firstEl);
         } catch (NumberFormatException e) {
-            throw new ClientInputException("Index musi zaczynać sie od cyfry");
+            throw new UserInputException("Indeks musi zaczynać się od cyfry");
         }
     }
 
@@ -65,7 +68,7 @@ public class CamperPlaceService extends CRUDServiceImpl<CamperPlace> {
         return String.valueOf(Integer.parseInt(maxIndex) + 1);
     }
 
-    public List<CamperPlace> updateCamperPlaces(List<CamperPlace_DTO> camperPlaceDtos) {
+    public List<CamperPlace> updateAll(List<camperPlaceDTO> camperPlaceDtos) {
         try {
             var cpToUpdate = new ArrayList<CamperPlace>();
             camperPlaceDtos.forEach(dto -> {
@@ -77,13 +80,13 @@ public class CamperPlaceService extends CRUDServiceImpl<CamperPlace> {
         } catch (DataIntegrityViolationException e) {
             var cause =  e.getMostSpecificCause();
             if (cause instanceof SQLIntegrityConstraintViolationException sqlEx && DUPLICATE_ENTRY == sqlEx.getErrorCode()) {
-                throw new ClientInputException("Parcela z podanym indexem już istnieje");
+                throw new UserInputException("Parcela z podanym indexem już istnieje");
             }
             throw new IllegalStateException();
         }
     }
 
-    private @NonNull CamperPlace mapToCamperPlace(CamperPlace_DTO dto) {
+    private @NonNull CamperPlace mapToCamperPlace(camperPlaceDTO dto) {
         var cp = findById(dto.id());
         var cpt = camperPlaceTypeService.findById(dto.type().id());
         cp.setCamperPlaceType(cpt);
@@ -96,22 +99,35 @@ public class CamperPlaceService extends CRUDServiceImpl<CamperPlace> {
         return camperPlaceRepository.findAllOrderByIndex();
     }
 
-    public boolean isOccupied(CamperPlace cp, LocalDate checkin, LocalDate checkout, @Nullable Integer idToExclude) {
-        var res = cp.getReservations();
-        return res != null ?
-                cp.getReservations().stream()
-                        .filter(r -> !r.getId().equals(idToExclude))
-                        .anyMatch(r -> checkin.isBefore(r.getCheckout()) && checkout.isAfter(r.getCheckin()))
-                : false;
-    }
-
     public List<CamperPlace> findCamperPlaceByPriceNotNullAndCamperPlaceType_Id(Integer id) {
         return camperPlaceRepository.findCamperPlaceByPriceNotNullAndCamperPlaceType_Id(id);
+    }
+
+    public List<LocalDate> getOccupiedDates(Integer cpId) {
+        return getOccupiedDates(cpId, null);
+    }
+
+    public List<LocalDate> getOccupiedDates(Integer cpId, Integer reservationId) {
+        return camperPlaceRepository.getOccupiedDates(cpId, reservationId);
+    }
+
+    public boolean hasOverlappingReservation(Integer cpId, LocalDate checkin, LocalDate checkout, Integer reservationId) {
+        return camperPlaceRepository.countOverlappingReservations(cpId, checkin, checkout, reservationId) > 0;
+    }
+
+    public BigDecimal getCalculatedReservationPrice(Integer cpId, LocalDate checkin, LocalDate checkout) {
+        if (!checkout.isAfter(checkin)) {
+            throw new UserInputException("Data wyjazdu musi być po dacie wjazdu");
+        }
+        final var price = findById(cpId).getPrice();
+        final var daysInReservation = checkin.datesUntil(checkout).count();
+        return reservationCalculatorService.calculate(price, daysInReservation);
     }
 
     @Override
     protected CRUDRepository<CamperPlace> getRepository() {
         return camperPlaceRepository;
     }
+
 }
 

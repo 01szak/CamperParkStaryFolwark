@@ -1,7 +1,7 @@
 package CPSF.com.demo.controller;
 
-import CPSF.com.demo.model.dto.Reservation_DTO;
-import CPSF.com.demo.service.core.SearchCriteria;
+import CPSF.com.demo.model.dto.ReservationDTO;
+import CPSF.com.demo.model.dto.SearchRequest;
 import CPSF.com.demo.service.util.DtoMapper;
 import CPSF.com.demo.service.core.ReservationService;
 import jakarta.validation.Valid;
@@ -22,26 +22,29 @@ public class ReservationController {
     private final ReservationService reservationService;
 
     @PostMapping
-    public ResponseEntity<Map<String, String>> create(@RequestBody @Valid Reservation_DTO reservationDto) {
+    public ResponseEntity<Map<String, String>> create(@RequestBody @Valid ReservationDTO reservationDto) {
         reservationService.create(reservationDto);
-        return ResponseEntity.status(HttpStatus.CREATED).body(Map.of("success","Rezeracja została dodana"));
+        return ResponseEntity.status(HttpStatus.CREATED).body(Map.of("success","Rezerwacja została dodana"));
     }
 
     @PatchMapping
-    public ResponseEntity<Map<String, String>> update(@RequestBody @Valid Reservation_DTO reservationDto) {
+    public ResponseEntity<Map<String, String>> update(@RequestBody @Valid ReservationDTO reservationDto) {
         reservationService.update(reservationDto);
-        return ResponseEntity.status(HttpStatus.OK).body(Map.of("success","Rezeracja została zmieniona"));
+        return ResponseEntity.status(HttpStatus.OK).body(Map.of("success","Rezerwacja została zmieniona"));
     }
 
     @DeleteMapping("/{id}")
     public ResponseEntity<?> delete(@PathVariable int id) {
         reservationService.deleteById(id);
-        return ResponseEntity.status(HttpStatus.OK).body(Map.of("success","Rezeracja została usunięta"));
+        return ResponseEntity.status(HttpStatus.OK).body(Map.of("success","Rezerwacja została usunięta"));
     }
 
-    @GetMapping
-    public Page<Reservation_DTO> findBy(Pageable pageable, SearchCriteria searchCriteria) {
-        return reservationService.findBy(pageable, searchCriteria).map(DtoMapper::getReservationDto);
+    @PostMapping("/findBy")
+    public Page<ReservationDTO> findBy(Pageable pageable, @RequestBody @Valid SearchRequest searchRequest) {
+        return reservationService.findBy(
+                pageable,
+                searchRequest.searchCriteria()
+        ).map(DtoMapper::getReservationDto);
     }
 
 }
