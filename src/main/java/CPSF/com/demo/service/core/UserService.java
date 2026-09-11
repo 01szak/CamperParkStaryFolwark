@@ -1,5 +1,6 @@
 package CPSF.com.demo.service.core;
 
+import CPSF.com.demo.model.constant.UserRole;
 import CPSF.com.demo.model.entity.User;
 import CPSF.com.demo.repository.CRUDRepository;
 import CPSF.com.demo.repository.UserRepository;
@@ -8,6 +9,8 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
+
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -24,6 +27,10 @@ public class UserService extends CRUDServiceImpl<User> implements UserDetailsSer
         }
 
         return user.get();
+    }
+
+    public Optional<User> findWebAppUser(int organisationId) {
+        return userRepository.findFirstByOrganisation_IdAndUserRole(organisationId, UserRole.WEB_APP);
     }
 
     @Override

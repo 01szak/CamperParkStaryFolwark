@@ -53,13 +53,13 @@ public class CamperPlaceService extends CRUDServiceImpl<CamperPlace> {
 
     private void validateIndex(String cpIndex) {
         if (cpIndex == null || cpIndex.isBlank()) {
-            throw new UserInputException("Indedx nie może byc pusty");
+            throw new UserInputException("Indeks nie może być pusty");
         }
         var firstEl = String.valueOf(cpIndex.charAt(0));
         try {
             Integer.parseInt(firstEl);
         } catch (NumberFormatException e) {
-            throw new UserInputException("Index musi zaczynać sie od cyfry");
+            throw new UserInputException("Indeks musi zaczynać się od cyfry");
         }
     }
 
@@ -99,25 +99,27 @@ public class CamperPlaceService extends CRUDServiceImpl<CamperPlace> {
         return camperPlaceRepository.findAllOrderByIndex();
     }
 
-    public boolean isOccupied(CamperPlace cp, LocalDate checkin, LocalDate checkout, @Nullable Integer idToExclude) {
-        var res = cp.getReservations();
-        return res != null ?
-                cp.getReservations().stream()
-                        .filter(r -> !r.getId().equals(idToExclude))
-                        .anyMatch(r -> checkin.isBefore(r.getCheckout()) && checkout.isAfter(r.getCheckin()))
-                : false;
-    }
-
     public List<CamperPlace> findCamperPlaceByPriceNotNullAndCamperPlaceType_Id(Integer id) {
         return camperPlaceRepository.findCamperPlaceByPriceNotNullAndCamperPlaceType_Id(id);
     }
 
     public List<LocalDate> getOccupiedDates(Integer cpId) {
-        return camperPlaceRepository.getOccupiedDates(cpId);
+        return getOccupiedDates(cpId, null);
+    }
+
+    public List<LocalDate> getOccupiedDates(Integer cpId, Integer reservationId) {
+        return camperPlaceRepository.getOccupiedDates(cpId, reservationId);
+    }
+
+    public boolean hasOverlappingReservation(Integer cpId, LocalDate checkin, LocalDate checkout, Integer reservationId) {
+        return camperPlaceRepository.countOverlappingReservations(cpId, checkin, checkout, reservationId) > 0;
     }
 
     public BigDecimal getCalculatedReservationPrice(Integer cpId, LocalDate checkin, LocalDate checkout) {
-        final var price = getRepository().findById(cpId).map(CamperPlace::getPrice).get();
+        if (!checkout.isAfter(checkin)) {
+            throw new UserInputException("Data wyjazdu musi być po dacie wjazdu");
+        }
+        final var price = findById(cpId).getPrice();
         final var daysInReservation = checkin.datesUntil(checkout).count();
         return reservationCalculatorService.calculate(price, daysInReservation);
     }

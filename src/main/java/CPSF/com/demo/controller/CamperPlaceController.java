@@ -4,7 +4,6 @@ import CPSF.com.demo.model.dto.camperPlaceDTO;
 import CPSF.com.demo.service.core.CamperPlaceService;
 import CPSF.com.demo.service.util.DtoMapper;
 import jakarta.validation.Valid;
-import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -61,7 +60,7 @@ public class CamperPlaceController {
     }
 
     @DeleteMapping("/{campPlaceId}")
-    public ResponseEntity<Map<String, String>> delete(@PathVariable @NotNull Integer campPlaceId) {
+    public ResponseEntity<Map<String, String>> delete(@PathVariable Integer campPlaceId) {
         camperPlaceService.deleteById(campPlaceId);
         return ResponseEntity.status(HttpStatus.OK).body(Map.of("success","Parcela została usunięta"));
     }

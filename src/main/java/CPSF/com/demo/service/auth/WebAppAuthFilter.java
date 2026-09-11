@@ -1,10 +1,8 @@
-package CPSF.com.demo.configuration.auth;
+package CPSF.com.demo.service.auth;
 
 import CPSF.com.demo.exception.AuthenticationException;
-import CPSF.com.demo.model.constant.Operation;
 import CPSF.com.demo.model.entity.User;
 import CPSF.com.demo.service.core.OrganisationService;
-import CPSF.com.demo.service.core.SearchCriteria;
 import CPSF.com.demo.service.core.UserService;
 import com.github.benmanes.caffeine.cache.Cache;
 import com.github.benmanes.caffeine.cache.Caffeine;
@@ -22,6 +20,7 @@ import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.Optional;
 
 import static CPSF.com.demo.model.constant.UserRole.WEB_APP;
@@ -39,7 +38,7 @@ public class WebAppAuthFilter extends OncePerRequestFilter {
     private final UserService userService;
     private final Cache<String, User> authCache = Caffeine.newBuilder()
             .expireAfterWrite(5, MINUTES)
-            .maximumSize(1)
+            .maximumSize(200)
             .build();
 
 
@@ -52,35 +51,38 @@ public class WebAppAuthFilter extends OncePerRequestFilter {
         var orgId = request.getHeader(ORGANISATION_ID_HEADER);
         var apiKey = request.getHeader(API_KEY_HEADER);
         var headersPresent = orgId != null && apiKey != null;
+        try {
+            if (headersPresent) {
+                var appUser = authCache.getIfPresent(getCacheKey(orgId, apiKey));
 
-        if (headersPresent) {
-            var appUser = authCache.getIfPresent(getCacheKey(orgId, apiKey));
-
-            Optional.ofNullable(appUser).ifPresentOrElse(
-                    this::authoriseUser,
-                    () -> authenticateUser(orgId, apiKey)
+                Optional.ofNullable(appUser).ifPresentOrElse(
+                        this::authoriseUser,
+                        () -> authenticateUser(orgId, apiKey)
+                );
+            }
+        } catch (AuthenticationException | NumberFormatException | NoSuchElementException e) {
+            SecurityContextHolder.clearContext();
+            response.sendError(
+                    HttpServletResponse.SC_UNAUTHORIZED,
+                    "Invalid web application credentials"
             );
+            return;
         }
 
         filterChain.doFilter(request, response);
     }
 
     private void authenticateUser(String orgId, String apiKey) {
-        logger.info("Web app auth headers found, starting Authentication for orgId: " + orgId);
+        log.info("Web app auth headers found, starting Authentication for orgId: {}", orgId);
 
         var organisation = organisationService.findById(Integer.parseInt(orgId));
 
-        var appUser = userService.findBy(
-                        new SearchCriteria("organisation", "id", Operation.EQUALS, orgId),
-                        new SearchCriteria("userRole", Operation.EQUALS, "WEB_APP")
-                )
-                .stream()
-                .findFirst()
+        var appUser = userService.findWebAppUser(Integer.parseInt(orgId))
                 .orElseThrow(() -> new AuthenticationException("No web app associated for the given organisation"));
 
         if (passwordEncoder.matches(apiKey, organisation.getWebAppApiKey())) {
             authoriseUser(appUser);
-            logger.info("Web app authentication succeeded for orgId: " + orgId);
+            log.info("Web app authentication succeeded for orgId: {}", orgId);
         } else {
             throw new AuthenticationException("Api key not matched");
         }

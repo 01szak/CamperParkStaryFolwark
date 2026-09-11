@@ -15,5 +15,6 @@ public record ReservationDTO(
         @NotNull GuestDTO guest,
         @NotNull camperPlaceDTO camperPlace,
         @NotNull Boolean paid,
-        @Nullable ReservationStatus reservationStatus
+        @Nullable ReservationStatus reservationStatus,
+        @Nullable UserDTO creator
 ) {}

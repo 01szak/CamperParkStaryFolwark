@@ -150,16 +150,19 @@ ADD CONSTRAINT fk_creator_id
 -- changeset 01szak:system_task_table
 -- validCheckSum: ANY
 -- preconditions onFail:MARK_RAN
--- precondition-sql-check expectedResult:0 SELECT COUNT(*) FROM information_schema.tables WHERE table_schema = DATABASE() AND table_name = 'status_task'
+-- precondition-sql-check expectedResult:0 SELECT COUNT(*) FROM information_schema.tables WHERE table_schema = DATABASE() AND table_name = 'system_task'
 CREATE TABLE IF NOT EXISTS system_task (
-     id BIGINT AUTO_INCREMENT PRIMARY KEY NOT NULL,
-     created_at DATETIME,
-     updated_at DATETIME,
-     target_id VARCHAR(36),
-     payload JSON,
-     task_status VARCHAR(50) NOT NULL,
-     task_type VARCHAR(50) NOT NULL,
-     retry_count BIGINT,
-     parent_task_id BIGINT,
-     CONSTRAINT fk_system_task_parent FOREIGN KEY (parent_task_id) REFERENCES system_task(id)
+    id BIGINT AUTO_INCREMENT PRIMARY KEY NOT NULL,
+    created_at DATETIME,
+    updated_at DATETIME,
+    target_id VARCHAR(36),
+    payload JSON,
+    task_status VARCHAR(50) NOT NULL DEFAULT 'PENDING',
+    task_type VARCHAR(50) NOT NULL,
+    retryable BOOLEAN DEFAULT FALSE,
+    retry_count BIGINT,
+    parent_task_id BIGINT,
+    execution_date DATETIME,
+    status_message VARCHAR(255),
+    CONSTRAINT fk_system_task_parent FOREIGN KEY (parent_task_id) REFERENCES system_task(id)
 );

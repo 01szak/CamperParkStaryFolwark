@@ -22,7 +22,7 @@ import java.util.List;
 @SuperBuilder
 public class User extends DbObject implements UserDetails {
 
-    @Column(name = "login")
+    @Column(name = "login", nullable = false)
     private String login;
 
     @Column(name = "username")
@@ -31,10 +31,10 @@ public class User extends DbObject implements UserDetails {
     @Column(name = "email")
     private String email;
 
-    @Column(name = "password")
+    @Column(name = "password", nullable = false)
     private String password;
 
-    @Column(name = "role")
+    @Column(name = "role", nullable = false)
     @Enumerated(EnumType.STRING)
     private UserRole userRole;
 

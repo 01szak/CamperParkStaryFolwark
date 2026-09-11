@@ -1,20 +1,25 @@
 package CPSF.com.demo;
 
+import CPSF.com.demo.helper.AuthenticationHelper;
 import CPSF.com.demo.model.constant.Country;
 import CPSF.com.demo.model.constant.ReservationStatus;
+import CPSF.com.demo.model.constant.UserRole;
 import CPSF.com.demo.model.dto.CamperPlaceTypeDTO;
-import CPSF.com.demo.model.dto.camperPlaceDTO;
 import CPSF.com.demo.model.dto.GuestDTO;
 import CPSF.com.demo.model.dto.ReservationDTO;
+import CPSF.com.demo.model.dto.camperPlaceDTO;
 import CPSF.com.demo.model.entity.CamperPlace;
 import CPSF.com.demo.model.entity.CamperPlaceType;
 import CPSF.com.demo.model.entity.Guest;
 import CPSF.com.demo.model.entity.Reservation;
+import CPSF.com.demo.model.entity.User;
 import CPSF.com.demo.service.core.CamperPlaceService;
 import CPSF.com.demo.service.core.CamperPlaceTypeService;
 import CPSF.com.demo.service.core.GuestService;
 import CPSF.com.demo.service.core.ReservationService;
 import CPSF.com.demo.service.core.StatisticsService;
+import CPSF.com.demo.service.core.UserService;
+import CPSF.com.demo.service.processor.TaskService;
 import CPSF.com.demo.service.util.DtoMapper;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.AfterEach;
@@ -23,22 +28,18 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.context.ActiveProfiles;
-import org.springframework.test.context.DynamicPropertyRegistry;
-import org.springframework.test.context.DynamicPropertySource;
 import org.springframework.transaction.annotation.Transactional;
-import org.testcontainers.containers.MySQLContainer;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.Date;
 
+import static CPSF.com.demo.helper.AuthenticationHelper.IT_USER_LOGIN;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 
 @SpringBootTest(classes = CamperparkdemoApplication.class)
-@ActiveProfiles("test")
 @Transactional
-public class BaseIT {
+public abstract class BaseIT extends AbstractMySqlContainerTest {
 
     @Autowired
     protected ReservationService reservationService;
@@ -50,25 +51,13 @@ public class BaseIT {
     protected CamperPlaceTypeService camperPlaceTypeService;
     @Autowired
     protected StatisticsService statisticsService;
+    @Autowired
+    protected TaskService taskService;
+    @Autowired
+    protected UserService userService;
 
     private static long eachTestStart;
     private static long testStart;
-
-    private static final MySQLContainer<?> MY_SQL_CONTAINER = new MySQLContainer<>("mysql:8.0.32")
-            .withDatabaseName("test_camper_park_sf")
-            .withUsername("root")
-            .withPassword("qwer");
-
-    static {
-        MY_SQL_CONTAINER.start();
-    }
-
-    @DynamicPropertySource
-    static void overrideProps(DynamicPropertyRegistry registry) {
-        registry.add("spring.datasource.url", MY_SQL_CONTAINER::getJdbcUrl);
-        registry.add("spring.datasource.username", MY_SQL_CONTAINER::getUsername);
-        registry.add("spring.datasource.password", MY_SQL_CONTAINER::getPassword);
-    }
 
     @BeforeAll
     public static void beforeAll() {
@@ -79,13 +68,22 @@ public class BaseIT {
     public static void afterAll() {
         var testTime = (new Date().getTime() - testStart);
         System.out.printf("\nTOOK OVERALL: %s ms\n", testTime);
-        MY_SQL_CONTAINER.stop();
     }
 
     @BeforeEach
     public void before() {
         eachTestStart = new Date().getTime();
         System.out.println("\n-----------< TEST START >-----------");
+
+        final var testUser = userService.create(User.builder()
+                .login(IT_USER_LOGIN)
+                .username(IT_USER_LOGIN)
+                .email("it_test_user@example.com")
+                .password("testPassword")
+                .userRole(UserRole.ADMIN)
+                .build()
+        );
+        AuthenticationHelper.authenticateUser(testUser);
     }
 
     @AfterEach
@@ -97,7 +95,7 @@ public class BaseIT {
 
     @Test
     public void isContainerRunning() {
-        assertThat(MY_SQL_CONTAINER.isRunning()).isTrue();
+        assertThat(MY_SQL.isRunning()).isTrue();
     }
 
     protected Reservation createReservationWithNewData(
@@ -132,7 +130,8 @@ public class BaseIT {
                         DtoMapper.getGuestDTO(guest),
                         DtoMapper.getCamperPlaceDto(camperPlace),
                         paid,
-                        ReservationStatus.COMING
+                        ReservationStatus.COMING,
+                        null
                 )
         );
     }

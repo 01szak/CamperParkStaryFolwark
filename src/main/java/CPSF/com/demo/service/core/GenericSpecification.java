@@ -16,6 +16,7 @@ import org.springframework.data.jpa.domain.Specification;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.format.DateTimeParseException;
 import java.util.Optional;
 
@@ -78,12 +79,16 @@ public record GenericSpecification<S>(@NotNull SearchCriteria searchCriteria) im
         try {
             if (value == null) {
                 return null;
+            } else if (LocalDateTime.class.isAssignableFrom(javaType)) {
+                return LocalDateTime.parse(value);
             } else if (LocalDate.class.isAssignableFrom(javaType)) {
                 return LocalDate.parse(value);
             } else if (BigDecimal.class.isAssignableFrom(javaType)) {
                 return new BigDecimal(value);
             } else if (Integer.class.isAssignableFrom(javaType)||int.class.isAssignableFrom(javaType) ) {
                 return Integer.parseInt(value);
+            } else if (Long.class.isAssignableFrom(javaType)||long.class.isAssignableFrom(javaType)) {
+                return Long.parseLong(value);
             } else if (Boolean.class.isAssignableFrom(javaType)||boolean.class.isAssignableFrom(javaType)) {
                 return Boolean.valueOf(value);
             } else if (Enum.class.isAssignableFrom(javaType)) {
@@ -93,6 +98,8 @@ public record GenericSpecification<S>(@NotNull SearchCriteria searchCriteria) im
             }
         } catch (DateTimeParseException e) {
             throw new UserInputException("Nieprawidłowa data!");
+        } catch (IllegalArgumentException e) {
+            throw new UserInputException("Nieprawidłowa wartość filtra: " + value);
         }
 
     }
