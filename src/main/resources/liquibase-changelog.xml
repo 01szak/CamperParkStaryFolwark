@@ -15,8 +15,8 @@
 
     <include file="database/mig/05-06-26/update_countries_in_guests_mig.sql" relativeToChangelogFile="true" context="prod"/>
 
-<!--    <include file="database/mig/08-08-2026/create_organisation_dev.sql" relativeToChangelogFile="true" context="dev"/>-->
-<!--    <include file="database/mig/08-08-2026/insert_app_users_to_organisation_dev.sql" relativeToChangelogFile="true" context="dev"/>-->
+    <include file="database/mig/07-09-26/assign_creator_to_the_reservation.mig.sql" relativeToChangelogFile="true" context="prod"/>
+    <include file="database/mig/07-09-26/assign_app_users_to_the_org.mig.sql" relativeToChangelogFile="true" context="prod"/>
 
     <include file="database/demo/app_user.sql" relativeToChangelogFile="true" context="dev"/>
     <include file="database/demo/guest.sql" relativeToChangelogFile="true" context="dev"/>
