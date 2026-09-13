@@ -12,6 +12,7 @@ import io.swagger.v3.oas.annotations.enums.ParameterIn;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -34,7 +35,7 @@ public class WebAppController {
     @PostMapping("/reservation/init")
     @Parameter(in = ParameterIn.HEADER, name = "X-org-id", required = true)
     @Parameter(in = ParameterIn.HEADER, name = "X-api-key", required = true)
-    public void createUnverifiedReservationAndSendAuthenticationEmail(@RequestBody @Valid ReservationDTO reservationDTO) {
+    public ResponseEntity<String> createUnverifiedReservationAndSendAuthenticationEmail(@RequestBody @Valid ReservationDTO reservationDTO) {
         final var webAppUserName = SecurityContextHolder.getContext().getAuthentication().getName();
         final var webAppUSer = (User) userService.loadUserByUsername(webAppUserName);
         final var task = Task.builder()
@@ -44,14 +45,16 @@ public class WebAppController {
                 .parentTask(null)
                 .build();
         taskService.create(task);
+        return ResponseEntity.ok().build();
     }
 
     @PostMapping("/reservation/verify/{targetId}")
     @Parameter(in = ParameterIn.HEADER, name = "X-org-id", required = true)
     @Parameter(in = ParameterIn.HEADER, name = "X-api-key", required = true)
-    public void verifyReservation(@PathVariable @NotNull String targetId) {
+    public ResponseEntity<String> verifyReservation(@PathVariable @NotNull String targetId) {
         final var task = Task.builder().targetId(targetId).taskType(TaskType.RESERVATION_STATUS_VERIFIER_TASK).build();
         taskService.create(task);
+        return ResponseEntity.ok().build();
     }
 
 }
