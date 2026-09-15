@@ -24,7 +24,11 @@ public class UserController {
     public UserDTO getUser(@AuthenticationPrincipal Jwt jwt) {
         var username = jwt.getClaimAsString("sub");
 
-        return userService.findBy(new SearchCriteria("login", Operation.EQUALS, username))
+        return userService.findBy(SearchCriteria.builder()
+                        .key("login")
+                        .operation(Operation.EQUALS)
+                        .value(username)
+                        .build())
                 .map(DtoMapper::getUserDTO)
                 .stream()
                 .findFirst()

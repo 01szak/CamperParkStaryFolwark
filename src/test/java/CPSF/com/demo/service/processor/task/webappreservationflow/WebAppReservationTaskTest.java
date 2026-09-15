@@ -10,6 +10,8 @@ import CPSF.com.demo.model.dto.GuestDTO;
 import CPSF.com.demo.model.dto.ReservationDTO;
 import CPSF.com.demo.model.dto.UserDTO;
 import CPSF.com.demo.model.dto.camperPlaceDTO;
+import CPSF.com.demo.model.entity.CamperPlace;
+import CPSF.com.demo.model.entity.CamperPlaceType;
 import CPSF.com.demo.model.entity.Guest;
 import CPSF.com.demo.model.entity.Reservation;
 import CPSF.com.demo.model.entity.Task;
@@ -17,7 +19,6 @@ import CPSF.com.demo.service.core.GuestService;
 import CPSF.com.demo.service.core.ReservationService;
 import CPSF.com.demo.service.core.SearchCriteria;
 import CPSF.com.demo.service.processor.TaskService;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
@@ -54,7 +55,7 @@ class WebAppReservationTaskTest {
 
     @Test
     void failsTheTaskWhenThePayloadCannotBeReadAsAReservation() {
-        final var entity = task(null);
+        final var entity = createWebAppReservationTaskEntity(null);
         final var task = new WebAppReservationTask(reservationService, taskService, guestService, entity);
 
         task.doTask();
@@ -66,7 +67,7 @@ class WebAppReservationTaskTest {
 
     @Test
     void failsTheTaskWhenTheReservationHasNoCreator() {
-        final var entity = task(reservationDto(guestDto(null), null));
+        final var entity = createWebAppReservationTaskEntity(reservationDto(guestDto(null), null));
         final var task = new WebAppReservationTask(reservationService, taskService, guestService, entity);
 
         task.doTask();
@@ -78,7 +79,7 @@ class WebAppReservationTaskTest {
 
     @Test
     void createsAnUnverifiedReservationWithHolderAndEmailChildrenForANewGuest() {
-        final var entity = task(reservationDto(guestDto(null), creatorDto()));
+        final var entity = createWebAppReservationTaskEntity(reservationDto(guestDto(null), creatorDto()));
         final var task = new WebAppReservationTask(reservationService, taskService, guestService, entity);
 
         when(guestService.findBy(any(SearchCriteria.class))).thenReturn(Page.empty());
@@ -111,7 +112,7 @@ class WebAppReservationTaskTest {
 
     @Test
     void reusesAnExistingGuestMatchedByEmail() {
-        final var entity = task(reservationDto(guestDto(null), creatorDto()));
+        final var entity = createWebAppReservationTaskEntity(reservationDto(guestDto(null), creatorDto()));
         final var task = new WebAppReservationTask(reservationService, taskService, guestService, entity);
 
         final var existingGuest = Guest.builder().id(7).email("ada@example.com").firstname("Ada").build();
@@ -130,18 +131,16 @@ class WebAppReservationTaskTest {
 
     @Test
     void whenAKnownGuestRetriesAfterADateClashItResendsTheEmailButAddsNoSecondHolder() {
-        final var entity = task(reservationDto(guestDto(7), creatorDto()));
+        final var entity = createWebAppReservationTaskEntity(reservationDto(guestDto(7), creatorDto()));
         final var task = new WebAppReservationTask(reservationService, taskService, guestService, entity);
 
         final var existingGuest = Guest.builder().id(7).email("ada@example.com").build();
-        when(guestService.findBy(any(SearchCriteria.class)))
+        when(guestService.findBy(any(SearchCriteria[].class)))
                 .thenReturn(new PageImpl<>(List.of(existingGuest)));
         when(guestService.update(existingGuest)).thenReturn(existingGuest);
         when(reservationService.create(any(ReservationDTO.class)))
                 .thenThrow(new DateValidationException("Parcela jest już zajęta!"));
-        when(reservationService.findBy(
-                any(SearchCriteria.class), any(SearchCriteria.class),
-                any(SearchCriteria.class), any(SearchCriteria.class)))
+        when(reservationService.findBy(any(SearchCriteria[].class)))
                 .thenReturn(new PageImpl<>(List.of(persistedReservation(55))));
 
         task.doTask();
@@ -155,7 +154,7 @@ class WebAppReservationTaskTest {
 
     @Test
     void propagatesTheDateClashWhenABrandNewGuestCannotBeMatchedToAnExistingReservation() {
-        final var entity = task(reservationDto(guestDto(null), creatorDto()));
+        final var entity = createWebAppReservationTaskEntity(reservationDto(guestDto(null), creatorDto()));
         final var task = new WebAppReservationTask(reservationService, taskService, guestService, entity);
 
         when(guestService.findBy(any(SearchCriteria.class))).thenReturn(Page.empty());
@@ -169,7 +168,7 @@ class WebAppReservationTaskTest {
 
     // --- fixtures ---
 
-    private Task task(Object payload) {
+    private Task createWebAppReservationTaskEntity(Object payload) {
         return Task.builder()
                 .targetId(TARGET_ID)
                 .payload(payload)
@@ -202,8 +201,10 @@ class WebAppReservationTaskTest {
                 .id(id)
                 .checkin(CHECKIN)
                 .checkout(CHECKOUT)
+                .camperPlace(CamperPlace.builder().id(6).index("1a").camperPlaceType(CamperPlaceType.builder().id(10).typeName("name").price(BigDecimal.valueOf(123)).build()).build())
                 .guest(Guest.builder().id(7).email("ada@example.com").firstname("Ada").build())
                 .reservationStatus(ReservationStatus.UNVERIFIED)
                 .build();
     }
+
 }

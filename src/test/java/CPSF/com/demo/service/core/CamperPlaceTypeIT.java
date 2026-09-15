@@ -116,8 +116,8 @@ public class CamperPlaceTypeIT extends BaseIT {
 
         // Then
         assertThat(updatedRes).hasSize(1);
-        assertThat(camperPlaceTypeService.findBy(new SearchCriteria("typeName", Operation.EQUALS, "UpdatedOldType")).getContent()).isNotEmpty();
-        assertThat(camperPlaceTypeService.findBy(new SearchCriteria("typeName", Operation.EQUALS, "BrandNewType")).getContent()).isNotEmpty();
+        assertThat(camperPlaceTypeService.findBy(SearchCriteria.builder().key("typeName").operation(Operation.EQUALS).value("UpdatedOldType").build()).getContent()).isNotEmpty();
+        assertThat(camperPlaceTypeService.findBy(SearchCriteria.builder().key("typeName").operation(Operation.EQUALS).value("BrandNewType").build()).getContent()).isNotEmpty();
 
         cleanup(null, List.of(createdRes));
         cleanup(null, updatedRes);
