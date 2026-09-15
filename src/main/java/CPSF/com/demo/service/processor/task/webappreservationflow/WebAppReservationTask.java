@@ -2,7 +2,6 @@ package CPSF.com.demo.service.processor.task.webappreservationflow;
 
 import CPSF.com.demo.exception.DateValidationException;
 import CPSF.com.demo.model.EmailData;
-import CPSF.com.demo.model.constant.JoinOperator;
 import CPSF.com.demo.model.constant.Operation;
 import CPSF.com.demo.model.constant.TaskStatus;
 import CPSF.com.demo.model.constant.TaskType;
@@ -36,6 +35,8 @@ public class WebAppReservationTask implements ExecutableTask {
     private final GuestService guestService;
     private final Task webAppReservationTaskEntity;
 
+    private record CreateReservationResult(boolean isRetry, Reservation createdReservation){};
+
     @Override
     public void doTask() {
         final var reservationDTO =
@@ -53,41 +54,68 @@ public class WebAppReservationTask implements ExecutableTask {
             return;
         }
 
-        var guestOpt =
-                guestService.findBy(new SearchCriteria("email", Operation.EQUALS, reservationDTO.guest().email())).get().findFirst();
-
+        final var byEmail = SearchCriteria.builder().key("email").operation(Operation.EQUALS).value(reservationDTO.guest().email()).build();
+        final var guestOpt = guestService.findBy(byEmail).stream().findFirst();
         //If the guest already exists (matched by email) we reuse that entity so the reservation
         //is linked to a persisted guest id.
-        final var guest = guestOpt.isPresent()
-                ? DtoMapper.getGuestDTO(guestService.update(guestOpt.get()))
-                : reservationDTO.guest();
+        final var guest = guestOpt.isPresent() ? DtoMapper.getGuestDTO(guestService.update(guestOpt.get())) : reservationDTO.guest();
+        final var modifiedReservation = reservationDTO.toBuilder().guest(guest).reservationStatus(UNVERIFIED).build();
 
-        final var modifiedReservation = reservationDTO.toBuilder()
-                .guest(guest)
-                .reservationStatus(UNVERIFIED)
-                .build();
-
-        Reservation createdReservation;
-
+        CreateReservationResult createReservationResult;
         try {
-            createdReservation = reservationService.create(modifiedReservation);
+            createReservationResult = new CreateReservationResult(false, reservationService.create(modifiedReservation));
         } catch (DateValidationException e) {
-            //we check whether the guest is retrying the reservation flow
-            Optional.ofNullable(guest.id()).orElseThrow(() -> e);
-            createdReservation = reservationService.findBy(
-                    new SearchCriteria("guest", "id", Operation.EQUALS, guest.id().toString()),
-                    new SearchCriteria("reservationStatus", Operation.EQUALS, UNVERIFIED.toString(), JoinOperator.AND),
-                    new SearchCriteria("checkin", Operation.EQUALS, reservationDTO.checkin().toString(), JoinOperator.AND),
-                    new SearchCriteria("checkout", Operation.EQUALS, reservationDTO.checkout().toString(), JoinOperator.AND)
-            )
-            .get()
-            .findFirst()
-            .orElseThrow(() -> e);
+            createReservationResult = handleRetry(guest, reservationDTO);
+            if (!createReservationResult.isRetry()) {
+                throw e;
+            }
         }
-
-        createReservationHolderTask(createdReservation.getId());
+        final var createdReservation = createReservationResult.createdReservation();
+        if (!createReservationResult.isRetry()) {
+            createReservationHolderTask(createdReservation.getId());
+        }
         //we need to map the entity again cause we need to pass Id as well
         createEmailTask(DtoMapper.getGuestDTO(createdReservation.getGuest()), DtoMapper.getReservationDto(createdReservation));
+    }
+
+    private CreateReservationResult handleRetry(GuestDTO guest, ReservationDTO reservationDTO) {
+        //we check whether the guest is retrying the reservation flow
+        Reservation createdReservation = null;
+        var isRetry = false;
+
+        if (guest.id() == null) {
+            return new CreateReservationResult(isRetry, createdReservation);
+        }
+
+        final var optCreatedReservation = reservationService.findBy(
+                SearchCriteria.builder()
+                        .joinObject("guest")
+                        .key("id")
+                        .operation(Operation.EQUALS)
+                        .value(guest.id().toString())
+                        .and()
+                        .key("reservationStatus")
+                        .operation(Operation.EQUALS)
+                        .value(UNVERIFIED.toString())
+                        .and()
+                        .key("checkin")
+                        .operation(Operation.EQUALS)
+                        .value(reservationDTO.checkin().toString())
+                        .and()
+                        .key("checkout")
+                        .operation(Operation.EQUALS)
+                        .value(reservationDTO.checkout().toString())
+                        .build()
+        )
+        .getContent();
+
+
+        if (optCreatedReservation.size() == 1) {
+            createdReservation = optCreatedReservation.getFirst();
+            isRetry = true;
+        }
+
+        return new CreateReservationResult(isRetry, createdReservation);
     }
 
     private void createReservationHolderTask(Integer createdReservationId) {
