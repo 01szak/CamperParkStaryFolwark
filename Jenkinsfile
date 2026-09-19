@@ -15,6 +15,7 @@ pipeline {
         SPRING_PROFILE = "${params.PROFILE}"
 
         EXTERNAL_PORT  = "${params.PROFILE == 'prod' ? '2000' : '2001'}"
+        EXTERNAL_DEBUG_PORT = '5005'
 
         LOCAL_PATH     = "/var/www/backend/camper_park_v2-${params.PROFILE}"
         DB_NAME        = "camper_park_${params.PROFILE}"
@@ -81,7 +82,8 @@ pipeline {
                     usernamePassword(credentialsId: "camper_park_db_${SPRING_PROFILE}", passwordVariable: 'DB_PASSWORD', usernameVariable: 'DB_USER'),
                     string(credentialsId: "${SPRING_PROFILE}-db-root-pass", variable: 'DB_ROOT_PASSWORD'),
                     file(credentialsId: "${SPRING_PROFILE}-camper_park_RSA_private-key", variable: 'RSA_FILE'),
-                    file(credentialsId: "${SPRING_PROFILE}-camper_park-RSA-key", variable: 'RSA_PUB_FILE')
+                    file(credentialsId: "${SPRING_PROFILE}-camper_park-RSA-key", variable: 'RSA_PUB_FILE'),
+                    string(credentialsId: "novu_api_key", variable: 'NOVU_SECRET_KEY')
                 ]) {
                     sh '''
                         # Domyślny backup dla prod/stage, jeśli nie ustawiono DB_DUMP_SOURCE

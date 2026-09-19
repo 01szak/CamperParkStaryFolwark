@@ -1,6 +1,6 @@
 package CPSF.com.demo.service.core;
 
-import CPSF.com.demo.exception.ClientInputException;
+import CPSF.com.demo.exception.UserInputException;
 import CPSF.com.demo.model.dto.CamperPlaceTypeDTO;
 import CPSF.com.demo.model.entity.CamperPlace;
 import CPSF.com.demo.model.entity.CamperPlaceType;
@@ -66,7 +66,7 @@ public class CamperPlaceTypeService extends CRUDServiceImpl<CamperPlaceType>{
     public void deleteById(int id) {
         var cpType = super.findById(id);
         if (!cpType.getCamperPlaces().isEmpty()) {
-            throw new ClientInputException("Nie można usunąć typu parceli do którego są przypisane parcele! Przypisz parcele do innego typu następnie spróbuj ponownie");
+            throw new UserInputException("Nie można usunąć typu parceli do którego są przypisane parcele! Przypisz parcele do innego typu następnie spróbuj ponownie");
         }
         super.deleteById(id);
     }

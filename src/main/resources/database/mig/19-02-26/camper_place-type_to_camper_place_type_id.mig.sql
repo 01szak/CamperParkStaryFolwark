@@ -6,8 +6,8 @@
 
 UPDATE camper_place cp
     JOIN camper_place_type cpt ON cp.type = cpt.type_name
-    SET cp.camper_place_type_id = cpt.id
+SET cp.camper_place_type_id = cpt.id
 WHERE cp.camper_place_type_id IS NULL;
 
 ALTER TABLE camper_place
-DROP COLUMN type;
+    DROP COLUMN type;

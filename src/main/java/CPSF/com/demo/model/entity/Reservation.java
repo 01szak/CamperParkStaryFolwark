@@ -24,33 +24,37 @@ import static CPSF.com.demo.model.constant.ReservationStatus.COMING;
 @EqualsAndHashCode(callSuper = true)
 public class Reservation extends DbObject {
 
+    @NotNull(message = "Check-in date is required")
     @Column(name = "checkin")
     @JsonFormat(pattern = "yyyy-MM-dd")
-    @NotNull(message = "Check-in date is required")
     private LocalDate checkin;
 
+    @NotNull(message = "Check-out date is required")
     @Column(name = "checkout")
     @JsonFormat(pattern = "yyyy-MM-dd")
-    @NotNull(message = "Check-out date is required")
     private LocalDate checkout;
 
+    @NotNull
     @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "camper_place_id")
+    @JoinColumn(name = "camper_place_id", nullable = false)
     @Lazy
     @JsonBackReference("camperPlace-reservations")
     private CamperPlace camperPlace;
 
+    @NotNull
     @ManyToOne
-    @JoinColumn(name = "guest_id")
+    @JoinColumn(name = "guest_id", nullable = false)
     @Lazy
     @JsonBackReference("guest-reservations")
     private Guest guest;
 
+    @NotNull
     @Enumerated(EnumType.STRING)
-    @Column(name = "status")
+    @Column(name = "status", nullable = false)
     @Builder.Default
     private ReservationStatus reservationStatus = COMING;
 
+    @NotNull
     @Column(name = "is_paid")
     private Boolean paid = false;
 
@@ -59,5 +63,9 @@ public class Reservation extends DbObject {
     @Column(name = "price")
     private BigDecimal price;
 
+    @NotNull
+    @ManyToOne
+    @JoinColumn(name = "creator_id")
+    private User creator;
 
 }

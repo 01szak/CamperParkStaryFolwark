@@ -1,6 +1,10 @@
 package CPSF.com.demo.service.util;
 
-import CPSF.com.demo.model.dto.*;
+import CPSF.com.demo.model.dto.CamperPlaceTypeDTO;
+import CPSF.com.demo.model.dto.camperPlaceDTO;
+import CPSF.com.demo.model.dto.GuestDTO;
+import CPSF.com.demo.model.dto.ReservationDTO;
+import CPSF.com.demo.model.dto.UserDTO;
 import CPSF.com.demo.model.entity.CamperPlace;
 import CPSF.com.demo.model.entity.CamperPlaceType;
 import CPSF.com.demo.model.entity.Guest;
@@ -12,14 +16,15 @@ public class DtoMapper {
 
     public static UserDTO getUserDTO(User u) {
         return new UserDTO(
+                u.getId(),
                 u.getUsername(),
                 u.getEmail(),
                 u.getUserRole().toString()
         );
     }
 
-    public static CamperPlace_DTO getCamperPlaceDto(@NotNull CamperPlace c) {
-        return new CamperPlace_DTO(
+    public static camperPlaceDTO getCamperPlaceDto(@NotNull CamperPlace c) {
+        return new camperPlaceDTO(
                 c.getId(),
                 c.getIndex(),
                 getCamperPlaceTypeDTO(c.getCamperPlaceType()),
@@ -27,15 +32,16 @@ public class DtoMapper {
         );
     }
 
-    public static Reservation_DTO getReservationDto(@NotNull Reservation r) {
-        return new Reservation_DTO(
+    public static ReservationDTO getReservationDto(@NotNull Reservation r) {
+        return new ReservationDTO(
                 r.getId(),
                 r.getCheckin(),
                 r.getCheckout(),
                 getGuestDTO(r.getGuest()),
                 getCamperPlaceDto(r.getCamperPlace()),
                 r.getPaid(),
-                r.getReservationStatus()
+                r.getReservationStatus(),
+                r.getCreator() != null ? getUserDTO(r.getCreator()) : null
         );
     }
 

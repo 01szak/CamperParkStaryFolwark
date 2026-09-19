@@ -1,6 +1,6 @@
 package CPSF.com.demo.service.core;
 
-import CPSF.com.demo.exception.ClientInputException;
+import CPSF.com.demo.exception.UserInputException;
 import CPSF.com.demo.model.dto.GuestDTO;
 import CPSF.com.demo.model.entity.Guest;
 import CPSF.com.demo.repository.CRUDRepository;
@@ -63,7 +63,7 @@ public class GuestService extends CRUDServiceImpl<Guest> {
         ).allMatch(v -> v == null || v.isBlank());
 
         if (guestIsEmpty) {
-            throw new ClientInputException("Utwórz lub podaj istniejącego gościa");
+            throw new UserInputException("Utwórz lub podaj istniejącego gościa");
         }
     }
 

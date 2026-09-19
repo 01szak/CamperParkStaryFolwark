@@ -1,12 +1,11 @@
 package CPSF.com.demo.controller;
 
 import CPSF.com.demo.model.dto.AuthDTO;
-import CPSF.com.demo.service.auth.JwtServiceImpl;
 import CPSF.com.demo.service.auth.JwtService;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -14,29 +13,20 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 
-@RestController()
+@RestController
 @RequestMapping("/auth")
+@RequiredArgsConstructor
 public class AuthController {
 
     private final AuthenticationManager authenticationManager;
-
-    private final JwtService service;
-
-    public AuthController(AuthenticationManager authenticationManager, JwtServiceImpl jwtTokenServiceImpl, JwtService service) {
-        this.authenticationManager = authenticationManager;
-        this.service = service;
-    }
+    private final JwtService jwtService;
 
     @PostMapping("/login")
     public ResponseEntity<?> login(@RequestBody AuthDTO.LoginRequest credentials) throws IllegalAccessException {
-
-        UsernamePasswordAuthenticationToken a =
-                new UsernamePasswordAuthenticationToken(credentials.login(), credentials.password());
-
-        Authentication authentication = authenticationManager.authenticate(a);
+        final var a = new UsernamePasswordAuthenticationToken(credentials.login(), credentials.password());
+        final var authentication = authenticationManager.authenticate(a);
         SecurityContextHolder.getContext().setAuthentication(authentication);
-        String token = service.generateToken(authentication);
-        return ResponseEntity.ok(new AuthDTO.Response("Authenticated", token));
+        return ResponseEntity.ok(new AuthDTO.Response("Authenticated", jwtService.generateToken(authentication)));
     }
 
 //    @PostMapping("/register")
@@ -65,6 +55,5 @@ public class AuthController {
 //        return ResponseEntity.ok(new AuthDTO.Response("Registered", token));
 //
 //    }
-
 
 }
