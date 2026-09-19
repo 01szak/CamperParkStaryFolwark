@@ -127,22 +127,12 @@ public class ReservationServiceTest {
         // Given
         final var checkin = LocalDate.now().minusDays(5);
         final var checkout = LocalDate.now().minusDays(1);
-        final var guestDto = createGuestDto(null);
-        final var cpDto = createCamperPlaceDto(1, "1");
-        final var reservationDto = createReservationDto(null, checkin, checkout, guestDto, cpDto, false, null);
-
-        when(userService.loadUserByUsername(USERNAME)).thenReturn(defaultUser);
-        when(camperPlaceService.findById(1)).thenReturn(defaultCamperPlace);
-        when(camperPlaceService.hasOverlappingReservation(1, checkin, checkout, null)).thenReturn(false);
-        when(guestService.create(guestDto)).thenReturn(defaultGuest);
-        when(calculator.calculate(DEFAULT_PRICE, 4L)).thenReturn(CALCULATED_PRICE);
-        when(reservationRepository.save(any(Reservation.class))).thenAnswer(invocation -> invocation.getArgument(0));
 
         // When
-        final var result = reservationService.create(reservationDto);
+        final var result = reservationService.getActuallReservationStatus(checkin, checkout);
 
         // Then
-        assertThat(result.getReservationStatus()).isEqualTo(ReservationStatus.EXPIRED);
+        assertThat(result).isEqualTo(ReservationStatus.EXPIRED);
     }
 
     @Test

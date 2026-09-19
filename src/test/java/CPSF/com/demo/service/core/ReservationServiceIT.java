@@ -337,9 +337,11 @@ public class ReservationServiceIT extends BaseIT {
         createReservation(cp, checkin2, checkout2, guest, false);
         createReservation(cp, checkin3, checkout3, guest, false);
 
-        final var occupiedDates = checkin1.datesUntil(checkout3).toList();
-
-        assertThat(camperPlaceService.getOccupiedDates(cp.getId()).containsAll(occupiedDates));
+        assertThat(camperPlaceService.getOccupiedDates(cp.getId())).containsExactly(
+                checkin1.datesUntil(checkout1).toList(),
+                checkin2.datesUntil(checkout2).toList(),
+                checkin3.datesUntil(checkout3).toList()
+        );
     }
 }
 

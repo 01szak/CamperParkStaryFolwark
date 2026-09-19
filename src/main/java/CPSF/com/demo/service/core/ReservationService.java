@@ -140,6 +140,7 @@ public class ReservationService extends CRUDServiceImpl<Reservation> {
     }
 
     private void validateDates(LocalDate checkout, LocalDate checkin, Integer camperPlaceId, Integer reservationId) {
+        checkClientInput(checkout.isBefore(LocalDate.now()), "Rezerwacja już wygasła");
         checkClientInput(checkout.isBefore(checkin), "Data wyjazdu nie może być przed datą wjazdu");
         checkClientInput(checkout.equals(checkin), "Czas trwania rezerwacji musi wynosić minimum 1 dobę");
         checkClientInput(

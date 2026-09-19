@@ -8,6 +8,7 @@ import org.junit.jupiter.api.Test;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -31,7 +32,7 @@ public class CamperPlaceServiceIT extends BaseIT {
                 false
         );
 
-        final var expected = checkin.plusDays(1).datesUntil(checkout).toList();
+        final var expected = List.of(checkin.datesUntil(checkout).toList());
         final var result = camperPlaceService.getOccupiedDates(reservation.getCamperPlace().getId());
 
         assertThat(result).isEqualTo(expected);
@@ -58,7 +59,13 @@ public class CamperPlaceServiceIT extends BaseIT {
         createReservation(camperPlace, res2Checkin, res2Checkout, guest, false);
 
         final var occupiedDates = camperPlaceService.getOccupiedDates(res1.getCamperPlace().getId());
-        assertThat(occupiedDates).doesNotContain(res1Checkout);
+
+        // each reservation occupies its own nights only (checkin inclusive, checkout exclusive)
+        assertThat(occupiedDates).containsExactly(
+                res1Checkin.datesUntil(res1Checkout).toList(),
+                res2Checkin.datesUntil(res2Checkout).toList()
+        );
+        assertThat(occupiedDates.getFirst()).doesNotContain(res1Checkout);
     }
 
     @Test

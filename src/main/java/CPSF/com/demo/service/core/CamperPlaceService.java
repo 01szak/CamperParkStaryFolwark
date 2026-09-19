@@ -7,7 +7,6 @@ import CPSF.com.demo.repository.CRUDRepository;
 import CPSF.com.demo.repository.CamperPlaceRepository;
 import lombok.RequiredArgsConstructor;
 import org.jspecify.annotations.NonNull;
-import org.jspecify.annotations.Nullable;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 
@@ -15,7 +14,9 @@ import java.math.BigDecimal;
 import java.sql.SQLIntegrityConstraintViolationException;
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -103,12 +104,19 @@ public class CamperPlaceService extends CRUDServiceImpl<CamperPlace> {
         return camperPlaceRepository.findCamperPlaceByPriceNotNullAndCamperPlaceType_Id(id);
     }
 
-    public List<LocalDate> getOccupiedDates(Integer cpId) {
+    public List<List<LocalDate>> getOccupiedDates(Integer cpId) {
         return getOccupiedDates(cpId, null);
     }
 
-    public List<LocalDate> getOccupiedDates(Integer cpId, Integer reservationId) {
-        return camperPlaceRepository.getOccupiedDates(cpId, reservationId);
+    public List<List<LocalDate>> getOccupiedDates(Integer cpId, Integer reservationId) {
+        return camperPlaceRepository.getOccupiedDates(cpId, reservationId).stream()
+                .collect(
+                        Collectors.groupingBy(
+                            CamperPlaceRepository.OccupiedDateRow::getReservationId,
+                            LinkedHashMap::new,
+                            Collectors.mapping(CamperPlaceRepository.OccupiedDateRow::getOcpDate, Collectors.toList())
+                        )
+                ).values().stream().toList();
     }
 
     public boolean hasOverlappingReservation(Integer cpId, LocalDate checkin, LocalDate checkout, Integer reservationId) {
