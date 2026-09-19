@@ -28,8 +28,8 @@ public class StatisticsServiceIT extends BaseIT {
                     "GUEST_FN_DEMO" + i,
                     "GUEST_LN_DEMO" + i,
                     Country.PERU,
-                    LocalDate.parse("2000-01-01"),
-                    LocalDate.parse("2000-01-02"),
+                    LocalDate.parse("2100-01-01"),
+                    LocalDate.parse("2100-01-02"),
                     i <= 4
             );
         }

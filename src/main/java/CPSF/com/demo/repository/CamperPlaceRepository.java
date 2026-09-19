@@ -23,35 +23,33 @@ public interface CamperPlaceRepository extends CRUDRepository<CamperPlace> {
 
     List<CamperPlace> findCamperPlaceByPriceNotNullAndCamperPlaceType_Id(Integer cptId);
 
+    interface OccupiedDateRow {
+        Integer getReservationId();
+        LocalDate getOcpDate();
+    }
+
     @Query(value = """
-        WITH RECURSIVE exc AS (
-            SELECT DATE_ADD(checkin, INTERVAL 1 DAY ) as exc_date, checkout as exc_checkout 
+        WITH RECURSIVE
+        ocp AS (
+            SELECT r.id AS ocp_r_id, r.checkin AS ocp_date, r.checkout AS ocp_checkout
             FROM reservation AS r
-            WHERE r.id = :reservationId
-                
-            UNION ALL
-            
-            SELECT DATE_ADD(exc_date, INTERVAL 1 DAY), exc_checkout
-            FROM exc
-            WHERE DATE_ADD(exc_date, INTERVAL 1 DAY) < exc_checkout
-        ),
-        ocp AS ( 
-            SELECT DATE_ADD(checkin, INTERVAL 1 DAY) as ocp_date, checkout as ocp_checkout 
-            FROM reservation AS r
-            WHERE r.camper_place_id = :cpId AND r.checkout >= CURDATE()
+            WHERE r.camper_place_id = :cpId
+              AND r.checkout >= CURDATE()
+              AND (:reservationId IS NULL OR r.id <> :reservationId)
                 
             UNION ALL
                 
-            SELECT DATE_ADD(ocp_date, INTERVAL 1 DAY), ocp_checkout
+            SELECT ocp_r_id, DATE_ADD(ocp_date, INTERVAL 1 DAY), ocp_checkout
             FROM ocp
             WHERE DATE_ADD(ocp_date, INTERVAL 1 DAY) < ocp_checkout
         )
             
-        SELECT DISTINCT ocp_date
+        SELECT ocp_r_id AS reservationId, ocp_date AS ocpDate
         FROM ocp
-        WHERE ocp_date >= CURDATE() AND ocp_date NOT IN (SELECT exc_date FROM exc)
+        WHERE ocp_date >= CURDATE()
+        ORDER BY ocp_r_id, ocp_date
     """, nativeQuery = true)
-    List<LocalDate> getOccupiedDates(@Param("cpId") Integer cpId, @Param("reservationId") Integer reservationId);
+    List<OccupiedDateRow> getOccupiedDates(@Param("cpId") Integer cpId, @Param("reservationId") Integer reservationId);
 
     @Query(value = """
         SELECT COUNT(*) FROM reservation r
@@ -60,10 +58,12 @@ public interface CamperPlaceRepository extends CRUDRepository<CamperPlace> {
           AND r.checkin  < :checkout
           AND r.checkout > :checkin
     """, nativeQuery = true)
-    long countOverlappingReservations(@Param("cpId") Integer cpId,
-                                      @Param("checkin") LocalDate checkin,
-                                      @Param("checkout") LocalDate checkout,
-                                      @Param("reservationId") Integer reservationId);
+    long countOverlappingReservations(
+            @Param("cpId") Integer cpId,
+            @Param("checkin") LocalDate checkin,
+            @Param("checkout") LocalDate checkout,
+            @Param("reservationId") Integer reservationId
+    );
 
 
 }

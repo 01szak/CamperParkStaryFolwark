@@ -34,7 +34,7 @@ public class CamperPlaceController {
     }
 
     @GetMapping("/occupancy/{cpId}")
-    public List<LocalDate> getOccupiedDate(@PathVariable Integer cpId) {
+    public List<List<LocalDate>> getOccupiedDates(@PathVariable Integer cpId) {
         return camperPlaceService.getOccupiedDates(cpId);
     }
 
