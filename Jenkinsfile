@@ -11,16 +11,17 @@ pipeline {
     }
 
     environment {
-        APP_NAME       = "camper_park"
-        SPRING_PROFILE = "${params.PROFILE}"
+        APP_NAME        = "camper_park"
+        SPRING_PROFILE  = "${params.PROFILE}"
 
-        EXTERNAL_PORT  = "${params.PROFILE == 'prod' ? '2000' : '2001'}"
-        EXTERNAL_DEBUG_PORT = '5005'
+        EXTERNAL_PORT   = "${params.PROFILE == 'prod' ? '2000' : '2001'}"
 
-        LOCAL_PATH     = "/var/www/backend/camper_park_v2-${params.PROFILE}"
-        DB_NAME        = "camper_park_${params.PROFILE}"
+        LOCAL_PATH      = "/var/www/backend/camper_park_v2-${params.PROFILE}"
+        DB_NAME         = "camper_park_${params.PROFILE}"
         
-        DUMPS_DIR      = "/home/camper_park/backups"
+        DUMPS_DIR       = "/home/camper_park/backups"
+
+        NOVU_SERVER_URL = "http://localhost:3000"
     }
 
     stages {

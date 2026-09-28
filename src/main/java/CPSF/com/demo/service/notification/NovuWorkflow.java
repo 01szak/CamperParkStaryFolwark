@@ -6,7 +6,7 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public enum NovuWorkflow {
 
-    TEST_WORKFLOW("test-workflow");
+    VERIFY_RESERVATION_WORKFLOW("reservation-verification-email");
 
     private final String workflow;
 

@@ -30,7 +30,7 @@ public class SendEmailAuthenticationTask implements ExecutableTask {
                 "targetId", sendEmailAuthenticationTaskEntity.getTargetId(),
                 "additionalPayload", additionalPayload
         );
-        final var workflow = NovuWorkflow.TEST_WORKFLOW.getWorkflowBuilder().to(to).payload(payload).build();
+        final var workflow = NovuWorkflow.VERIFY_RESERVATION_WORKFLOW.getWorkflowBuilder().to(to).payload(payload).build();
         novu.trigger().body(workflow).call();
     }
 
