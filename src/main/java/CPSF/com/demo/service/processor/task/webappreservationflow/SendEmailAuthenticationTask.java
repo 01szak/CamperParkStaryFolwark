@@ -9,10 +9,12 @@ import co.novu.Novu;
 import co.novu.models.components.SubscriberPayloadDto;
 import co.novu.models.components.TriggerEventRequestDtoTo2;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
 import java.util.Map;
 
 
+@Slf4j
 @RequiredArgsConstructor
 public class SendEmailAuthenticationTask implements ExecutableTask {
 
@@ -31,7 +33,20 @@ public class SendEmailAuthenticationTask implements ExecutableTask {
                 "additionalPayload", additionalPayload
         );
         final var workflow = NovuWorkflow.VERIFY_RESERVATION_WORKFLOW.getWorkflowBuilder().to(to).payload(payload).build();
-        novu.trigger().body(workflow).call();
+        log.info("Triggering novu workflow with workflowId {}", workflow.workflowId());
+
+        final var response = novu.trigger().body(workflow).call();
+        if (response.statusCode() < 300) {
+            log.info("Workflow triggered successfully, Novu responded with status: {}", response.statusCode());
+        } else {
+            final var failureReason = response.triggerEventResponseDto().isPresent()
+                    ? response.triggerEventResponseDto().get()
+                    : "Unknown";
+            log.warn("Failed to trigger workflow, Novu responded with status: {} reason: {}",
+                    response.statusCode(),
+                    failureReason
+            );
+        }
     }
 
     private SubscriberPayloadDto buildSubscriber(GuestDTO guest) {

@@ -1,12 +1,13 @@
 package CPSF.com.demo.configuration.notification;
 
 import co.novu.Novu;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
-import java.util.Optional;
 
+@Slf4j
 @Configuration
 public class NotificationConfig {
 
@@ -20,10 +21,19 @@ public class NotificationConfig {
     //TODO Novu should be inside NotificationService to not correlate business logic with external service
     @Bean
     public Novu novu () {
-        return Novu.builder()
+        final var finalUrl = serverUrl != null ? serverUrl : DEFAULT_NOVU_SERVER;
+        final var novu = Novu.builder()
                 .secretKey(novuSecretKey)
-                .serverURL(serverUrl != null ? serverUrl : DEFAULT_NOVU_SERVER)
+                .serverURL(finalUrl)
                 .build();
+
+        log.info(
+                "Novu configured with env variables: {} with integration params: {}",
+                novu.environmentVariables().listDirect(),
+                novu.integrations().listDirect()
+        );
+
+        return novu;
     }
 
 }
