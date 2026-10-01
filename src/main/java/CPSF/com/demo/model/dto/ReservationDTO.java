@@ -1,17 +1,20 @@
 package CPSF.com.demo.model.dto;
 
-import lombok.*;
+import CPSF.com.demo.model.constant.ReservationStatus;
+import jakarta.annotation.Nullable;
+import jakarta.validation.constraints.NotNull;
+import lombok.Builder;
 
-@Data
-@Builder
-@NoArgsConstructor
-@AllArgsConstructor
-public class ReservationDTO extends DTO {
-    private int id;
-    private String checkin;
-    private String checkout;
-    private String reservationStatus;
-    private String camperPlaceIndex;
-    private GuestDTO user;
-    private boolean paid;
-}
+import java.time.LocalDate;
+
+@Builder(toBuilder = true)
+public record ReservationDTO(
+        @Nullable Integer id,
+        @NotNull LocalDate checkin,
+        @NotNull LocalDate checkout,
+        @NotNull GuestDTO guest,
+        @NotNull camperPlaceDTO camperPlace,
+        @NotNull Boolean paid,
+        @Nullable ReservationStatus reservationStatus,
+        @Nullable UserDTO creator
+) {}

@@ -5,6 +5,7 @@ import CPSF.com.demo.model.entity.Reservation;
 import CPSF.com.demo.service.core.StatisticsService.StatisticsModel;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
@@ -76,4 +77,24 @@ public interface ReservationRepository extends CRUDRepository<Reservation> {
             AND r.camperPlace.id = :camperPlaceId
         """)
         List<Reservation> findByDateInBetweenAndCamperPlaceId(@Param("date") LocalDate date, @Param("camperPlaceId") Integer camperPlaceId);
+
+
+        @Modifying
+        @Query("""
+            UPDATE Reservation r SET r.reservationStatus = 
+            CASE 
+                WHEN r.checkin <= CURRENT_DATE AND r.checkout > CURRENT_DATE THEN 'ACTIVE'
+                WHEN r.checkout <= CURRENT_DATE THEN 'EXPIRED'
+                WHEN r.checkin > CURRENT_DATE THEN 'COMING'
+                ELSE r.reservationStatus 
+            END
+            WHERE r.reservationStatus NOT IN ('UNVERIFIED', 'EXPIRED')
+                    AND (
+                        (r.checkin <= CURRENT_DATE AND r.checkout > CURRENT_DATE AND r.reservationStatus <> 'ACTIVE')
+                        OR (r.checkout <= CURRENT_DATE AND r.reservationStatus <> 'EXPIRED')
+                        OR (r.checkin > CURRENT_DATE AND r.reservationStatus <> 'COMING')
+                    )
+        """)
+        int setActualReservationStatuses();
+
 }

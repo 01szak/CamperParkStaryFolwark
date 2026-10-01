@@ -18,11 +18,11 @@ public class StatisticsService {
         public record CountryDistribution (String countryIsoCode, long usersCount) {}
     }
 
-    public List<StatisticsModel.CountryDistribution> getUserPerCountry() {
-        return getUserPerCountry(0, 0);
+    public List<StatisticsModel.CountryDistribution> getGuestPerCountry() {
+        return getGuestPerCountry(0, 0);
     }
 
-    public List<StatisticsModel.CountryDistribution> getUserPerCountry(int month, int year) {
+    public List<StatisticsModel.CountryDistribution> getGuestPerCountry(int month, int year) {
         return guestService.getCountryDistribution(month, year);
     }
 
