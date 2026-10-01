@@ -33,20 +33,25 @@ public class SendEmailAuthenticationTask implements ExecutableTask {
                 "additionalPayload", additionalPayload
         );
         final var workflow = NovuWorkflow.VERIFY_RESERVATION_WORKFLOW.getWorkflowBuilder().to(to).payload(payload).build();
-        log.info("Triggering novu workflow with workflowId {}", workflow.workflowId());
+        log.info("Triggering Novu workflow with workflowId: {}", workflow.workflowId());
+        try {
+            final var response = novu.trigger().body(workflow).call();
 
-        final var response = novu.trigger().body(workflow).call();
-        if (response.statusCode() < 300) {
-            log.info("Workflow triggered successfully, Novu responded with status: {}", response.statusCode());
-        } else {
-            final var failureReason = response.triggerEventResponseDto().isPresent()
-                    ? response.triggerEventResponseDto().get()
-                    : "Unknown";
-            log.warn("Failed to trigger workflow, Novu responded with status: {} reason: {}",
-                    response.statusCode(),
-                    failureReason
-            );
+            if (response.statusCode() < 300) {
+                log.info("Workflow triggered successfully, Novu responded with status: {}", response.statusCode());
+            } else {
+                final var failureReason = response.triggerEventResponseDto().isPresent()
+                        ? response.triggerEventResponseDto().get()
+                        : "Unknown";
+                log.warn("Failed to trigger workflow, Novu responded with status: {} reason: {}",
+                        response.statusCode(),
+                        failureReason
+                );
+            }
+        } catch (Exception e) {
+            log.error("Something went wrong while trying to trigger the Novu workflow with workflowId: {}", workflow.workflowId(), e);
         }
+
     }
 
     private SubscriberPayloadDto buildSubscriber(GuestDTO guest) {
