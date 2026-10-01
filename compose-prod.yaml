@@ -48,7 +48,9 @@ services:
       - "${RSA_PUBLIC_PATH}:/var/rsa/public.pem:ro"
     networks:
       - camper_park-net
-
+      - novu_default
 networks:
   camper_park-net:
     driver: bridge
+  novu_default:
+    external: true

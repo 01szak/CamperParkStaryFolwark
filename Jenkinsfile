@@ -21,7 +21,7 @@ pipeline {
         
         DUMPS_DIR       = "/home/camper_park/backups"
 
-        NOVU_SERVER_URL = "http://localhost:3000"
+        NOVU_SERVER_URL = "http://api:3000"
     }
 
     stages {
