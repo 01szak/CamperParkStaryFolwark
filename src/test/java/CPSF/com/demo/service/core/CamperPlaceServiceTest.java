@@ -2,14 +2,10 @@ package CPSF.com.demo.service.core;
 
 import CPSF.com.demo.exception.UserInputException;
 import CPSF.com.demo.model.dto.CamperPlaceTypeDTO;
-import CPSF.com.demo.model.dto.camperPlaceDTO;
+import CPSF.com.demo.model.dto.CamperPlaceDTO;
 import CPSF.com.demo.model.entity.CamperPlace;
 import CPSF.com.demo.model.entity.CamperPlaceType;
-import CPSF.com.demo.model.entity.Reservation;
 import CPSF.com.demo.repository.CamperPlaceRepository;
-import CPSF.com.demo.service.core.CamperPlaceService;
-import CPSF.com.demo.service.core.CamperPlaceTypeService;
-import CPSF.com.demo.service.core.ReservationCalculatorService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -19,7 +15,6 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.math.BigDecimal;
-import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
@@ -61,7 +56,7 @@ public class CamperPlaceServiceTest {
     public void shouldCreateCamperPlaceWithExplicitIndex() {
         // Given
         final var typeDto = new CamperPlaceTypeDTO(1, "Standard", TYPE_PRICE);
-        final var cpDto = new camperPlaceDTO(null, "10A", typeDto, null);
+        final var cpDto = new CamperPlaceDTO(null, "10A", typeDto, null);
 
         when(camperPlaceTypeService.findById(1)).thenReturn(defaultType);
         when(camperPlaceRepository.save(any(CamperPlace.class))).thenAnswer(invocation -> invocation.getArgument(0));
@@ -83,7 +78,7 @@ public class CamperPlaceServiceTest {
     public void shouldAutoGenerateNextIndexWhenIndexIsNull() {
         // Given
         final var typeDto = new CamperPlaceTypeDTO(1, "Standard", TYPE_PRICE);
-        final var cpDto = new camperPlaceDTO(null, null, typeDto, null);
+        final var cpDto = new CamperPlaceDTO(null, null, typeDto, null);
 
         when(camperPlaceTypeService.findById(1)).thenReturn(defaultType);
         when(camperPlaceRepository.getCamperplaceMaxIndex()).thenReturn("5");
@@ -103,14 +98,14 @@ public class CamperPlaceServiceTest {
     public void shouldThrowIllegalArgumentExceptionWhenTypeIsNotFound() {
         // Given
         final var typeDto = new CamperPlaceTypeDTO(999, "Unknown", TYPE_PRICE);
-        final var cpDto = new camperPlaceDTO(null, "1", typeDto, null);
+        final var cpDto = new CamperPlaceDTO(null, "1", typeDto, null);
 
         when(camperPlaceTypeService.findById(999)).thenReturn(null);
 
         // When & Then
         assertThatThrownBy(() -> camperPlaceService.create(cpDto))
                 .isInstanceOf(IllegalArgumentException.class)
-                .hasMessage("Invalid type");
+                .hasMessage("Invalid camperPlaceType");
 
         verify(camperPlaceRepository, never()).save(any(CamperPlace.class));
     }
@@ -119,7 +114,7 @@ public class CamperPlaceServiceTest {
     public void shouldThrowUserInputExceptionWhenIndexIsEmptyOrBlank() {
         // Given
         final var typeDto = new CamperPlaceTypeDTO(1, "Standard", TYPE_PRICE);
-        final var cpDto = new camperPlaceDTO(null, "   ", typeDto, null);
+        final var cpDto = new CamperPlaceDTO(null, "   ", typeDto, null);
 
         when(camperPlaceTypeService.findById(1)).thenReturn(defaultType);
 
@@ -135,7 +130,7 @@ public class CamperPlaceServiceTest {
     public void shouldThrowUserInputExceptionWhenIndexDoesNotStartWithDigit() {
         // Given
         final var typeDto = new CamperPlaceTypeDTO(1, "Standard", TYPE_PRICE);
-        final var cpDto = new camperPlaceDTO(null, "A1", typeDto, null);
+        final var cpDto = new CamperPlaceDTO(null, "A1", typeDto, null);
 
         when(camperPlaceTypeService.findById(1)).thenReturn(defaultType);
 
@@ -158,7 +153,7 @@ public class CamperPlaceServiceTest {
                 .build();
 
         final var typeDto = new CamperPlaceTypeDTO(1, "Standard", TYPE_PRICE);
-        final var updateDto = new camperPlaceDTO(1, "1", typeDto, TYPE_PRICE);
+        final var updateDto = new CamperPlaceDTO(1, "1", typeDto, TYPE_PRICE);
 
         when(camperPlaceRepository.findById(1)).thenReturn(Optional.of(existingCp));
         when(camperPlaceTypeService.findById(1)).thenReturn(defaultType);
@@ -185,7 +180,7 @@ public class CamperPlaceServiceTest {
 
         final var customPrice = BigDecimal.valueOf(175);
         final var typeDto = new CamperPlaceTypeDTO(1, "Standard", TYPE_PRICE);
-        final var updateDto = new camperPlaceDTO(1, "1", typeDto, customPrice);
+        final var updateDto = new CamperPlaceDTO(1, "1", typeDto, customPrice);
 
         when(camperPlaceRepository.findById(1)).thenReturn(Optional.of(existingCp));
         when(camperPlaceTypeService.findById(1)).thenReturn(defaultType);

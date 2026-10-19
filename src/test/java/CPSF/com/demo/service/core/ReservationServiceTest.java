@@ -7,7 +7,7 @@ import CPSF.com.demo.model.constant.UserRole;
 import CPSF.com.demo.model.dto.CamperPlaceTypeDTO;
 import CPSF.com.demo.model.dto.GuestDTO;
 import CPSF.com.demo.model.dto.ReservationDTO;
-import CPSF.com.demo.model.dto.camperPlaceDTO;
+import CPSF.com.demo.model.dto.CamperPlaceDTO;
 import CPSF.com.demo.model.entity.CamperPlace;
 import CPSF.com.demo.model.entity.CamperPlaceType;
 import CPSF.com.demo.model.entity.Guest;
@@ -350,9 +350,9 @@ public class ReservationServiceTest {
         return new GuestDTO(id, "Jan", "Kowalski", null, null, null, "PL");
     }
 
-    private camperPlaceDTO createCamperPlaceDto(Integer id, String index) {
+    private CamperPlaceDTO createCamperPlaceDto(Integer id, String index) {
         final var typeDto = new CamperPlaceTypeDTO(1, "Standard", DEFAULT_PRICE);
-        return new camperPlaceDTO(id, index, typeDto, null);
+        return new CamperPlaceDTO(id, index, typeDto, null);
     }
 
     private ReservationDTO createReservationDto(
@@ -360,11 +360,19 @@ public class ReservationServiceTest {
             LocalDate checkin,
             LocalDate checkout,
             GuestDTO guestDto,
-            camperPlaceDTO cpDto,
+            CamperPlaceDTO cpDto,
             boolean paid,
             ReservationStatus status
     ) {
-        return new ReservationDTO(id, checkin, checkout, guestDto, cpDto, paid, status, null);
+        return ReservationDTO.builder()
+                .id(id)
+                .checkin(checkin)
+                .checkout(checkout)
+                .guest(guestDto)
+                .camperPlace(cpDto)
+                .paid(paid)
+                .reservationStatus(status)
+                .build();
     }
 
     private Reservation createExistingReservation(

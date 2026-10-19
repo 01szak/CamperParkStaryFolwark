@@ -29,14 +29,7 @@ import static org.mockito.Mockito.mock;
  * <p>The scheduled task delays are pushed out so E2E tests can drive the async pipeline by calling
  * {@code TaskProcessor#processTasks()} themselves instead of racing the scheduler.
  */
-@SpringBootTest(
-        webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT,
-        properties = {
-                "parceo.task.process-tasks.fixed-delay=3600000",
-                "parceo.task.reservation-status-update-task.fixed-delay=3600000",
-                "parceo.task.cleanup-task.fixed-delay=3600000"
-        }
-)
+@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 public abstract class BaseE2E extends AbstractMySqlContainerTest {
 
     protected static final String API_KEY = "e2e-secret-api-key";

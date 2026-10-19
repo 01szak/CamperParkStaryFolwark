@@ -4,6 +4,7 @@ import CPSF.com.demo.model.EmailData;
 import CPSF.com.demo.model.constant.TaskType;
 import CPSF.com.demo.model.dto.GuestDTO;
 import CPSF.com.demo.model.entity.Task;
+import CPSF.com.demo.service.notification.NovuWorkflow;
 import co.novu.Novu;
 import co.novu.models.components.TriggerEventRequestDto;
 import co.novu.models.operations.EventsControllerTriggerRequestBuilder;
@@ -57,7 +58,7 @@ class SendEmailAuthenticationTaskTest {
         verify(triggerBuilder).call();
 
         final var body = bodyCaptor.getValue();
-        assertThat(body.workflowId()).isEqualTo("test-workflow");
+        assertThat(body.workflowId()).isEqualTo(NovuWorkflow.VERIFY_RESERVATION_WORKFLOW.getWorkflow());
         assertThat(body.payload()).hasValueSatisfying(payload ->
                 assertThat(payload).containsEntry("targetId", TARGET_ID));
         assertThat(body.to()).isNotNull();

@@ -6,7 +6,7 @@ import CPSF.com.demo.model.constant.TaskType;
 import CPSF.com.demo.model.dto.CamperPlaceTypeDTO;
 import CPSF.com.demo.model.dto.GuestDTO;
 import CPSF.com.demo.model.dto.ReservationDTO;
-import CPSF.com.demo.model.dto.camperPlaceDTO;
+import CPSF.com.demo.model.dto.CamperPlaceDTO;
 import CPSF.com.demo.model.entity.CamperPlace;
 import CPSF.com.demo.repository.ReservationRepository;
 import CPSF.com.demo.repository.TaskRepository;
@@ -49,8 +49,8 @@ class WebAppReservationE2EIT extends BaseE2E {
 
     @BeforeEach
     void setUpCamperPlace() {
-        var type = camperPlaceTypeService.create(new CamperPlaceTypeDTO(null, "e2e-type", BigDecimal.valueOf(150)));
-        camperPlace = camperPlaceService.create(new camperPlaceDTO(null, "801",
+        var type = camperPlaceTypeService.create(new CamperPlaceTypeDTO(null, "e2e-camperPlaceType", BigDecimal.valueOf(150)));
+        camperPlace = camperPlaceService.create(new CamperPlaceDTO(null, "801",
                 DtoMapper.getCamperPlaceTypeDTO(type), null));
     }
 
@@ -60,7 +60,7 @@ class WebAppReservationE2EIT extends BaseE2E {
         var body = ReservationDTO.builder()
                 .checkin(CHECKIN).checkout(CHECKOUT)
                 .guest(guest)
-                .camperPlace(new camperPlaceDTO(camperPlace.getId(), camperPlace.getIndex(),
+                .camperPlace(new CamperPlaceDTO(camperPlace.getId(), camperPlace.getIndex(),
                         DtoMapper.getCamperPlaceTypeDTO(camperPlace.getCamperPlaceType()), BigDecimal.valueOf(150)))
                 .paid(false)
                 .build();

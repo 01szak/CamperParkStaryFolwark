@@ -65,5 +65,18 @@ public interface CamperPlaceRepository extends CRUDRepository<CamperPlace> {
             @Param("reservationId") Integer reservationId
     );
 
+    @Query(value = """
+        SELECT *
+        FROM camper_place cp
+        WHERE (
+            SELECT COUNT(*)
+            FROM reservation r
+            WHERE r.camper_place_id = cp.id
+              AND r.checkin < :to
+              AND r.checkout > :from
+        ) = 0;
+    """, nativeQuery = true)
+    List<CamperPlace> getAvailableCamperPlaces(@Param("from") LocalDate from, @Param("to") LocalDate to);
+
 
 }

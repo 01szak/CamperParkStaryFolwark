@@ -13,7 +13,8 @@ public record ReservationDTO(
         @NotNull LocalDate checkin,
         @NotNull LocalDate checkout,
         @NotNull GuestDTO guest,
-        @NotNull camperPlaceDTO camperPlace,
+        @NotNull CamperPlaceDTO camperPlace,
+        @Nullable Double price,
         @NotNull Boolean paid,
         @Nullable ReservationStatus reservationStatus,
         @Nullable UserDTO creator

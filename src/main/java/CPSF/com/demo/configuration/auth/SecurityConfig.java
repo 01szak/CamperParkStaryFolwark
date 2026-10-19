@@ -49,9 +49,10 @@ public class SecurityConfig {
             "/auth/register",
     };
     private static final String[] GET_AUTHENTICATED_PATHS = new String[] {
-            "/camperPlace",
+            "/camperPlace/findBy",
             "/camperPlace/calcPrice/**",
-            "/camperPlace/occupancy/**"
+            "/camperPlace/occupancy/**",
+            "/camperPlace/available/**"
     };
     private static final String[] POST_WEB_APP_PATHS = new String[] {
             "/web/reservation/init",

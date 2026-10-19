@@ -29,7 +29,7 @@ public interface TaskRepository extends CRUDRepository<Task> {
     List<Task> findAllByTargetIdAndTaskType(String targetId, TaskType taskType);
 
     /**
-     * Ids of payload-holder tasks of the given type created at or before {@code cutoff}.
+     * Ids of payload-holder tasks of the given camperPlaceType created at or before {@code cutoff}.
      * Rows still referenced as a parent are excluded so deleting them cannot violate the
      * FK ({@code fk_system_task_parent}); a task tree is thus removed leaf-first over
      * successive cleanup runs. (A plain SELECT may self-reference the table — a DELETE may not on MySQL.)

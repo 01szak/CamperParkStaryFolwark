@@ -37,7 +37,7 @@ class ReservationStatusUpdateTaskIT extends BaseIT {
 
     @BeforeEach
     void setUpFixtures() {
-        type = createCpType("status-type", BigDecimal.valueOf(80));
+        type = createCpType("status-camperPlaceType", BigDecimal.valueOf(80));
         guest = createGuest("Status", "Guest", Country.POLAND);
         creator = (User) userService.loadUserByUsername(AuthenticationHelper.IT_USER_LOGIN);
     }
