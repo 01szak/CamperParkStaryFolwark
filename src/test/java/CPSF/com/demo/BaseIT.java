@@ -7,7 +7,7 @@ import CPSF.com.demo.model.constant.UserRole;
 import CPSF.com.demo.model.dto.CamperPlaceTypeDTO;
 import CPSF.com.demo.model.dto.GuestDTO;
 import CPSF.com.demo.model.dto.ReservationDTO;
-import CPSF.com.demo.model.dto.camperPlaceDTO;
+import CPSF.com.demo.model.dto.CamperPlaceDTO;
 import CPSF.com.demo.model.entity.CamperPlace;
 import CPSF.com.demo.model.entity.CamperPlaceType;
 import CPSF.com.demo.model.entity.Guest;
@@ -123,16 +123,14 @@ public abstract class BaseIT extends AbstractMySqlContainerTest {
             boolean paid
     ) {
         return reservationService.create(
-                new ReservationDTO(
-                        null,
-                        checkin,
-                        checkout,
-                        DtoMapper.getGuestDTO(guest),
-                        DtoMapper.getCamperPlaceDto(camperPlace),
-                        paid,
-                        ReservationStatus.COMING,
-                        null
-                )
+                 ReservationDTO.builder()
+                         .checkin(checkin)
+                         .checkout(checkout)
+                         .guest(DtoMapper.getGuestDTO(guest))
+                         .camperPlace(DtoMapper.getCamperPlaceDto(camperPlace))
+                         .paid(paid)
+                         .reservationStatus(ReservationStatus.COMING)
+                         .build()
         );
     }
 
@@ -152,7 +150,7 @@ public abstract class BaseIT extends AbstractMySqlContainerTest {
 
     protected CamperPlace createCamperPlace(String camperPlaceIndex, CamperPlaceType cpType) {
         return camperPlaceService.create(
-                new camperPlaceDTO(
+                new CamperPlaceDTO(
                         null,
                         camperPlaceIndex,
                         DtoMapper.getCamperPlaceTypeDTO(cpType),

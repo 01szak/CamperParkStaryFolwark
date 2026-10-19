@@ -9,7 +9,7 @@ import CPSF.com.demo.model.constant.UserRole;
 import CPSF.com.demo.model.dto.CamperPlaceTypeDTO;
 import CPSF.com.demo.model.dto.GuestDTO;
 import CPSF.com.demo.model.dto.ReservationDTO;
-import CPSF.com.demo.model.dto.camperPlaceDTO;
+import CPSF.com.demo.model.dto.CamperPlaceDTO;
 import CPSF.com.demo.model.entity.CamperPlace;
 import CPSF.com.demo.model.entity.Task;
 import CPSF.com.demo.model.entity.User;
@@ -60,8 +60,8 @@ class WebAppReservationFlowIT extends BaseIT {
 
     @BeforeEach
     void setUpFlowFixtures() {
-        var type = camperPlaceTypeService.create(new CamperPlaceTypeDTO(null, "flow-type", BigDecimal.valueOf(120)));
-        camperPlace = camperPlaceService.create(new camperPlaceDTO(null, "901",
+        var type = camperPlaceTypeService.create(new CamperPlaceTypeDTO(null, "flow-camperPlaceType", BigDecimal.valueOf(120)));
+        camperPlace = camperPlaceService.create(new CamperPlaceDTO(null, "901",
                 DtoMapper.getCamperPlaceTypeDTO(type), null));
         webAppUser = userService.create(User.builder()
                 .login("flow-web-app").username("flow-web-app").email("flow@example.com")

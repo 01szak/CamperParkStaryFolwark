@@ -1,7 +1,7 @@
 package CPSF.com.demo.service.util;
 
 import CPSF.com.demo.model.dto.CamperPlaceTypeDTO;
-import CPSF.com.demo.model.dto.camperPlaceDTO;
+import CPSF.com.demo.model.dto.CamperPlaceDTO;
 import CPSF.com.demo.model.dto.GuestDTO;
 import CPSF.com.demo.model.dto.ReservationDTO;
 import CPSF.com.demo.model.dto.UserDTO;
@@ -11,6 +11,7 @@ import CPSF.com.demo.model.entity.Guest;
 import CPSF.com.demo.model.entity.Reservation;
 import CPSF.com.demo.model.entity.User;
 import jakarta.validation.constraints.NotNull;
+
 
 public class DtoMapper {
 
@@ -23,8 +24,8 @@ public class DtoMapper {
         );
     }
 
-    public static camperPlaceDTO getCamperPlaceDto(@NotNull CamperPlace c) {
-        return new camperPlaceDTO(
+    public static CamperPlaceDTO getCamperPlaceDto(@NotNull CamperPlace c) {
+        return new CamperPlaceDTO(
                 c.getId(),
                 c.getIndex(),
                 getCamperPlaceTypeDTO(c.getCamperPlaceType()),
@@ -39,6 +40,7 @@ public class DtoMapper {
                 r.getCheckout(),
                 getGuestDTO(r.getGuest()),
                 getCamperPlaceDto(r.getCamperPlace()),
+                r.getPrice().doubleValue(),
                 r.getPaid(),
                 r.getReservationStatus(),
                 r.getCreator() != null ? getUserDTO(r.getCreator()) : null

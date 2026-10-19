@@ -4,6 +4,7 @@ import CPSF.com.demo.model.dto.ReservationDTO;
 import CPSF.com.demo.model.dto.SearchRequest;
 import CPSF.com.demo.service.util.DtoMapper;
 import CPSF.com.demo.service.core.ReservationService;
+import jakarta.annotation.Nullable;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -40,7 +41,7 @@ public class ReservationController {
     }
 
     @PostMapping("/findBy")
-    public Page<ReservationDTO> findBy(Pageable pageable, @RequestBody @Valid SearchRequest searchRequest) {
+    public Page<ReservationDTO> findBy(@Nullable Pageable pageable, @RequestBody @Valid SearchRequest searchRequest) {
         return reservationService.findBy(
                 pageable,
                 searchRequest.searchCriteria()

@@ -54,7 +54,7 @@ public class ReservationService extends CRUDServiceImpl<Reservation> {
                 .camperPlace(camperPlace)
                 .guest(guest)
                 .price(calculator.calculate(camperPlace.getPrice(), checkin.datesUntil(checkout).count())) //TODO it can be passed in request
-                .paid(reservationDto.paid())
+                .paid(reservationDto.paid() != null && reservationDto.paid())
                 .reservationStatus(status)
                 .creator(creator);
 

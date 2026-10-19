@@ -9,7 +9,7 @@ import CPSF.com.demo.model.dto.CamperPlaceTypeDTO;
 import CPSF.com.demo.model.dto.GuestDTO;
 import CPSF.com.demo.model.dto.ReservationDTO;
 import CPSF.com.demo.model.dto.UserDTO;
-import CPSF.com.demo.model.dto.camperPlaceDTO;
+import CPSF.com.demo.model.dto.CamperPlaceDTO;
 import CPSF.com.demo.model.entity.CamperPlace;
 import CPSF.com.demo.model.entity.CamperPlaceType;
 import CPSF.com.demo.model.entity.Guest;
@@ -181,7 +181,7 @@ class WebAppReservationTaskTest {
                 .checkin(CHECKIN)
                 .checkout(CHECKOUT)
                 .guest(guest)
-                .camperPlace(new camperPlaceDTO(5, "A-1",
+                .camperPlace(new CamperPlaceDTO(5, "A-1",
                         new CamperPlaceTypeDTO(1, "standard", BigDecimal.TEN), BigDecimal.TEN))
                 .paid(false)
                 .creator(creator)
@@ -204,6 +204,7 @@ class WebAppReservationTaskTest {
                 .camperPlace(CamperPlace.builder().id(6).index("1a").camperPlaceType(CamperPlaceType.builder().id(10).typeName("name").price(BigDecimal.valueOf(123)).build()).build())
                 .guest(Guest.builder().id(7).email("ada@example.com").firstname("Ada").build())
                 .reservationStatus(ReservationStatus.UNVERIFIED)
+                .price(BigDecimal.valueOf(67))
                 .build();
     }
 

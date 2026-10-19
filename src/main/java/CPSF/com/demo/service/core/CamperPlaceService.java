@@ -1,7 +1,7 @@
 package CPSF.com.demo.service.core;
 
 import CPSF.com.demo.exception.UserInputException;
-import CPSF.com.demo.model.dto.camperPlaceDTO;
+import CPSF.com.demo.model.dto.CamperPlaceDTO;
 import CPSF.com.demo.model.entity.CamperPlace;
 import CPSF.com.demo.repository.CRUDRepository;
 import CPSF.com.demo.repository.CamperPlaceRepository;
@@ -28,11 +28,11 @@ public class CamperPlaceService extends CRUDServiceImpl<CamperPlace> {
     private final CamperPlaceTypeService camperPlaceTypeService;
     private final ReservationCalculatorService reservationCalculatorService;
 
-    public CamperPlace create(camperPlaceDTO camperPlaceDto) {
-        var camperPlaceType = camperPlaceTypeService.findById(camperPlaceDto.type().id());
+    public CamperPlace create(CamperPlaceDTO camperPlaceDto) {
+        var camperPlaceType = camperPlaceTypeService.findById(camperPlaceDto.camperPlaceType().id());
 
         if (camperPlaceType == null) {
-            throw new IllegalArgumentException("Invalid type");
+            throw new IllegalArgumentException("Invalid camperPlaceType");
         }
         var cpIndex = camperPlaceDto.index() != null ? camperPlaceDto.index() : generateNextIndex();
         validateIndex(cpIndex);
@@ -69,7 +69,7 @@ public class CamperPlaceService extends CRUDServiceImpl<CamperPlace> {
         return String.valueOf(Integer.parseInt(maxIndex) + 1);
     }
 
-    public List<CamperPlace> updateAll(List<camperPlaceDTO> camperPlaceDtos) {
+    public List<CamperPlace> updateAll(List<CamperPlaceDTO> camperPlaceDtos) {
         try {
             var cpToUpdate = new ArrayList<CamperPlace>();
             camperPlaceDtos.forEach(dto -> {
@@ -87,9 +87,9 @@ public class CamperPlaceService extends CRUDServiceImpl<CamperPlace> {
         }
     }
 
-    private @NonNull CamperPlace mapToCamperPlace(camperPlaceDTO dto) {
+    private @NonNull CamperPlace mapToCamperPlace(CamperPlaceDTO dto) {
         var cp = findById(dto.id());
-        var cpt = camperPlaceTypeService.findById(dto.type().id());
+        var cpt = camperPlaceTypeService.findById(dto.camperPlaceType().id());
         cp.setCamperPlaceType(cpt);
         cp.setIndex(dto.index());
         cp.setPrice(cpt.getPrice().compareTo(dto.price()) == 0 ? null : dto.price());
@@ -131,7 +131,9 @@ public class CamperPlaceService extends CRUDServiceImpl<CamperPlace> {
         final var daysInReservation = checkin.datesUntil(checkout).count();
         return reservationCalculatorService.calculate(price, daysInReservation);
     }
-
+    public List<CamperPlace> getAvailableCamperPlaces(LocalDate from, LocalDate to) {
+        return camperPlaceRepository.getAvailableCamperPlaces(from, to);
+    }
     @Override
     protected CRUDRepository<CamperPlace> getRepository() {
         return camperPlaceRepository;

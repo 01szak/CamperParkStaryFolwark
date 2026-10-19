@@ -70,16 +70,14 @@ public class ReservationServiceIT extends BaseIT {
         final var checkin = LocalDate.parse("2030-06-01");
         final var checkout = LocalDate.parse("2030-06-04");
 
-        final var reservationDto = new ReservationDTO(
-                null,
-                checkin,
-                checkout,
-                DtoMapper.getGuestDTO(guest),
-                DtoMapper.getCamperPlaceDto(cp),
-                true,
-                ReservationStatus.COMING,
-                null
-        );
+        final var reservationDto = ReservationDTO.builder()
+                .checkin(checkin)
+                .checkout(checkout)
+                .guest(DtoMapper.getGuestDTO(guest))
+                .camperPlace(DtoMapper.getCamperPlaceDto(cp))
+                .reservationStatus(ReservationStatus.COMING)
+                .paid(true)
+                .build();
 
         // When
         final var createdReservation = reservationService.create(reservationDto);
@@ -106,16 +104,14 @@ public class ReservationServiceIT extends BaseIT {
         createReservation(cp, checkin1, checkout1, guest1, false);
 
         // When & Then - overlapping check-in
-        final var overlappingDto = new ReservationDTO(
-                null,
-                LocalDate.parse("2030-07-03"),
-                LocalDate.parse("2030-07-08"),
-                DtoMapper.getGuestDTO(guest2),
-                DtoMapper.getCamperPlaceDto(cp),
-                false,
-                ReservationStatus.COMING,
-                null
-        );
+        final var overlappingDto = ReservationDTO.builder()
+                .checkin(LocalDate.parse("2030-07-05"))
+                .checkout(LocalDate.parse("2030-07-08"))
+                .guest(DtoMapper.getGuestDTO(guest2))
+                .camperPlace(DtoMapper.getCamperPlaceDto(cp))
+                .paid(false)
+                .reservationStatus(ReservationStatus.COMING)
+                .build();
 
         assertThatThrownBy(() -> reservationService.create(overlappingDto))
                 .isInstanceOf(UserInputException.class)
@@ -151,16 +147,15 @@ public class ReservationServiceIT extends BaseIT {
                 Country.POLAND.getIsoCode()
         );
 
-        final var updateDto = new ReservationDTO(
-                reservation.getId(),
-                newCheckin,
-                newCheckout,
-                updatedGuestDto,
-                DtoMapper.getCamperPlaceDto(reservation.getCamperPlace()),
-                true,
-                ReservationStatus.COMING,
-                null
-        );
+        final var updateDto = ReservationDTO.builder()
+                .id(reservation.getId())
+                .checkin(newCheckin)
+                .checkout(newCheckout)
+                .guest(updatedGuestDto)
+                .camperPlace(DtoMapper.getCamperPlaceDto(reservation.getCamperPlace()))
+                .paid(true)
+                .reservationStatus(ReservationStatus.COMING)
+                .build();
 
         // When
         reservationService.update(updateDto);
@@ -186,16 +181,15 @@ public class ReservationServiceIT extends BaseIT {
         final var res2 = createReservation(cp, LocalDate.parse("2030-09-10"), LocalDate.parse("2030-09-15"), guest2, false);
 
         // When & Then - try updating res2 to overlap res1
-        final var conflictingUpdateDto = new ReservationDTO(
-                res2.getId(),
-                LocalDate.parse("2030-09-04"),
-                LocalDate.parse("2030-09-12"),
-                DtoMapper.getGuestDTO(guest2),
-                DtoMapper.getCamperPlaceDto(cp),
-                false,
-                ReservationStatus.COMING,
-                null
-        );
+        final var conflictingUpdateDto = ReservationDTO.builder()
+                .id(res2.getId())
+                .checkin(LocalDate.parse("2030-09-04"))
+                .checkout(LocalDate.parse("2030-09-12"))
+                .guest(DtoMapper.getGuestDTO(guest2))
+                .camperPlace(DtoMapper.getCamperPlaceDto(cp))
+                .paid(false)
+                .reservationStatus(ReservationStatus.COMING)
+                .build();
 
         assertThatThrownBy(() -> reservationService.update(conflictingUpdateDto))
                 .isInstanceOf(UserInputException.class)
@@ -219,16 +213,15 @@ public class ReservationServiceIT extends BaseIT {
                 false);
 
         checkout = LocalDate.parse("2067-01-17");
-        final var updatePayload = new ReservationDTO(
-                reservation.getId(),
-                checkin,
-                checkout,
-                DtoMapper.getGuestDTO(reservation.getGuest()),
-                DtoMapper.getCamperPlaceDto(reservation.getCamperPlace()),
-                reservation.getPaid(),
-                reservation.getReservationStatus(),
-                null
-        );
+        final var updatePayload = ReservationDTO.builder()
+                .id(reservation.getId())
+                .checkin(checkin)
+                .checkout(checkout)
+                .guest(DtoMapper.getGuestDTO(reservation.getGuest()))
+                .camperPlace(DtoMapper.getCamperPlaceDto(reservation.getCamperPlace()))
+                .paid(reservation.getPaid())
+                .reservationStatus(reservation.getReservationStatus())
+                .build();
 
         reservationService.update(updatePayload);
 
@@ -250,16 +243,14 @@ public class ReservationServiceIT extends BaseIT {
         createReservation(cp, checkin1, checkout1, guest1, false);
 
         // When & Then - overlapping check-in
-        final var overlappingDto = new ReservationDTO(
-                null,
-                LocalDate.parse("2030-10-08"),
-                LocalDate.parse("2030-10-17"),
-                DtoMapper.getGuestDTO(guest2),
-                DtoMapper.getCamperPlaceDto(cp),
-                false,
-                ReservationStatus.COMING,
-                null
-        );
+        final var overlappingDto = ReservationDTO.builder()
+                .checkin(LocalDate.parse("2030-10-08"))
+                .checkout(LocalDate.parse("2030-10-17"))
+                .guest(DtoMapper.getGuestDTO(guest2))
+                .camperPlace(DtoMapper.getCamperPlaceDto(cp))
+                .paid(false)
+                .reservationStatus(ReservationStatus.COMING)
+                .build();
 
         assertThatThrownBy(() -> reservationService.create(overlappingDto))
                 .isInstanceOf(UserInputException.class)
@@ -278,16 +269,14 @@ public class ReservationServiceIT extends BaseIT {
         createReservation(cp, checkin1, checkout1, guest1, false);
 
         // When & Then - overlapping check-in
-        final var overlappingDto = new ReservationDTO(
-                null,
-                LocalDate.now(),
-                LocalDate.now().plusDays(1),
-                DtoMapper.getGuestDTO(guest2),
-                DtoMapper.getCamperPlaceDto(cp),
-                false,
-                ReservationStatus.COMING,
-                null
-        );
+        final var overlappingDto = ReservationDTO.builder()
+                .checkin(LocalDate.now())
+                .checkout(LocalDate.now().plusDays(1))
+                .guest(DtoMapper.getGuestDTO(guest2))
+                .camperPlace(DtoMapper.getCamperPlaceDto(cp))
+                .paid(false)
+                .reservationStatus(ReservationStatus.COMING)
+                .build();
 
         assertThatThrownBy(() -> reservationService.create(overlappingDto))
                 .isInstanceOf(UserInputException.class)
@@ -305,16 +294,14 @@ public class ReservationServiceIT extends BaseIT {
         createReservation(cp, checkin1, checkout1, guest1, false);
 
         // When & Then - overlapping check-in
-        final var overlappingDto = new ReservationDTO(
-                null,
-                LocalDate.parse("2030-12-07"),
-                LocalDate.parse("2030-12-08"),
-                DtoMapper.getGuestDTO(guest2),
-                DtoMapper.getCamperPlaceDto(cp),
-                false,
-                ReservationStatus.COMING,
-                null
-        );
+        final var overlappingDto = ReservationDTO.builder()
+                .checkin(LocalDate.parse("2030-12-07"))
+                .checkout(LocalDate.parse("2030-12-08"))
+                .guest(DtoMapper.getGuestDTO(guest2))
+                .camperPlace(DtoMapper.getCamperPlaceDto(cp))
+                .paid(false)
+                .reservationStatus(ReservationStatus.COMING)
+                .build();
 
         assertThatThrownBy(() -> reservationService.create(overlappingDto))
                 .isInstanceOf(UserInputException.class)

@@ -6,9 +6,9 @@ import jakarta.validation.constraints.Positive;
 
 import java.math.BigDecimal;
 
-public record camperPlaceDTO(
+public record CamperPlaceDTO(
         @Nullable Integer id,
         @Nullable String index,
-        @NotNull CamperPlaceTypeDTO type,
+        @NotNull CamperPlaceTypeDTO camperPlaceType,
         @NotNull @Positive BigDecimal price
 ) {}
