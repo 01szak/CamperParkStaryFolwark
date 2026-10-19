@@ -1,9 +1,10 @@
 package CPSF.com.demo.controller;
 
 import CPSF.com.demo.model.dto.GuestDTO;
+import CPSF.com.demo.model.dto.SearchRequest;
 import CPSF.com.demo.service.core.GuestService;
-import CPSF.com.demo.service.core.SearchCriteria;
 import CPSF.com.demo.service.util.DtoMapper;
+import jakarta.annotation.Nullable;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -21,9 +22,9 @@ public class GuestController {
 
     private final GuestService guestService;
 
-    @GetMapping
-    public Page<GuestDTO> findBy(Pageable pageable, SearchCriteria searchCriteria) {
-        return guestService.findBy(pageable, searchCriteria).map(DtoMapper::getGuestDTO);
+    @PostMapping("/findBy")
+    public Page<GuestDTO> findBy(@Nullable Pageable pageable, @RequestBody @Valid SearchRequest searchRequest) {
+        return guestService.findBy(pageable, searchRequest.searchCriteria()).map(DtoMapper::getGuestDTO);
     }
 
     @PatchMapping

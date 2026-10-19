@@ -11,15 +11,17 @@ pipeline {
     }
 
     environment {
-        APP_NAME       = "camper_park"
-        SPRING_PROFILE = "${params.PROFILE}"
+        APP_NAME        = "camper_park"
+        SPRING_PROFILE  = "${params.PROFILE}"
 
-        EXTERNAL_PORT  = "${params.PROFILE == 'prod' ? '2000' : '2001'}"
+        EXTERNAL_PORT   = "${params.PROFILE == 'prod' ? '2000' : '2001'}"
 
-        LOCAL_PATH     = "/var/www/backend/camper_park_v2-${params.PROFILE}"
-        DB_NAME        = "camper_park_${params.PROFILE}"
+        LOCAL_PATH      = "/var/www/backend/camper_park_v2-${params.PROFILE}"
+        DB_NAME         = "camper_park_${params.PROFILE}"
         
-        DUMPS_DIR      = "/home/camper_park/backups"
+        DUMPS_DIR       = "/home/camper_park/backups"
+
+        NOVU_SERVER_URL = "http://api:3000"
     }
 
     stages {
@@ -81,7 +83,8 @@ pipeline {
                     usernamePassword(credentialsId: "camper_park_db_${SPRING_PROFILE}", passwordVariable: 'DB_PASSWORD', usernameVariable: 'DB_USER'),
                     string(credentialsId: "${SPRING_PROFILE}-db-root-pass", variable: 'DB_ROOT_PASSWORD'),
                     file(credentialsId: "${SPRING_PROFILE}-camper_park_RSA_private-key", variable: 'RSA_FILE'),
-                    file(credentialsId: "${SPRING_PROFILE}-camper_park-RSA-key", variable: 'RSA_PUB_FILE')
+                    file(credentialsId: "${SPRING_PROFILE}-camper_park-RSA-key", variable: 'RSA_PUB_FILE'),
+                    string(credentialsId: "novu_api_key", variable: 'NOVU_SECRET_KEY')
                 ]) {
                     sh '''
                         # Domyślny backup dla prod/stage, jeśli nie ustawiono DB_DUMP_SOURCE

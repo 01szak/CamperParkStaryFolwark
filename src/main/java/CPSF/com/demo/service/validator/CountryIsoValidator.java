@@ -3,12 +3,13 @@ package CPSF.com.demo.service.validator;
 import CPSF.com.demo.model.constant.Country;
 import jakarta.validation.ConstraintValidator;
 import jakarta.validation.ConstraintValidatorContext;
+import org.apache.commons.lang3.StringUtils;
 
 public class CountryIsoValidator implements ConstraintValidator<CountryIso, String> {
 
     @Override
     public boolean isValid(String value, ConstraintValidatorContext context) {
-        if (value == null) {
+        if (StringUtils.isBlank(value)) {
             return true;
         }
 
@@ -22,7 +23,7 @@ public class CountryIsoValidator implements ConstraintValidator<CountryIso, Stri
             return false;
         }
 
-        if (!Country.getByIsoCode(value).isPresent()) {
+        if (Country.getByIsoCode(value).isEmpty()) {
             setCustomMessage(context, "Unknown Iso code");
             return false;
         }
