@@ -19,7 +19,7 @@ public interface TaskRepository extends CRUDRepository<Task> {
         WHERE (t.executionDate IS NULL OR t.executionDate <= CURRENT_TIMESTAMP)
           AND (
               t.taskStatus = 'PENDING'
-              OR (t.taskStatus = 'FAILED' AND t.retryable = TRUE AND t.retryCount <= :max_retry_count)
+              OR (t.taskStatus = 'FAILED' AND t.retryable = TRUE AND t.retryCount < :max_retry_count)
           )
     """)
     List<Task> getExecutableTasks(@Param("max_retry_count") long maxRetryCount);
