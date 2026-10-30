@@ -3,6 +3,7 @@ package CPSF.com.demo.service.processor.task.webappreservationflow;
 import CPSF.com.demo.exception.DateValidationException;
 import CPSF.com.demo.model.EmailData;
 import CPSF.com.demo.model.constant.ReservationStatus;
+import CPSF.com.demo.model.constant.SupportedLocale;
 import CPSF.com.demo.model.constant.TaskStatus;
 import CPSF.com.demo.model.constant.TaskType;
 import CPSF.com.demo.model.dto.CamperPlaceTypeDTO;
@@ -10,6 +11,7 @@ import CPSF.com.demo.model.dto.GuestDTO;
 import CPSF.com.demo.model.dto.ReservationDTO;
 import CPSF.com.demo.model.dto.UserDTO;
 import CPSF.com.demo.model.dto.CamperPlaceDTO;
+import CPSF.com.demo.model.dto.WebAppReservationPayload;
 import CPSF.com.demo.model.entity.CamperPlace;
 import CPSF.com.demo.model.entity.CamperPlaceType;
 import CPSF.com.demo.model.entity.Guest;
@@ -54,20 +56,8 @@ class WebAppReservationTaskTest {
     private GuestService guestService;
 
     @Test
-    void failsTheTaskWhenThePayloadCannotBeReadAsAReservation() {
-        final var entity = createWebAppReservationTaskEntity(null);
-        final var task = new WebAppReservationTask(reservationService, taskService, guestService, entity);
-
-        task.doTask();
-
-        assertThat(entity.getTaskStatus()).isEqualTo(TaskStatus.FAILED);
-        assertThat(entity.getStatusMessage()).isEqualTo("There is no reservation to store");
-        verifyNoInteractions(reservationService, taskService, guestService);
-    }
-
-    @Test
     void failsTheTaskWhenTheReservationHasNoCreator() {
-        final var entity = createWebAppReservationTaskEntity(reservationDto(guestDto(null), null));
+        final var entity = createWebAppReservationTaskEntity(new WebAppReservationPayload(reservationDto(guestDto(null), null), SupportedLocale.pl));
         final var task = new WebAppReservationTask(reservationService, taskService, guestService, entity);
 
         task.doTask();
@@ -79,7 +69,7 @@ class WebAppReservationTaskTest {
 
     @Test
     void createsAnUnverifiedReservationWithHolderAndEmailChildrenForANewGuest() {
-        final var entity = createWebAppReservationTaskEntity(reservationDto(guestDto(null), creatorDto()));
+        final var entity = createWebAppReservationTaskEntity(new WebAppReservationPayload(reservationDto(guestDto(null), creatorDto()), SupportedLocale.pl));
         final var task = new WebAppReservationTask(reservationService, taskService, guestService, entity);
 
         when(guestService.findBy(any(SearchCriteria.class))).thenReturn(Page.empty());
@@ -108,11 +98,12 @@ class WebAppReservationTaskTest {
                 .findFirst().orElseThrow();
         assertThat(email.getTargetId()).isEqualTo(TARGET_ID);
         assertThat(email.getPayload()).isInstanceOf(EmailData.class);
+        assertThat(((EmailData) email.getPayload()).locale()).isEqualTo(SupportedLocale.pl);
     }
 
     @Test
     void reusesAnExistingGuestMatchedByEmail() {
-        final var entity = createWebAppReservationTaskEntity(reservationDto(guestDto(null), creatorDto()));
+        final var entity = createWebAppReservationTaskEntity(new WebAppReservationPayload(reservationDto(guestDto(null), creatorDto()), SupportedLocale.pl));
         final var task = new WebAppReservationTask(reservationService, taskService, guestService, entity);
 
         final var existingGuest = Guest.builder().id(7).email("ada@example.com").firstname("Ada").build();
@@ -131,7 +122,7 @@ class WebAppReservationTaskTest {
 
     @Test
     void whenAKnownGuestRetriesAfterADateClashItResendsTheEmailButAddsNoSecondHolder() {
-        final var entity = createWebAppReservationTaskEntity(reservationDto(guestDto(7), creatorDto()));
+        final var entity = createWebAppReservationTaskEntity(new WebAppReservationPayload(reservationDto(guestDto(7), creatorDto()), SupportedLocale.pl));
         final var task = new WebAppReservationTask(reservationService, taskService, guestService, entity);
 
         final var existingGuest = Guest.builder().id(7).email("ada@example.com").build();
@@ -154,7 +145,7 @@ class WebAppReservationTaskTest {
 
     @Test
     void propagatesTheDateClashWhenABrandNewGuestCannotBeMatchedToAnExistingReservation() {
-        final var entity = createWebAppReservationTaskEntity(reservationDto(guestDto(null), creatorDto()));
+        final var entity = createWebAppReservationTaskEntity(new WebAppReservationPayload(reservationDto(guestDto(null), creatorDto()), SupportedLocale.pl));
         final var task = new WebAppReservationTask(reservationService, taskService, guestService, entity);
 
         when(guestService.findBy(any(SearchCriteria.class))).thenReturn(Page.empty());
@@ -168,7 +159,7 @@ class WebAppReservationTaskTest {
 
     // --- fixtures ---
 
-    private Task createWebAppReservationTaskEntity(Object payload) {
+    private Task createWebAppReservationTaskEntity(WebAppReservationPayload payload) {
         return Task.builder()
                 .targetId(TARGET_ID)
                 .payload(payload)

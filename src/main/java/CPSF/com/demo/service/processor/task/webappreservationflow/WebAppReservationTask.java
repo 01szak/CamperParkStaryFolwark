@@ -3,10 +3,12 @@ package CPSF.com.demo.service.processor.task.webappreservationflow;
 import CPSF.com.demo.exception.DateValidationException;
 import CPSF.com.demo.model.EmailData;
 import CPSF.com.demo.model.constant.Operation;
+import CPSF.com.demo.model.constant.SupportedLocale;
 import CPSF.com.demo.model.constant.TaskStatus;
 import CPSF.com.demo.model.constant.TaskType;
 import CPSF.com.demo.model.dto.GuestDTO;
 import CPSF.com.demo.model.dto.ReservationDTO;
+import CPSF.com.demo.model.dto.WebAppReservationPayload;
 import CPSF.com.demo.model.entity.Reservation;
 import CPSF.com.demo.model.entity.Task;
 import CPSF.com.demo.service.core.GuestService;
@@ -35,12 +37,13 @@ public class WebAppReservationTask implements ExecutableTask {
     private final GuestService guestService;
     private final Task webAppReservationTaskEntity;
 
-    private record CreateReservationResult(boolean isRetry, Reservation createdReservation){};
+    private record CreateReservationResult(boolean isRetry, Reservation createdReservation){}
 
     @Override
     public void doTask() {
-        final var reservationDTO =
-                objectMapper.convertValue(webAppReservationTaskEntity.getPayload(), ReservationDTO.class);
+        final var taskPayload = objectMapper.convertValue(webAppReservationTaskEntity.getPayload(), WebAppReservationPayload.class);
+        final var reservationDTO = taskPayload.reservationDTO();
+        final var locale = taskPayload.locale();
 
         if (reservationDTO == null) {
             failTaskWithMessage(NO_RESERVATION_PAYLOAD_MESSAGE);
@@ -75,7 +78,7 @@ public class WebAppReservationTask implements ExecutableTask {
             createReservationHolderTask(createdReservation.getId());
         }
         //we need to map the entity again cause we need to pass Id as well
-        createEmailTask(DtoMapper.getGuestDTO(createdReservation.getGuest()), DtoMapper.getReservationDto(createdReservation));
+        createEmailTask(locale, DtoMapper.getGuestDTO(createdReservation.getGuest()), DtoMapper.getReservationDto(createdReservation));
     }
 
     private CreateReservationResult handleRetry(GuestDTO guest, ReservationDTO reservationDTO) {
@@ -134,10 +137,10 @@ public class WebAppReservationTask implements ExecutableTask {
         });
     }
 
-    private void createEmailTask(GuestDTO guest, ReservationDTO reservationDTO) {
+    private void createEmailTask(SupportedLocale locale, GuestDTO guest, ReservationDTO reservationDTO) {
         final var emailTaskEntity = Task.builder()
                 .targetId(webAppReservationTaskEntity.getTargetId())
-                .payload(new EmailData(guest, reservationDTO))
+                .payload(new EmailData(locale, guest, reservationDTO))
                 .taskType(SEND_EMAIL_AUTHENTICATION_TASK)
                 .build();
 

@@ -1,7 +1,9 @@
 package CPSF.com.demo.controller;
 
+import CPSF.com.demo.model.constant.SupportedLocale;
 import CPSF.com.demo.model.constant.TaskType;
 import CPSF.com.demo.model.dto.ReservationDTO;
+import CPSF.com.demo.model.dto.WebAppReservationPayload;
 import CPSF.com.demo.model.entity.Task;
 import CPSF.com.demo.model.entity.User;
 import CPSF.com.demo.service.core.UserService;
@@ -32,15 +34,19 @@ public class WebAppController {
     private final TaskService taskService;
     private final UserService userService;
 
+    public record ResInitRequest(@NotNull ReservationDTO reservationDTO, @NotNull SupportedLocale locale) {}
+
     @PostMapping("/reservation/init")
     @Parameter(in = ParameterIn.HEADER, name = "X-org-id", required = true)
     @Parameter(in = ParameterIn.HEADER, name = "X-api-key", required = true)
-    public ResponseEntity<String> createUnverifiedReservationAndSendAuthenticationEmail(@RequestBody @Valid ReservationDTO reservationDTO) {
+    public ResponseEntity<String> createUnverifiedReservationAndSendAuthenticationEmail(@RequestBody @Valid ResInitRequest request) {
         final var webAppUserName = SecurityContextHolder.getContext().getAuthentication().getName();
         final var webAppUSer = (User) userService.loadUserByUsername(webAppUserName);
+        final var payload = new WebAppReservationPayload(
+                request.reservationDTO().toBuilder().creator(DtoMapper.getUserDTO(webAppUSer)).build(), request.locale());
         final var task = Task.builder()
                 .targetId(UUID.randomUUID().toString())
-                .payload(reservationDTO.toBuilder().creator(DtoMapper.getUserDTO(webAppUSer)).build())
+                .payload(payload)
                 .taskType(WEB_APP_RESERVATION_TASK)
                 .parentTask(null)
                 .build();

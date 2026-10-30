@@ -1,6 +1,6 @@
 package CPSF.com.demo.model;
 
+import CPSF.com.demo.model.constant.SupportedLocale;
 import CPSF.com.demo.model.dto.GuestDTO;
-import CPSF.com.demo.model.dto.ReservationDTO;
 
-public record EmailData(GuestDTO guest, Object additionalPayload) {}
+public record EmailData(SupportedLocale locale, GuestDTO guest, Object additionalPayload) {}

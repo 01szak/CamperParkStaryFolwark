@@ -30,6 +30,7 @@ public class SendEmailAuthenticationTask implements ExecutableTask {
         final var to = TriggerEventRequestDtoTo2.of(subscriber);
         final var payload = Map.of(
                 "targetId", sendEmailAuthenticationTaskEntity.getTargetId(),
+                "locale", emailData.locale(),
                 "additionalPayload", additionalPayload
         );
         final var workflow = NovuWorkflow.VERIFY_RESERVATION_WORKFLOW.getWorkflowBuilder().to(to).payload(payload).build();

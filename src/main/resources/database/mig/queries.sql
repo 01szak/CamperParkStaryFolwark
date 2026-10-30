@@ -6,7 +6,7 @@
 -- insert into camper_park.users(first_name, last_name, email, password_hash, role)
 --     value ('Paweł', 'Olszewski', 'camperpark.sfolwark@gmail.com','$2y$10$.SkN425//TLbbYJi91hMNuYxbN5SLMjQq0EyFCX.i9oCuK.vT.d7u','ADMIN');
 -- -- changeset kacper:2
--- insert into camper_park.camper_places(is_occupied,type,price,number)
+-- insert into camper_park.camper_places(is_occupied,camperPlaceType,price,number)
 -- values
 --     (default,'STANDARD',150.00,1),
 --     (default,'STANDARD',150.00,2),
