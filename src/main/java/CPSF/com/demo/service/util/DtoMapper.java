@@ -18,7 +18,7 @@ public class DtoMapper {
     public static UserDTO getUserDTO(User u) {
         return new UserDTO(
                 u.getId(),
-                u.getUsername(),
+                u.getDisplayUsername(),
                 u.getEmail(),
                 u.getUserRole().toString()
         );
