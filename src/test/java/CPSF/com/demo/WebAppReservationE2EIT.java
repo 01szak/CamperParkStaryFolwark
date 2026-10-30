@@ -1,6 +1,8 @@
 package CPSF.com.demo;
 
+import CPSF.com.demo.controller.WebAppController;
 import CPSF.com.demo.model.constant.ReservationStatus;
+import CPSF.com.demo.model.constant.SupportedLocale;
 import CPSF.com.demo.model.constant.TaskStatus;
 import CPSF.com.demo.model.constant.TaskType;
 import CPSF.com.demo.model.dto.CamperPlaceTypeDTO;
@@ -68,7 +70,7 @@ class WebAppReservationE2EIT extends BaseE2E {
                 .header("X-org-id", orgId)
                 .header("X-api-key", apiKey)
                 .contentType(MediaType.APPLICATION_JSON)
-                .body(body);
+                .body(new WebAppController.ResInitRequest(body, SupportedLocale.pl));
     }
 
     private GuestDTO guest() {

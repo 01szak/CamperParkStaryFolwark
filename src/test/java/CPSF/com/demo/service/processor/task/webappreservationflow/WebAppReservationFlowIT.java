@@ -3,6 +3,7 @@ package CPSF.com.demo.service.processor.task.webappreservationflow;
 import CPSF.com.demo.BaseIT;
 import CPSF.com.demo.exception.AuthenticationException;
 import CPSF.com.demo.model.constant.ReservationStatus;
+import CPSF.com.demo.model.constant.SupportedLocale;
 import CPSF.com.demo.model.constant.TaskStatus;
 import CPSF.com.demo.model.constant.TaskType;
 import CPSF.com.demo.model.constant.UserRole;
@@ -10,6 +11,7 @@ import CPSF.com.demo.model.dto.CamperPlaceTypeDTO;
 import CPSF.com.demo.model.dto.GuestDTO;
 import CPSF.com.demo.model.dto.ReservationDTO;
 import CPSF.com.demo.model.dto.CamperPlaceDTO;
+import CPSF.com.demo.model.dto.WebAppReservationPayload;
 import CPSF.com.demo.model.entity.CamperPlace;
 import CPSF.com.demo.model.entity.Task;
 import CPSF.com.demo.model.entity.User;
@@ -73,7 +75,7 @@ class WebAppReservationFlowIT extends BaseIT {
     }
 
     private Task runInitTask(GuestDTO guest) {
-        var payload = ReservationDTO.builder()
+        var res = ReservationDTO.builder()
                 .checkin(CHECKIN).checkout(CHECKOUT)
                 .guest(guest)
                 .camperPlace(DtoMapper.getCamperPlaceDto(camperPlace))
@@ -82,7 +84,7 @@ class WebAppReservationFlowIT extends BaseIT {
                 .build();
         var initTask = taskRepository.save(Task.builder()
                 .targetId(java.util.UUID.randomUUID().toString())
-                .payload(payload)
+                .payload(new WebAppReservationPayload(res, SupportedLocale.pl))
                 .taskType(TaskType.WEB_APP_RESERVATION_TASK)
                 .build());
         executableTaskFactory.getExecutableTask(initTask).doTask();

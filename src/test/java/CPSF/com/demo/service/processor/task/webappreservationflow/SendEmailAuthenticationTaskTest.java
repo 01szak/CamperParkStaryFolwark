@@ -1,6 +1,7 @@
 package CPSF.com.demo.service.processor.task.webappreservationflow;
 
 import CPSF.com.demo.model.EmailData;
+import CPSF.com.demo.model.constant.SupportedLocale;
 import CPSF.com.demo.model.constant.TaskType;
 import CPSF.com.demo.model.dto.GuestDTO;
 import CPSF.com.demo.model.entity.Task;
@@ -39,7 +40,7 @@ class SendEmailAuthenticationTaskTest {
         final var guest = new GuestDTO(7, "Ada", "Kowalska", "ada@example.com", "600700800", null, "PL");
         final var taskEntity = Task.builder()
                 .targetId(TARGET_ID)
-                .payload(new EmailData(guest, new Object()))
+                .payload(new EmailData(SupportedLocale.en, guest, new Object()))
                 .taskType(TaskType.SEND_EMAIL_AUTHENTICATION_TASK)
                 .build();
         task = new SendEmailAuthenticationTask(novu, taskEntity);
@@ -60,7 +61,7 @@ class SendEmailAuthenticationTaskTest {
         final var body = bodyCaptor.getValue();
         assertThat(body.workflowId()).isEqualTo(NovuWorkflow.VERIFY_RESERVATION_WORKFLOW.getWorkflow());
         assertThat(body.payload()).hasValueSatisfying(payload ->
-                assertThat(payload).containsEntry("targetId", TARGET_ID));
+                assertThat(payload).containsEntry("targetId", TARGET_ID).containsEntry("locale", SupportedLocale.en));
         assertThat(body.to()).isNotNull();
     }
 }
