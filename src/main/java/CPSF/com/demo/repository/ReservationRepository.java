@@ -80,21 +80,21 @@ public interface ReservationRepository extends CRUDRepository<Reservation> {
 
 
         @Modifying
-        @Query("""
-            UPDATE Reservation r SET r.reservationStatus = 
+        @Query(value = """
+            UPDATE reservation r SET r.status = 
             CASE 
                 WHEN r.checkin <= CURRENT_DATE AND r.checkout > CURRENT_DATE THEN 'ACTIVE'
-                WHEN r.checkout <= CURRENT_DATE THEN 'EXPIRED'
+                WHEN r.checkout <= DATE_SUB(CURRENT_DATE, INTERVAL 1 DAY) THEN 'EXPIRED'
                 WHEN r.checkin > CURRENT_DATE THEN 'COMING'
-                ELSE r.reservationStatus 
+                ELSE r.status 
             END
-            WHERE r.reservationStatus NOT IN ('UNVERIFIED', 'EXPIRED')
+            WHERE r.status NOT IN ('UNVERIFIED', 'EXPIRED')
                     AND (
-                        (r.checkin <= CURRENT_DATE AND r.checkout > CURRENT_DATE AND r.reservationStatus <> 'ACTIVE')
-                        OR (r.checkout <= CURRENT_DATE AND r.reservationStatus <> 'EXPIRED')
-                        OR (r.checkin > CURRENT_DATE AND r.reservationStatus <> 'COMING')
+                        (r.checkin <= CURRENT_DATE AND r.checkout > CURRENT_DATE AND r.status <> 'ACTIVE')
+                        OR (r.checkout <= CURRENT_DATE AND r.status <> 'EXPIRED')
+                        OR (r.checkin > CURRENT_DATE AND r.status <> 'COMING')
                     )
-        """)
+        """, nativeQuery = true)
         int setActualReservationStatuses();
 
 }
