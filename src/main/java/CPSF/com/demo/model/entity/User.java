@@ -47,9 +47,21 @@ public class User extends DbObject implements UserDetails {
         return List.of(userRole);
     }
 
+    /**
+     * This method returns login,
+     * confusing name is caused by the UserDetails interface that uses username as a login
+     * @return login
+     */
     @Override
     public String getUsername() {
         return login;
+    }
+
+    /**
+     * @return actual username
+     */
+    public String getDisplayUsername() {
+        return username;
     }
 
     @Override
